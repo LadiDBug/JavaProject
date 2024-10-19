@@ -1,4 +1,4 @@
-package org.blackjack.blackjack;
+package org.blackjack;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -11,8 +11,10 @@ public class Launcher extends Application {
     @Override
     public void start(Stage window) throws IOException {
 
-        new BuildScene().setWindow(window);
-        SceneManager sceneManager = new SceneManager(window);
+        SceneManager.Builder.setWindow(window);
+        SceneManager.Builder.build();
+        SceneManager sceneManager = SceneManager.getInstance(window);
+
 
         //display del menu
         sceneManager.displayRoot(Root.MENU);

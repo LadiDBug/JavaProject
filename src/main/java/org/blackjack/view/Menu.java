@@ -1,6 +1,5 @@
 package org.blackjack.view;
 
-import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -32,7 +31,7 @@ public class Menu implements WindowRoot {
         // TODO: stile bottoni in button
 
 
-        b1.setOnAction((ActionEvent e) -> SceneManager.getInstance().displayRoot(Root.GAME));
+        // b1.setOnAction((ActionEvent e) -> SceneManager.getInstance().displayRoot(Root.GAME));
         //TODO idem per b2-b4
         anchorPane.getChildren().add(vBox);
 

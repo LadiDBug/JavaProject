@@ -3,8 +3,6 @@ package org.blackjack.view;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import lombok.Getter;
-import lombok.Setter;
 import org.blackjack.exception.CantBuildClassException;
 
 import java.util.Observable;
@@ -14,7 +12,7 @@ public class SceneManager implements Observer {
 
 
     public static class Builder {
-        @Setter
+
         private static Stage window;
 
         public static void build() {
@@ -24,19 +22,30 @@ public class SceneManager implements Observer {
             instance = new SceneManager(window);
         }
 
+        public static void setWindow(Stage window) {
+            Builder.window = window;
+        }
+
         private Builder() {
         }
     }
 
     private final Stage window;
-    @Getter
-    private static SceneManager instance;
 
+    private static SceneManager instance;
 
     private SceneManager(Stage window) {
         this.window = window;
         window.setScene(new Scene(new AnchorPane()));
     }
+
+    public static SceneManager getInstance(Stage window) {
+        if (instance == null) {
+            throw new IllegalStateException("SceneManager not created! Call Builder.build() first.");
+        }
+        return instance;
+    }
+
 
     public void displayRoot(Root root) {
         window.getScene().setRoot(root.getPane());
