@@ -18,28 +18,46 @@ public class Menu implements WindowRoot {
         Button b4 = new Button("Esci");
 
         VBox vBox = new VBox(b1, b2, b3, b4);
-        vBox.setStyle("-fx-background-color: green");
+        vBox.setStyle("-fx-background-color: transparent");
         vBox.setPrefWidth(200);
         vBox.setPrefHeight(400);
 
         vBox.setLayoutX(540);
-        //TODO: set.LayoutY
+        vBox.setLayoutY(100);
 
         vBox.setAlignment(Pos.CENTER);
 
-        //TODO: spazio tra bottoni in vbox
-        // TODO: stile bottoni in button
 
+        vBox.setSpacing(20);
+
+        //stile dei bottoni
+        styleButton(b1);
+        styleButton(b2);
+        styleButton(b3);
+        styleButton(b4);
 
         // b1.setOnAction((ActionEvent e) -> SceneManager.getInstance().displayRoot(Root.GAME));
         //TODO idem per b2-b4
         anchorPane.getChildren().add(vBox);
-
+        anchorPane.setStyle(
+                "-fx-background-image: url('/org/blackjack/view/immagine_iniziale.jpg');" +
+                        "-fx-background-size: cover;"
+        );
     }
 
 
     @Override
     public Parent getPane() {
         return anchorPane;
+    }
+
+    public void styleButton(Button button) {
+
+        button.setStyle(
+                "-fx-background-color: #006400;" +
+                        "-fx-text-fill: white;" +
+                        "-fx-font-size: 18px;" +
+                        "-fx-font-family: 'Helvetica';"
+        );
     }
 }
