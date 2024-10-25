@@ -2,15 +2,23 @@ package org.blackjack.view;
 
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import org.blackjack.controller.GameController;
 
 public class Menu implements WindowRoot {
 
     private final AnchorPane anchorPane;
+    private final GameController controller;
 
     public Menu() {
+        this.controller = new GameController();
         anchorPane = new AnchorPane();
         Button b1 = new Button("Gioca");
         Button b2 = new Button("Profilo");
@@ -36,8 +44,44 @@ public class Menu implements WindowRoot {
         styleButton(b3);
         styleButton(b4);
 
-        // b1.setOnAction((ActionEvent e) -> SceneManager.getInstance().displayRoot(Root.GAME));
-        //TODO idem per b2-b4
+        //Azioni sui bottoni
+        b1.setOnAction(e -> {
+            Stage stage = new Stage();
+            AnchorPane anchorPane1 = new AnchorPane();
+
+            RadioButton onePlayer = new RadioButton("1");
+            RadioButton twoPlayer = new RadioButton("2");
+            RadioButton threePlayer = new RadioButton("3");
+            RadioButton fourPlayer = new RadioButton("4");
+
+            Button buttonStart = new Button("Inizia");
+            Button buttonExit = new Button("Annulla");
+
+            Label selectedPlayers = new Label("Scegli il numero di giocatori della partita: ");
+
+            HBox choicePlayers = new HBox(onePlayer, twoPlayer, threePlayer, fourPlayer);
+            HBox startExitBox = new HBox(buttonStart, buttonExit);
+            VBox box2 = new VBox(choicePlayers, startExitBox);
+
+            anchorPane1.getChildren().add(box2);
+            buttonExit.setOnAction(event -> stage.close());
+            buttonStart.setOnAction(event -> {
+                stage.close();
+                SceneManager.getInstance().displayRoot(Root.GAME);
+                controller.startGame();
+            });
+            
+            //vbox due hbox bottoni e startannulla
+            Scene scene = new Scene(anchorPane1, 300, 200);
+            stage.setScene(scene);
+            stage.showAndWait();
+
+        });
+
+        b2.setOnAction(e -> SceneManager.getInstance().displayRoot(Root.PROFILE));
+        b3.setOnAction(e -> SceneManager.getInstance().displayRoot(Root.SETTINGS));
+        b4.setOnAction(e -> System.exit(0));
+
         anchorPane.getChildren().add(vBox);
         anchorPane.setStyle(
                 "-fx-background-image: url('/org/blackjack/view/immagine_iniziale.jpg');" +

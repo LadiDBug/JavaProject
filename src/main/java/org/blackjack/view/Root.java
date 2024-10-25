@@ -16,7 +16,7 @@ public enum Root {
         this.windowRoot = windowRoot;
     }
 
-    public WindowRoot getGame() {
+    public WindowRoot getWindowRoot() {
         return windowRoot;
     }
 

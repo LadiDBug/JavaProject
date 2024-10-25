@@ -31,7 +31,6 @@ public class SceneManager implements Observer {
     }
 
     private final Stage window;
-
     private static SceneManager instance;
 
     private SceneManager(Stage window) {
@@ -39,7 +38,7 @@ public class SceneManager implements Observer {
         window.setScene(new Scene(new AnchorPane()));
     }
 
-    public static SceneManager getInstance(Stage window) {
+    public static SceneManager getInstance() {
         if (instance == null) {
             throw new IllegalStateException("SceneManager not created! Call Builder.build() first.");
         }
@@ -55,7 +54,8 @@ public class SceneManager implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        Game game = ((Game) Root.GAME.getGame());
+        Game game = ((Game) Root.GAME.getWindowRoot());
+        //game.setplayer()
         //Platform.runLater((
         //TODO: switch per i packagetype
     }

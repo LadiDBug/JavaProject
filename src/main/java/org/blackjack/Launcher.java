@@ -11,24 +11,24 @@ public class Launcher extends Application {
     @Override
     public void start(Stage window) throws IOException {
 
+        //Imposta e costruisce il SceneManager
         SceneManager.Builder.setWindow(window);
         SceneManager.Builder.build();
-        SceneManager sceneManager = SceneManager.getInstance(window);
+        SceneManager sceneManager = SceneManager.getInstance();
 
 
-        //display del menu
+        //Display del menu come scena iniziale
         sceneManager.displayRoot(Root.MENU);
 
-        // setting base della finestra
+        // Configurazione della finestra e la mostra
+
         window.setWidth(1280);
         window.setHeight(720);
-
-
-        //aggiungere observable
         window.show();
 
+        //aggiungere observable
 
-        //window.show per far partire la finestra
+
     }
 
     public static void main(String[] args) {

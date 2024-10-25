@@ -45,7 +45,7 @@ public class BlackJackGame extends Observable {
         players.add(new RealPlayer(usernameRealPlayer));
 
         // Management of computer player,
-        //they have an username an avatar, but are choose randomly.
+        //they have a username an avatar, but are choose randomly.
         List<ComputerPlayer> availablePlayers = new ArrayList<>(
                 IntStream.range(0, USERNAMES.length)
                         .mapToObj(i -> new ComputerPlayer(USERNAMES[i], AVATARS[i]))
@@ -191,4 +191,5 @@ public class BlackJackGame extends Observable {
     }
 
     //TODO: metodo notify ecc
+    //public void
 }
