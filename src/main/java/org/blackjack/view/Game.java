@@ -19,17 +19,18 @@ public class Game implements WindowRoot {
         currentPlayerAvatar = new ImageView(takePlayerImagePath());
         currentPlayerAvatar.setFitHeight(30);
         currentPlayerAvatar.setFitWidth(30);
+
         // Box delle infoVarie
         Label labelTurn = new Label("Sta giocando: ");
         Label labelPlayerName = new Label("PlayerName");
         HBox infoBox = new HBox(labelTurn, labelPlayerName, currentPlayerAvatar);
-
+        infoBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.5); -fx-background-radius: 10; -fx-text-fill: white;");
 
         //Box per la gestione delle fiches
         Label labelFiches = new Label("Fiches Totali: ");
         Label totalFiches = new Label(getFiches());
-
         VBox boxTotalFiches = new VBox(labelFiches, totalFiches);
+
 
         Label labelBet = new Label("Puntata");
         Button f20 = new Button("20");
@@ -39,18 +40,35 @@ public class Game implements WindowRoot {
         HBox boxFiches = new HBox(f20, f50, f100, f200);
 
         HBox managerFichesBox = new HBox(boxTotalFiches, boxFiches);
+        managerFichesBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.5); -fx-background-radius: 10; -fx-text-fill: white;");
 
-        //BOX SINGLE PLAYER
-        //Label totalPoints = new Label(getTotalPoints());
+
+        //TODO: box verticale per un singolo player (che è la stessa anche per il dealer)
+        //per la box del player mi serve l'immagine del player, il nome del player, le fiches del player
+        //le carte del player, il totale delle carte del player
+        Label totalPoints = new Label("20");  //mettere funziona che lo getta dal model
+        Label playerName = new Label("PlayerName");
+        ImageView playerAvatar = new ImageView(takePlayerImagePath());
+        playerAvatar.setFitHeight(30);
+        playerAvatar.setFitWidth(30);
+
+
+        VBox playerBox = new VBox(totalPoints, playerAvatar, playerName);
+
+        playerBox.setPrefSize(100, 100);
+        playerBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.5); -fx-background-radius: 10; -fx-text-fill: white;");
+
 
         //TODO: box orizzontale per tutti i player
-        //TODO: box verticale per un singolo player (che è la stessa anche per il dealer)
+
 
         AnchorPane.setTopAnchor(infoBox, 10.0);
         AnchorPane.setLeftAnchor(infoBox, 10.0);
         AnchorPane.setBottomAnchor(managerFichesBox, 10.0);
         AnchorPane.setLeftAnchor(managerFichesBox, 10.0);
-        gamePane.getChildren().addAll(infoBox, managerFichesBox);
+        AnchorPane.setTopAnchor(playerBox, 50.0);
+        AnchorPane.setLeftAnchor(playerBox, 550.0);  //posizione del dealer
+        gamePane.getChildren().addAll(infoBox, managerFichesBox, playerBox);
         gamePane.setStyle(
                 "-fx-background-image: url('/org/blackjack/view/blackjack_table.png');" +
                         "-fx-background-size: 100% 100%;" +
