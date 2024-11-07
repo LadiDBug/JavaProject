@@ -51,7 +51,6 @@ public class BlackJackGame extends Observable {
                         .mapToObj(i -> new ComputerPlayer(USERNAMES[i], AVATARS[i]))
                         .toList()
         );
-
         Collections.shuffle(availablePlayers);
 
         for (int i = 0; i < numberOfPlayers - 1; i++) {
@@ -59,11 +58,12 @@ public class BlackJackGame extends Observable {
                 players.add(availablePlayers.get(i));
             }
         }
+
         deck.shuffleDeck();
-        //drawInitialCards();
+        System.out.print("I giocatori sono: " + players);
 
         setChanged();
-        notifyObservers();
+        notifyObservers(new Object[]{players, dealer});
 
     }
 

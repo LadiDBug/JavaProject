@@ -6,29 +6,32 @@ import org.blackjack.model.BlackJackGame;
 import org.blackjack.model.ComputerPlayer;
 import org.blackjack.model.Player;
 import org.blackjack.model.RealPlayer;
+import org.blackjack.view.SceneManager;
 
 public class GameController {
 
     private BlackJackGame game;
     private Thread gameThread;
+    private SceneManager sceneManager;
 
     public GameController() {
+
         this.game = new BlackJackGame();
+        this.sceneManager = SceneManager.getInstance();
+        game.addObserver(sceneManager);
     }
 
-    private void startGame1() {
-        String playerName = "Mario";
-        int numberOfPlayers = 2;
 
-        game.setUpGame(numberOfPlayers, playerName);
-
-        handleTurn();
-    }
-
-    public void startGame() {
+    public void startGame(int numerOfPlayers, String playerName) {
         if (gameThread != null && gameThread.isAlive()) throw new GameOnGoingException("Thread still alive");
-        gameThread = new Thread(this::startGame1);
+        gameThread = new Thread(() -> startGame1(numerOfPlayers, playerName));
         gameThread.start();
+    }
+
+    private void startGame1(int numberOfPlayers, String playerName) {
+        game.setUpGame(numberOfPlayers, playerName);
+        System.out.print("Game started");
+        //handleTurn();
     }
 
     public void waitGame() {

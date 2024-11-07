@@ -1,10 +1,14 @@
 package org.blackjack.view;
 
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.blackjack.exception.CantBuildClassException;
+import org.blackjack.model.Dealer;
+import org.blackjack.model.Player;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -12,7 +16,6 @@ public class SceneManager implements Observer {
 
 
     public static class Builder {
-
         private static Stage window;
 
         public static void build() {
@@ -54,9 +57,18 @@ public class SceneManager implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        Game game = ((Game) Root.GAME.getWindowRoot());
-        //game.setplayer()
-        //Platform.runLater((
-        //TODO: switch per i packagetype
+        if (arg instanceof Object[]) {
+            Object[] data = (Object[]) arg;
+            List<Player> players = (List<Player>) data[0];
+            Dealer dealer = (Dealer) data[1];
+            Platform.runLater(() -> inizializeGame(players, dealer));
+        }
+    }
+
+    private void inizializeGame(List<Player> players, Dealer dealer) {
+        Game gameView = (Game) Root.GAME.getWindowRoot();
+        gameView.displayPlayers(players, dealer);
+        displayRoot(Root.GAME);
+
     }
 }

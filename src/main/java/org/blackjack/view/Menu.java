@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -16,6 +17,7 @@ public class Menu implements WindowRoot {
 
     private final AnchorPane anchorPane;
     private final GameController controller;
+    private int playersSelected = 1;
 
     public Menu() {
         this.controller = new GameController();
@@ -54,13 +56,34 @@ public class Menu implements WindowRoot {
             RadioButton threePlayer = new RadioButton("3");
             RadioButton fourPlayer = new RadioButton("4");
 
+            ToggleGroup numberOfPlayers = new ToggleGroup();
+            onePlayer.setToggleGroup(numberOfPlayers);
+            twoPlayer.setToggleGroup(numberOfPlayers);
+            threePlayer.setToggleGroup(numberOfPlayers);
+            fourPlayer.setToggleGroup(numberOfPlayers);
+
+            onePlayer.setSelected(true);
+
+            numberOfPlayers.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue == onePlayer) {
+                    playersSelected = 1;
+                } else if (newValue == twoPlayer) {
+                    playersSelected = 2;
+                } else if (newValue == threePlayer) {
+                    playersSelected = 3;
+                } else if (newValue == fourPlayer) {
+                    playersSelected = 4;
+                }
+
+            });
+
             Button buttonStart = new Button("Inizia");
             Button buttonExit = new Button("Annulla");
 
-            Label selectedPlayers = new Label("Scegli il numero di giocatori della partita: ");
+            Label labelAskNumberPlayers = new Label("Scegli il numero di giocatori della partita: ");
 
             HBox choicePlayers = new HBox(onePlayer, twoPlayer, threePlayer, fourPlayer);
-            HBox startExitBox = new HBox(buttonStart, buttonExit);
+            HBox startExitBox = new HBox(labelAskNumberPlayers, buttonStart, buttonExit);
             VBox box2 = new VBox(choicePlayers, startExitBox);
 
             anchorPane1.getChildren().add(box2);
@@ -68,9 +91,10 @@ public class Menu implements WindowRoot {
             buttonStart.setOnAction(event -> {
                 stage.close();
                 SceneManager.getInstance().displayRoot(Root.GAME);
-                controller.startGame();
+                controller.startGame(playersSelected, "Mario");
+                System.out.println("HA SCELTO:" + playersSelected);
             });
-            
+
             //vbox due hbox bottoni e startannulla
             Scene scene = new Scene(anchorPane1, 300, 200);
             stage.setScene(scene);
