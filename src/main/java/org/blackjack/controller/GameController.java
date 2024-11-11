@@ -3,9 +3,6 @@ package org.blackjack.controller;
 
 import org.blackjack.exception.GameOnGoingException;
 import org.blackjack.model.BlackJackGame;
-import org.blackjack.model.ComputerPlayer;
-import org.blackjack.model.Player;
-import org.blackjack.model.RealPlayer;
 import org.blackjack.view.SceneManager;
 
 public class GameController {
@@ -42,6 +39,8 @@ public class GameController {
         }
     }
 
+
+    /*
     public void handleTurn() {
         boolean continuePlaying = true;    //flag per continuare la partita
 
@@ -186,5 +185,5 @@ public class GameController {
     public void playerBust(RealPlayer player) {
     }
 
-
+*/
 }

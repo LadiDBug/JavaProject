@@ -91,7 +91,7 @@ public class Menu implements WindowRoot {
             buttonStart.setOnAction(event -> {
                 stage.close();
                 SceneManager.getInstance().displayRoot(Root.GAME);
-                controller.startGame(playersSelected, "Mario");
+                controller.startGame(playersSelected, "SISTEMAMI!");
                 System.out.println("HA SCELTO:" + playersSelected);
             });
 

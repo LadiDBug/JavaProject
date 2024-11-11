@@ -16,9 +16,9 @@ public class BlackJackGame extends Observable {
 
     private static final String[] USERNAMES = {"Mario", "Michelangelo", "Batman"};
     private static final String[] AVATARS = {
-            "src/resources/super-mario.png",
-            "src/resources/michaelangelo.png",
-            "src/resources/batman.png"
+            "/org/blackjack/view/super-mario.png",
+            "/org/blackjack/view/michaelangelo.png",
+            "/org/blackjack/view/batman.png"
     };
 
 

@@ -68,17 +68,17 @@ public class Game implements WindowRoot {
         removePlayerBoxes();
 
         //aggiungo dealer
-        VBox dealerBox = createPlayerBox("Dealer", "20", takeDealerImagePath());
+        VBox dealerBox = createPlayerBox(dealer.getUsername(), Integer.toString(dealer.getScore()), dealer.getAvatar());
         positionPlayerBox(dealerBox, "dealer");
         gamePane.getChildren().add(dealerBox);
 
         //Aggiungo ciascun giocatore
         for (int i = 0; i < players.size(); i++) {
-            //Player player = players.get(i);
-            VBox playerBox = createPlayerBox("PlayerName", "20", takePlayerImagePath());
+            Player player = players.get(i);
+            VBox playerBox = createPlayerBox(player.getUsername(), Integer.toString(player.getScore()), player.getAvatar());
 
 
-            // if per la posizione dei player
+            // if per la posizione ;dei player
             if (i == 0) {
                 positionPlayerBox(playerBox, "human");
             } else if (i == 1) {
@@ -155,7 +155,7 @@ public class Game implements WindowRoot {
         }
     }
 
-    //TODO: sistemare i placeholder delle immagini
+
     @Override
     public Parent getPane() {
         return gamePane;
@@ -177,7 +177,4 @@ public class Game implements WindowRoot {
         return "/org/blackjack/view/retro_card.png";
     }
 
-    private String takeDealerImagePath() {
-        return "/org/blackjack/view/croupier.png";
-    }
 }
