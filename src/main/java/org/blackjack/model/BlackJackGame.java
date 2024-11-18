@@ -74,12 +74,16 @@ public class BlackJackGame extends Observable {
     }
 
     public void drawInitialCards() {
+        List<Integer> scores = new ArrayList<>(players.stream().map(Player::getScore).toList());
+        scores.add(dealer.getScore());
         for (Player player : players) {
             for (int i = 0; i < 2; i++) {
                 GameCard card = deck.drawCard();
                 player.hit(card);
+                scores.set(players.indexOf(player), player.getScore());
                 setChanged();
-                notifyObservers(new DrawPackage(PackageType.DRAW, card.getValue(), card.getSuit(), player.getType()));
+                notifyObservers(new DrawPackage(PackageType.DRAW, card.getValue(), card.getSuit(), player.getType(), player.getScore()));
+                notifyObservers(new ScorePackage(PackageType.SCORE, scores, player.getType()));
                 clearChanged();
             }
         }
@@ -87,9 +91,10 @@ public class BlackJackGame extends Observable {
         for (int i = 0; i < 2; i++) {
             GameCard card = deck.drawCard();
             dealer.hit(card);
+            scores.set(players.size(), dealer.getScore());
             setChanged();
-            notifyObservers(new DrawPackage(PackageType.DRAW, card.getValue(), card.getSuit(), TypePlayer.DEALER));
-            notifyObservers(new ScorePackage(PackageType.SCORE, );
+            notifyObservers(new DrawPackage(PackageType.DRAW, card.getValue(), card.getSuit(), TypePlayer.DEALER, dealer.getScore()));
+            notifyObservers(new ScorePackage(PackageType.SCORE, scores, TypePlayer.DEALER));
             clearChanged();
         }
     }

@@ -1,4 +1,8 @@
 package org.blackjack.api;
 
-public record ScorePackage(PackageType packageType, int score) implements DataPackage {
+import org.blackjack.view.TypePlayer;
+
+import java.util.List;
+
+public record ScorePackage(PackageType packageType, List<Integer> scores, TypePlayer player) implements DataPackage {
 }

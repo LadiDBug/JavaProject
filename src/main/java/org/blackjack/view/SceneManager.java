@@ -69,7 +69,7 @@ public class SceneManager implements Observer {
                 }
                 case DRAW -> {
                     DrawPackage drawPackage = (DrawPackage) dataPackage;
-                    Platform.runLater(() -> gameView.drawCards(drawPackage.value(), drawPackage.suit(), drawPackage.player()));
+                    Platform.runLater(() -> gameView.drawCards(drawPackage.value(), drawPackage.suit(), drawPackage.player(), drawPackage.score()));
                 }
             }
         }

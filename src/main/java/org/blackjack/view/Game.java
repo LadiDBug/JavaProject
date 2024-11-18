@@ -185,31 +185,36 @@ public class Game implements WindowRoot {
         }
     }
 
-    public void drawCards(Value value, Suit suit, TypePlayer player) {
+    public void drawCards(Value value, Suit suit, TypePlayer player, int score) {
         switch (player) {
             case PLAYER -> {
                 ImageView card = new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
                 ((HBox) playerBox.getChildren().get(3)).getChildren().add(card);
-
+                ((Label) playerBox.getChildren().get(0)).setText("Punteggio: " + score);
             }
             case DEALER -> {
                 ImageView card = new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
                 ((HBox) dealerBox.getChildren().get(3)).getChildren().add(card);
+                ((Label) dealerBox.getChildren().get(0)).setText("Punteggio: " + score);
             }
             case BOT1 -> {
                 ImageView card = new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
                 ((HBox) bot1Box.getChildren().get(3)).getChildren().add(card);
+                ((Label) bot1Box.getChildren().get(0)).setText("Punteggio: " + score);
             }
             case BOT2 -> {
                 ImageView card = new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
                 ((HBox) bot2Box.getChildren().get(3)).getChildren().add(card);
+                ((Label) bot2Box.getChildren().get(0)).setText("Punteggio: " + score);
             }
             case BOT3 -> {
                 ImageView card = new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
                 ((HBox) bot3Box.getChildren().get(3)).getChildren().add(card);
+                ((Label) bot3Box.getChildren().get(0)).setText("Punteggio: " + score);
             }
         }
 
-
+        //TODO: aggiungere box choice
+        //TODO: Pensare alle fiches
     }
 }
