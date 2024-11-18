@@ -1,5 +1,7 @@
 package org.blackjack.model;
 
+import org.blackjack.view.TypePlayer;
+
 /**
  * This class represents an abstract player in the game.
  * It is the base class for the Real Player, Computer Player and the Dealer.
@@ -12,6 +14,7 @@ public abstract class Player {
     protected Hand hand;
     protected int score;
     protected boolean standing;
+    protected TypePlayer type;
 
     /**
      * Constructor that initializes a player with a username.
@@ -19,17 +22,22 @@ public abstract class Player {
      *
      * @param username
      */
-    public Player(String username) {
+    public Player(String username, TypePlayer type) {
         this.username = username;
         this.avatar = "/org/blackjack/view/defaultUser.png";
         this.hand = new Hand();
         this.score = 0;
         this.standing = true;
+        this.type = type;
     }
 
     /**
      * Getter and setter of all the attributes.
      */
+    public TypePlayer getType() {
+        return type;
+    }
+
     public String getAvatar() {
         return avatar;
     }

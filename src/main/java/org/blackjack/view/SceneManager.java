@@ -4,11 +4,11 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import org.blackjack.api.DataPackage;
+import org.blackjack.api.DrawPackage;
+import org.blackjack.api.SetupPackage;
 import org.blackjack.exception.CantBuildClassException;
-import org.blackjack.model.Dealer;
-import org.blackjack.model.Player;
 
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -57,18 +57,23 @@ public class SceneManager implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        if (arg instanceof Object[]) {
-            Object[] data = (Object[]) arg;
-            List<Player> players = (List<Player>) data[0];
-            Dealer dealer = (Dealer) data[1];
-            Platform.runLater(() -> inizializeGame(players, dealer));
+
+        if (arg instanceof DataPackage dataPackage) {
+            Game gameView = (Game) Root.GAME.getWindowRoot();
+            switch (dataPackage.packageType()) {
+
+                case SETUP -> {
+                    SetupPackage setupPackage = (SetupPackage) dataPackage;
+                    Platform.runLater(() -> gameView.displayPlayers(setupPackage.playerNames(), setupPackage.numberOfPlayers(), setupPackage.avatars()));
+
+                }
+                case DRAW -> {
+                    DrawPackage drawPackage = (DrawPackage) dataPackage;
+                    Platform.runLater(() -> gameView.drawCards(drawPackage.value(), drawPackage.suit(), drawPackage.player()));
+                }
+            }
         }
     }
 
-    private void inizializeGame(List<Player> players, Dealer dealer) {
-        Game gameView = (Game) Root.GAME.getWindowRoot();
-        gameView.displayPlayers(players, dealer);
-        displayRoot(Root.GAME);
 
-    }
 }

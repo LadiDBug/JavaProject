@@ -1,5 +1,7 @@
 package org.blackjack.model;
 
+import org.blackjack.view.TypePlayer;
+
 /**
  * The RealPlayer class represents a human player in the game.
  * This class extends the abstract Player class, adding additional attributes.
@@ -22,7 +24,7 @@ public class RealPlayer extends Player {
      * @param username
      */
     public RealPlayer(String username) {
-        super(username);
+        super(username, TypePlayer.PLAYER);
         this.level = 0;
         this.totalGames = 0;
         this.wonGames = 0;

@@ -1,6 +1,9 @@
 package org.blackjack.model;
 
 import org.blackjack.api.DrawPackage;
+import org.blackjack.api.PackageType;
+import org.blackjack.api.ScorePackage;
+import org.blackjack.api.SetupPackage;
 import org.blackjack.view.TypePlayer;
 
 import java.util.ArrayList;
@@ -45,10 +48,11 @@ public class BlackJackGame extends Observable {
         players.add(new RealPlayer(usernameRealPlayer));
 
         // Management of computer player,
-        //they have a username an avatar, but are choose randomly.
+        //they have a username an avatars, but are choose randomly.
+        TypePlayer[] types = new TypePlayer[]{TypePlayer.BOT1, TypePlayer.BOT2, TypePlayer.BOT3};
         List<ComputerPlayer> availablePlayers = new ArrayList<>(
                 IntStream.range(0, USERNAMES.length)
-                        .mapToObj(i -> new ComputerPlayer(USERNAMES[i], AVATARS[i]))
+                        .mapToObj(i -> new ComputerPlayer(USERNAMES[i], AVATARS[i], types[i]))
                         .toList()
         );
         Collections.shuffle(availablePlayers);
@@ -59,29 +63,35 @@ public class BlackJackGame extends Observable {
             }
         }
 
+        List<String> usernames = players.stream().map(Player::getUsername).toList();
+        List<String> avatar = players.stream().map(Player::getAvatar).toList();
+
         deck.shuffleDeck();
-        System.out.print("I giocatori sono: " + players);
 
         setChanged();
-        notifyObservers(new Object[]{players, dealer});
+        notifyObservers(new SetupPackage(PackageType.SETUP, usernames, numberOfPlayers, avatar));
 
     }
 
     public void drawInitialCards() {
         for (Player player : players) {
-            GameCard card = deck.drawCard();
-            player.hit(card);
-            setChanged();
-            notifyObservers(new DrawPackage(card.getValue(), card.getSuit(), TypePlayer.PLAYER));
-            clearChanged();
-            player.hit(deck.drawCard());
+            for (int i = 0; i < 2; i++) {
+                GameCard card = deck.drawCard();
+                player.hit(card);
+                setChanged();
+                notifyObservers(new DrawPackage(PackageType.DRAW, card.getValue(), card.getSuit(), player.getType()));
+                clearChanged();
+            }
         }
 
-        dealer.hit(deck.drawCard());
-        dealer.hit(deck.drawCard());
-
-        setChanged();
-        notifyObservers();
+        for (int i = 0; i < 2; i++) {
+            GameCard card = deck.drawCard();
+            dealer.hit(card);
+            setChanged();
+            notifyObservers(new DrawPackage(PackageType.DRAW, card.getValue(), card.getSuit(), TypePlayer.DEALER));
+            notifyObservers(new ScorePackage(PackageType.SCORE, );
+            clearChanged();
+        }
     }
 
 

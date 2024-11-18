@@ -11,6 +11,7 @@ public enum PackageType {
     BUST,
     WIN,
     LOSE,
-    TIE;
-    
+    TIE,
+    SETUP,
+    SCORE
 }

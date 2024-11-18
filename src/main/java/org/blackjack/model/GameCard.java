@@ -56,8 +56,5 @@ public class GameCard implements Card {
         this.visible = visible;
     }
 
-    public String getCardPath() {
-        return "/org/blackjack/view/cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png";
-    }
 
 }

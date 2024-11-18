@@ -1,10 +1,12 @@
 package org.blackjack.model;
 
+import org.blackjack.view.TypePlayer;
+
 public class Dealer extends Player {
 
 
     public Dealer() {
-        super("DEALER");
+        super("DEALER", TypePlayer.DEALER);
         this.avatar = "/org/blackjack/view/croupier.png";
     }
 

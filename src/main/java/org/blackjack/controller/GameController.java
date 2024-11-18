@@ -28,6 +28,7 @@ public class GameController {
     private void startGame1(int numberOfPlayers, String playerName) {
         game.setUpGame(numberOfPlayers, playerName);
         System.out.print("Game started");
+        game.drawInitialCards();
         //handleTurn();
     }
 

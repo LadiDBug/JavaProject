@@ -5,5 +5,5 @@ import org.blackjack.model.Value;
 import org.blackjack.view.TypePlayer;
 
 //classe solo getter
-public record DrawPackage(Value value, Suit suit, TypePlayer player) {
+public record DrawPackage(PackageType packageType, Value value, Suit suit, TypePlayer player) implements DataPackage {
 }
