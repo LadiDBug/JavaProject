@@ -3,7 +3,9 @@ package org.blackjack.controller;
 
 import org.blackjack.exception.GameOnGoingException;
 import org.blackjack.model.BlackJackGame;
+import org.blackjack.model.RealPlayer;
 import org.blackjack.view.SceneManager;
+
 
 public class GameController {
 
@@ -29,7 +31,7 @@ public class GameController {
         game.setUpGame(numberOfPlayers, playerName);
         System.out.print("Game started");
         game.drawInitialCards();
-        //handleTurn();
+        handleTurn();
     }
 
     public void waitGame() {
@@ -40,47 +42,14 @@ public class GameController {
         }
     }
 
-
-    /*
     public void handleTurn() {
-        boolean continuePlaying = true;    //flag per continuare la partita
-
-        while (continuePlaying) {
-            placeBet();
-
-            game.drawInitialCards();
-
-            playGame();
-
-            continuePlaying = false;
-            if (continuePlaying) {
-                game.resetGame();
-            }
-        }
-        game.quitGame();
-    }
-
-    public void placeBet() {
-        for (Player player : game.getPlayers()) {
-            if (player instanceof RealPlayer) {
-                int bet = 50;
-
-                RealPlayer realPlayer = (RealPlayer) player;
-                realPlayer.setBet(bet);
-                realPlayer.setTotalFiches(realPlayer.getTotalFiches() - bet);
-            }
-        }
-    }
-
-
-    public void playGame() {
-        for (Player player : game.getPlayers()) {
+        game.getPlayers().forEach(player -> {
             if (player instanceof RealPlayer) {
                 handleRealPlayerTurn((RealPlayer) player);
             } else {
-                handleComputerPlayerTurn((ComputerPlayer) player);
+                // handleComputerPlayerTurn((ComputerPlayer) player);
             }
-        }
+        });
 
         //dopo tutti i giocatori gioca il dealer
         dealerPlay();
@@ -89,11 +58,10 @@ public class GameController {
         checkWinners();
     }
 
-
     public void handleRealPlayerTurn(RealPlayer player) {
         boolean continueTurn = true;
         while (continueTurn) {
-            int action = 1;
+            int action = takeChoice();     //COSA METTO?
 
             switch (action) {
                 case 1: //HIT
@@ -117,7 +85,30 @@ public class GameController {
         }
     }
 
-    public void handleComputerPlayerTurn(ComputerPlayer player) {
+    public int takeChoice() {
+        return sceneManager.getPlayerAction();
+    }
+
+    public void playerBust(RealPlayer player) {
+        //TODO: Implementare cosa fare quando un player busta
+        System.out.println("Ha fatto bust");
+    }
+
+    public void playerSplit(RealPlayer player) {
+        //TODO: implementare cosa fare quando un player split
+        System.out.println("Ha fatto split");
+    }
+
+    public void dealerPlay() {
+        //TODO: implementare cosa fare quando gioca il dealer
+        System.out.println("Il dealer gioca");
+    }
+
+    public void checkWinners() {
+        //TODO: implementare cosa fare quando controllo chi vince
+        System.out.println("Controllo chi vince");
+    }
+   /* public void handleComputerPlayerTurn(ComputerPlayer player) {
         player.setstanding(false);
 
         if (game.checkBlackJack(player)) {
@@ -140,6 +131,27 @@ public class GameController {
 
 
     }
+
+
+
+    public void placeBet() {
+        for (Player player : game.getPlayers()) {
+            if (player instanceof RealPlayer) {
+                int bet = 50;
+
+                RealPlayer realPlayer = (RealPlayer) player;
+                realPlayer.setBet(bet);
+                realPlayer.setTotalFiches(realPlayer.getTotalFiches() - bet);
+            }
+        }
+    }
+
+
+
+
+
+
+
 
     public void dealerPlay() {
         game.getDealer().setstanding(false);
@@ -183,8 +195,9 @@ public class GameController {
     public void playerSplit(RealPlayer player) {
     }
 
-    public void playerBust(RealPlayer player) {
-    }
 
+
+}
 */
+
 }

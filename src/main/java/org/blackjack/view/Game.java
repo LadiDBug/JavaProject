@@ -21,6 +21,7 @@ public class Game implements WindowRoot {
     private VBox bot1Box;
     private VBox bot2Box;
     private VBox bot3Box;
+    private int playerChoice;
 
     public Game() {
         gamePane = new AnchorPane();
@@ -32,18 +33,21 @@ public class Game implements WindowRoot {
         //Creazione della fiches box
         HBox managerFichesBox = creaManagerFichesBox();
         managerFichesBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.5); -fx-background-radius: 10; -fx-text-fill: white;");
-        //Creazione della player box
 
         //creazione della choice box
+        HBox choiceBox = creaChoiceBox();
+        choiceBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.5); -fx-background-radius: 10; -fx-text-fill: white;");
 
-        //Ancoraggio delle box nella view
-        //TODO: per ancorarle, e togliere ancorpane: infoBox.setLayoutX(10);
+
+        //Posizionamento delle box nella view
         infoBox.setLayoutX(10);
         infoBox.setLayoutY(10);
         managerFichesBox.setLayoutX(10);
         managerFichesBox.setLayoutY(640);
+        choiceBox.setLayoutX(1050);
+        choiceBox.setLayoutY(650);
 
-        gamePane.getChildren().addAll(infoBox, managerFichesBox);
+        gamePane.getChildren().addAll(infoBox, managerFichesBox, choiceBox);
 
         //Stile del gamePane
         gamePane.setStyle(
@@ -54,9 +58,34 @@ public class Game implements WindowRoot {
         );
     }
 
+
     @Override
     public Parent getPane() {
         return gamePane;
+    }
+
+    public HBox creaChoiceBox() {
+        Button hit = new Button("Hit");
+        Button stand = new Button("Stand");
+        Button doubleDown = new Button("Double Down");
+        Button split = new Button("Split");
+
+        hit.setOnAction(event -> {
+            setPlayerAction(1);
+            System.out.println("Hit");
+        });
+        stand.setOnAction(event -> setPlayerAction(2));
+        doubleDown.setOnAction(event -> setPlayerAction(3));
+        split.setOnAction(event -> setPlayerAction(4));
+        return new HBox(hit, stand, doubleDown, split);
+    }
+
+    public void setPlayerAction(int choice) {
+        this.playerChoice = choice;
+    }
+
+    public int getPlayerChoice() {
+        return playerChoice;
     }
 
     public HBox creaInfoBox() {

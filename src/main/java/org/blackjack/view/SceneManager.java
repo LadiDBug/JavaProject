@@ -53,7 +53,11 @@ public class SceneManager implements Observer {
         window.getScene().setRoot(root.getPane());
     }
 
-//mi serve un'istanza di game per potergli passare gli eventi
+    //mi serve un'istanza di game per potergli passare gli eventi
+    public int getPlayerAction() {
+        Game gameView = (Game) Root.GAME.getWindowRoot();
+        return gameView.getPlayerChoice();
+    }
 
     @Override
     public void update(Observable o, Object arg) {
