@@ -13,5 +13,6 @@ public enum PackageType {
     LOSE,
     TIE,
     SETUP,
-    SCORE
+    SCORE,
+    HIT
 }

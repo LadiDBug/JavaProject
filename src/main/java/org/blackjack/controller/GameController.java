@@ -45,6 +45,7 @@ public class GameController {
     public void handleTurn() {
         game.getPlayers().forEach(player -> {
             if (player instanceof RealPlayer) {
+                System.out.println("TOCCA AL REAL PLAYER");
                 handleRealPlayerTurn((RealPlayer) player);
             } else {
                 // handleComputerPlayerTurn((ComputerPlayer) player);
@@ -61,13 +62,12 @@ public class GameController {
     public void handleRealPlayerTurn(RealPlayer player) {
         boolean continueTurn = true;
         while (continueTurn) {
-            int action = takeChoice();     //COSA METTO?
+            int action = takeChoice();
 
             switch (action) {
                 case 1: //HIT
-                    player.hit(game.getDeck().drawCard());
+                    game.hit(player);
                     if (game.checkBust(player)) {
-                        playerBust(player);
                         continueTurn = false;
                     }
                     break;
@@ -82,18 +82,30 @@ public class GameController {
                 case 4:
                     playerSplit(player);
             }
+            sceneManager.resetPlayerChoice();
         }
     }
 
     public int takeChoice() {
-        return sceneManager.getPlayerAction();
+        int action = sceneManager.getPlayerAction();
+        while (action == 0) { // Aspetta una scelta valida
+            try {
+                Thread.sleep(100); // Piccola pausa per non sovraccaricare la CPU
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            action = sceneManager.getPlayerAction();
+        }
+        return action;
     }
 
-    public void playerBust(RealPlayer player) {
-        //TODO: Implementare cosa fare quando un player busta
-        System.out.println("Ha fatto bust");
-    }
-
+    /*
+        public void playerBust(RealPlayer player) {
+            sceneManager.showBustMessage();
+            System.out.println("Ha fatto bust");
+            //TODO: implemetare cosa fare quando un player fa bust
+        }
+    */
     public void playerSplit(RealPlayer player) {
         //TODO: implementare cosa fare quando un player split
         System.out.println("Ha fatto split");

@@ -6,6 +6,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.blackjack.api.DataPackage;
 import org.blackjack.api.DrawPackage;
+import org.blackjack.api.HitPackage;
 import org.blackjack.api.SetupPackage;
 import org.blackjack.exception.CantBuildClassException;
 
@@ -59,6 +60,12 @@ public class SceneManager implements Observer {
         return gameView.getPlayerChoice();
     }
 
+    public void resetPlayerChoice() {
+        Game gameView = (Game) Root.GAME.getWindowRoot();
+        gameView.resetPlayerChoice();
+    }
+
+
     @Override
     public void update(Observable o, Object arg) {
 
@@ -74,6 +81,13 @@ public class SceneManager implements Observer {
                 case DRAW -> {
                     DrawPackage drawPackage = (DrawPackage) dataPackage;
                     Platform.runLater(() -> gameView.drawCards(drawPackage.value(), drawPackage.suit(), drawPackage.player(), drawPackage.score()));
+                }
+                case HIT -> {
+                    HitPackage hitPackage = (HitPackage) dataPackage;
+                    Platform.runLater(() -> gameView.drawUserCard(hitPackage.value(), hitPackage.suit(), hitPackage.score()));
+                }
+                case BUST -> {
+                    Platform.runLater(() -> gameView.showBustMessage());
                 }
             }
         }

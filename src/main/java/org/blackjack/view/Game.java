@@ -47,6 +47,7 @@ public class Game implements WindowRoot {
         choiceBox.setLayoutX(1050);
         choiceBox.setLayoutY(650);
 
+
         gamePane.getChildren().addAll(infoBox, managerFichesBox, choiceBox);
 
         //Stile del gamePane
@@ -70,14 +71,16 @@ public class Game implements WindowRoot {
         Button doubleDown = new Button("Double Down");
         Button split = new Button("Split");
 
-        hit.setOnAction(event -> {
-            setPlayerAction(1);
-            System.out.println("Hit");
-        });
+        hit.setOnAction(event -> setPlayerAction(1));
+
         stand.setOnAction(event -> setPlayerAction(2));
         doubleDown.setOnAction(event -> setPlayerAction(3));
         split.setOnAction(event -> setPlayerAction(4));
         return new HBox(hit, stand, doubleDown, split);
+    }
+
+    public void resetPlayerChoice() {
+        this.playerChoice = 0;
     }
 
     public void setPlayerAction(int choice) {
@@ -214,6 +217,25 @@ public class Game implements WindowRoot {
         }
     }
 
+
+    public void showBustMessage() {
+        HBox messageBox = new HBox();
+        Label bustMessage = new Label("Hai sballato!");
+        bustMessage.setStyle("-fx-background-color: rgba(255, 255, 255, 0.5); -fx-background-radius: 10; -fx-text-fill: white;");
+        messageBox.getChildren().add(bustMessage);
+        messageBox.setLayoutX(800);
+        messageBox.setLayoutY(30);
+        gamePane.getChildren().add(messageBox);
+    }
+
+    public void drawUserCard(Value value, Suit suit, int score) {
+        ImageView card = new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
+        ((HBox) playerBox.getChildren().get(3)).getChildren().remove(0);
+        ((HBox) playerBox.getChildren().get(3)).getChildren().add(card);
+        ((Label) playerBox.getChildren().get(0)).setText("Punteggio: " + score);
+        System.out.println(card);
+    }
+
     public void drawCards(Value value, Suit suit, TypePlayer player, int score) {
         switch (player) {
             case PLAYER -> {
@@ -242,8 +264,7 @@ public class Game implements WindowRoot {
                 ((Label) bot3Box.getChildren().get(0)).setText("Punteggio: " + score);
             }
         }
-
-        //TODO: aggiungere box choice
-        //TODO: Pensare alle fiches
     }
+    //TODO: Pensare alle fiches
+
 }

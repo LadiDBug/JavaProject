@@ -1,9 +1,6 @@
 package org.blackjack.model;
 
-import org.blackjack.api.DrawPackage;
-import org.blackjack.api.PackageType;
-import org.blackjack.api.ScorePackage;
-import org.blackjack.api.SetupPackage;
+import org.blackjack.api.*;
 import org.blackjack.view.TypePlayer;
 
 import java.util.ArrayList;
@@ -99,6 +96,16 @@ public class BlackJackGame extends Observable {
         }
     }
 
+    public void hit(Player player) {
+        GameCard card = deck.drawCard();
+        player.hit(card);
+        System.out.println("HA CHIESTO CARTA");
+        setChanged();
+        notifyObservers(new HitPackage(PackageType.HIT, card.getValue(), card.getSuit(), player.getScore()));
+        clearChanged();
+
+    }
+
 
     public void resetGame() {
         for (Player player : players) {
@@ -168,11 +175,13 @@ public class BlackJackGame extends Observable {
         return false;
     }
 
+    //Se è bust ritorna true e lo passa tramite notify
     public boolean checkBust(Player player) {
         boolean isBust = player.bust();
         if (isBust) {
             setChanged();
-            notifyObservers(player.getUsername() + " is bust!");
+            notifyObservers(new BustPackage(PackageType.BUST, true));
+            clearChanged();
         }
         return isBust;
     }
