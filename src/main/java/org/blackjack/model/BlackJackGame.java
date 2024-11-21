@@ -99,11 +99,62 @@ public class BlackJackGame extends Observable {
     public void hit(Player player) {
         GameCard card = deck.drawCard();
         player.hit(card);
-        System.out.println("HA CHIESTO CARTA");
         setChanged();
-        notifyObservers(new HitPackage(PackageType.HIT, card.getValue(), card.getSuit(), player.getScore()));
+        sleep(1000);
+        notifyObservers(new HitPackage(PackageType.HIT, card.getValue(), card.getSuit(), player.getScore(), player.getType()));
         clearChanged();
 
+    }
+
+
+    public void dealerPlay() {
+        dealer.setstanding(false);
+        if (dealer.getScore() < 17) {
+            GameCard card = deck.drawCard();
+            dealer.hit(card);
+            setChanged();
+            sleep(1000);
+            notifyObservers(new HitPackage(PackageType.HIT, card.getValue(), card.getSuit(), dealer.getScore(), TypePlayer.DEALER));
+            clearChanged();
+        } else {
+            dealer.stand();
+            setChanged();
+            notifyObservers();
+            clearChanged();
+        }
+    }
+
+
+    public void checkWin(Player player, Player dealer) {
+        if (player.getScore() > dealer.getScore()) {
+            //vince player
+            setChanged();
+            notifyObservers(new WinPackage(PackageType.WIN, true));
+            clearChanged();
+        } else if (dealer.getScore() > player.getScore()) {
+            //vince dealer
+            setChanged();
+            notifyObservers(new LosePackage(PackageType.LOSE, true));
+            clearChanged();
+        } else {
+            // pareggio
+            setChanged();
+            notifyObservers(new TiePackage(PackageType.TIE, true));
+            clearChanged();
+        }
+
+    }
+
+    public void stand(Player player) {
+        player.setstanding(true);
+    }
+
+    private void sleep(int milliSec) {
+        try {
+            Thread.sleep(milliSec);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
 
@@ -140,21 +191,6 @@ public class BlackJackGame extends Observable {
             }
         }
         return false;
-    }
-
-    public String checkWin(Player player, Player dealer) {
-        String result;
-        if (player.getScore() > dealer.getScore()) {
-            result = player.getUsername();
-        } else if (dealer.getScore() > player.getScore()) {
-            result = "Dealer";
-        } else {
-            result = "Tie";
-        }
-
-        setChanged();
-        notifyObservers(result);
-        return result;
     }
 
     public boolean checkSplit(Player player) {
@@ -199,19 +235,7 @@ public class BlackJackGame extends Observable {
             return;
         }
 
-        //creazione della seconda mano
-        Hand secondHand = new Hand();
-        GameCard secondCard = player.getHand().getHand().remove(1);
-        secondHand.addCard(secondCard);
 
-        // aggiungo carta alle due mani
-        player.hit(deck.drawCard());
-        secondHand.addCard(deck.drawCard());
-
-        player.addSecondHand(secondHand);
-
-        setChanged();
-        notifyObservers();
     }
 
     //TODO: metodo notify ecc

@@ -14,12 +14,14 @@ public class Dealer extends Player {
         this.standing = true;
     }
 
+    /*
     public void decideAction(GameCard card) {
         if (hand.calculateHandValue() < 17) {
             hit(card);
         }
         stand();
-    }
+
+     */
 
 
 }

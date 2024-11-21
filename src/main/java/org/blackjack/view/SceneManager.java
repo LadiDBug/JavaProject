@@ -84,10 +84,19 @@ public class SceneManager implements Observer {
                 }
                 case HIT -> {
                     HitPackage hitPackage = (HitPackage) dataPackage;
-                    Platform.runLater(() -> gameView.drawUserCard(hitPackage.value(), hitPackage.suit(), hitPackage.score()));
+                    Platform.runLater(() -> gameView.drawHitCard(hitPackage.value(), hitPackage.suit(), hitPackage.score(), hitPackage.typePlayer()));
                 }
                 case BUST -> {
                     Platform.runLater(() -> gameView.showBustMessage());
+                }
+                case WIN -> {
+                    Platform.runLater(() -> gameView.showWinMessage());
+                }
+                case TIE -> {
+                    Platform.runLater(() -> gameView.showTieMessage());
+                }
+                case LOSE -> {
+                    Platform.runLater(() -> gameView.showLoseMessage());
                 }
             }
         }

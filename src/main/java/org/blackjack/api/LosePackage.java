@@ -1,4 +1,4 @@
 package org.blackjack.api;
 
-public record LosePackage() {
+public record LosePackage(PackageType packageType, boolean lose) implements DataPackage {
 }

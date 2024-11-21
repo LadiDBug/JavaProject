@@ -45,43 +45,31 @@ public class GameController {
     public void handleTurn() {
         game.getPlayers().forEach(player -> {
             if (player instanceof RealPlayer) {
-                System.out.println("TOCCA AL REAL PLAYER");
                 handleRealPlayerTurn((RealPlayer) player);
-            } else {
-                // handleComputerPlayerTurn((ComputerPlayer) player);
-            }
+            } // else {
+            //   handleComputerPlayerTurn((ComputerPlayer) player);
+            //}
         });
 
         //dopo tutti i giocatori gioca il dealer
-        dealerPlay();
-
+        game.dealerPlay();
+        sleep(2000);
         //alla fine controllo chi vince
-        checkWinners();
+        game.checkWin(game.getPlayers().getFirst(), game.getDealer());
     }
 
     public void handleRealPlayerTurn(RealPlayer player) {
         boolean continueTurn = true;
         while (continueTurn) {
             int action = takeChoice();
-
-            switch (action) {
-                case 1: //HIT
-                    game.hit(player);
-                    if (game.checkBust(player)) {
-                        continueTurn = false;
-                    }
-                    break;
-                case 2: //STAND
-                    continueTurn = false;
-                    return;
-                case 3: //DOUBLE DOWN
-                    player.setBet(player.getBet() * 2);
-                    player.hit(game.getDeck().drawCard());
-                    continueTurn = false;
-                    break;
-                case 4:
-                    playerSplit(player);
+            if (action == 1) {
+                game.hit(player);
             }
+            if (action == 2) {
+                game.stand(player);
+                continueTurn = false;
+            }
+            continueTurn = false;
             sceneManager.resetPlayerChoice();
         }
     }
@@ -99,6 +87,14 @@ public class GameController {
         return action;
     }
 
+
+    private void sleep(int milliSec) {
+        try {
+            Thread.sleep(milliSec);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
     /*
         public void playerBust(RealPlayer player) {
             sceneManager.showBustMessage();
@@ -106,20 +102,7 @@ public class GameController {
             //TODO: implemetare cosa fare quando un player fa bust
         }
     */
-    public void playerSplit(RealPlayer player) {
-        //TODO: implementare cosa fare quando un player split
-        System.out.println("Ha fatto split");
-    }
 
-    public void dealerPlay() {
-        //TODO: implementare cosa fare quando gioca il dealer
-        System.out.println("Il dealer gioca");
-    }
-
-    public void checkWinners() {
-        //TODO: implementare cosa fare quando controllo chi vince
-        System.out.println("Controllo chi vince");
-    }
    /* public void handleComputerPlayerTurn(ComputerPlayer player) {
         player.setstanding(false);
 

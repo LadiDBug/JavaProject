@@ -68,15 +68,11 @@ public class Game implements WindowRoot {
     public HBox creaChoiceBox() {
         Button hit = new Button("Hit");
         Button stand = new Button("Stand");
-        Button doubleDown = new Button("Double Down");
-        Button split = new Button("Split");
 
         hit.setOnAction(event -> setPlayerAction(1));
 
         stand.setOnAction(event -> setPlayerAction(2));
-        doubleDown.setOnAction(event -> setPlayerAction(3));
-        split.setOnAction(event -> setPlayerAction(4));
-        return new HBox(hit, stand, doubleDown, split);
+        return new HBox(hit, stand);
     }
 
     public void resetPlayerChoice() {
@@ -217,23 +213,75 @@ public class Game implements WindowRoot {
         }
     }
 
-
-    public void showBustMessage() {
-        HBox messageBox = new HBox();
-        Label bustMessage = new Label("Hai sballato!");
-        bustMessage.setStyle("-fx-background-color: rgba(255, 255, 255, 0.5); -fx-background-radius: 10; -fx-text-fill: white;");
-        messageBox.getChildren().add(bustMessage);
-        messageBox.setLayoutX(800);
-        messageBox.setLayoutY(30);
-        gamePane.getChildren().add(messageBox);
+    public void showLoseMessage() {
+        ((Label) (messageBox().getChildren().get(0))).setText("Hai perso!");
+        messageBox().setLayoutX(500);
+        messageBox().setLayoutY(360);
     }
 
-    public void drawUserCard(Value value, Suit suit, int score) {
-        ImageView card = new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
-        ((HBox) playerBox.getChildren().get(3)).getChildren().remove(0);
-        ((HBox) playerBox.getChildren().get(3)).getChildren().add(card);
-        ((Label) playerBox.getChildren().get(0)).setText("Punteggio: " + score);
-        System.out.println(card);
+    public void showBustMessage() {
+        ((Label) (messageBox().getChildren().get(0))).setText("Hai sballato!");
+    }
+
+    public void showWinMessage() {
+        ((Label) (messageBox().getChildren().get(0))).setText("Hai vinto!");
+        messageBox().setLayoutX(500);
+        messageBox().setLayoutY(360);
+    }
+
+    public void showTieMessage() {
+        ((Label) (messageBox().getChildren().get(0))).setText("E' finita in parità!");
+        messageBox().setLayoutX(500);
+        messageBox().setLayoutY(360);
+    }
+
+    public HBox messageBox() {
+        HBox messageBox = new HBox();
+        Label message = new Label();
+        message.setStyle("-fx-background-color: rgba(255, 255, 255, 0.5); -fx-background-radius: 10; -fx-text-fill: white;");
+        messageBox.getChildren().add(message);
+        messageBox.setLayoutX(820);
+        messageBox.setLayoutY(360);
+        gamePane.getChildren().add(messageBox);
+        return messageBox;
+    }
+
+
+    public void drawHitCard(Value value, Suit suit, int score, TypePlayer player) {
+        switch (player) {
+            case PLAYER -> {
+                ImageView card = new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
+                ((HBox) playerBox.getChildren().get(3)).getChildren().remove(0);
+                ((HBox) playerBox.getChildren().get(3)).getChildren().add(card);
+                ((Label) playerBox.getChildren().get(0)).setText("Punteggio: " + score);
+            }
+            case BOT1 -> {
+                ImageView card = new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
+                ((HBox) bot1Box.getChildren().get(3)).getChildren().remove(0);
+                ((HBox) bot1Box.getChildren().get(3)).getChildren().add(card);
+                ((Label) bot1Box.getChildren().get(0)).setText("Punteggio: " + score);
+
+            }
+            case BOT2 -> {
+                ImageView card = new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
+                ((HBox) bot2Box.getChildren().get(3)).getChildren().remove(0);
+                ((HBox) bot2Box.getChildren().get(3)).getChildren().add(card);
+                ((Label) bot2Box.getChildren().get(0)).setText("Punteggio: " + score);
+            }
+            case BOT3 -> {
+                ImageView card = new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
+                ((HBox) bot3Box.getChildren().get(3)).getChildren().remove(0);
+                ((HBox) bot3Box.getChildren().get(3)).getChildren().add(card);
+                ((Label) bot3Box.getChildren().get(0)).setText("Punteggio: " + score);
+            }
+            case DEALER -> {
+                ImageView card = new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
+                ((HBox) dealerBox.getChildren().get(3)).getChildren().remove(0);
+                ((HBox) dealerBox.getChildren().get(3)).getChildren().add(card);
+                ((Label) dealerBox.getChildren().get(0)).setText("Punteggio: " + score);
+            }
+        }
+
     }
 
     public void drawCards(Value value, Suit suit, TypePlayer player, int score) {
