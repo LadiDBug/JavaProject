@@ -1,12 +1,16 @@
 package org.blackjack.view;
 
+import javafx.animation.RotateTransition;
+import javafx.animation.TranslateTransition;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import org.blackjack.model.Suit;
 import org.blackjack.model.Value;
 
@@ -38,6 +42,7 @@ public class Game implements WindowRoot {
         HBox choiceBox = creaChoiceBox();
         choiceBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.5); -fx-background-radius: 10; -fx-text-fill: white;");
 
+        ImageView deck = new ImageView(getClass().getResource("retro_card.png").toExternalForm());
 
         //Posizionamento delle box nella view
         infoBox.setLayoutX(10);
@@ -46,9 +51,13 @@ public class Game implements WindowRoot {
         managerFichesBox.setLayoutY(640);
         choiceBox.setLayoutX(1050);
         choiceBox.setLayoutY(650);
+        deck.setLayoutX(597);
+        deck.setLayoutY(300);
+        deck.setFitHeight(120);
+        deck.setFitWidth(87);
 
 
-        gamePane.getChildren().addAll(infoBox, managerFichesBox, choiceBox);
+        gamePane.getChildren().addAll(infoBox, managerFichesBox, choiceBox, deck);
 
         //Stile del gamePane
         gamePane.setStyle(
@@ -70,7 +79,6 @@ public class Game implements WindowRoot {
         Button stand = new Button("Stand");
 
         hit.setOnAction(event -> setPlayerAction(1));
-
         stand.setOnAction(event -> setPlayerAction(2));
         return new HBox(hit, stand);
     }
@@ -214,47 +222,59 @@ public class Game implements WindowRoot {
     }
 
     public void showLoseMessage(TypePlayer typePlayer) {
-        ((Label) (messageBox().getChildren().get(0))).setText("Hai perso!");
+        ((Label) (messageBox(typePlayer).getChildren().get(0))).setText("Hai perso!");
         //messageBox().setLayoutX(500);
         //messageBox().setLayoutY(360);
     }
 
     public void showBJMessage(TypePlayer typePlayer) {
-        ((Label) (messageBox().getChildren().get(0))).setText("Hai fatto BLACKJACK!");
+        ((Label) (messageBox(typePlayer).getChildren().get(0))).setText("Hai fatto BLACKJACK!");
         //messageBox().setLayoutX(500);
         //messageBox().setLayoutY(360);
     }
 
     public void showBustMessage(TypePlayer typePlayer) {
-        ((Label) (messageBox().getChildren().get(0))).setText("Hai sballato!");
+        ((Label) (messageBox(typePlayer).getChildren().get(0))).setText("Hai sballato!");
         //messageBox().setLayoutX(500);
         //messageBox().setLayoutY(360);
     }
 
     public void showWinMessage(TypePlayer typePlayer) {
-        ((Label) (messageBox().getChildren().get(0))).setText("Hai vinto!");
+        ((Label) (messageBox(typePlayer).getChildren().get(0))).setText("Hai vinto!");
         //messageBox().setLayoutX(500);
         //messageBox().setLayoutY(360);
     }
 
     public void showTieMessage(TypePlayer typePlayer) {
-        ((Label) (messageBox().getChildren().get(0))).setText("E' finita in parità!");
+        ((Label) (messageBox(typePlayer).getChildren().get(0))).setText("E' finita in parità!");
         //messageBox().setLayoutX(500);
         //messageBox().setLayoutY(360);
     }
 
-    public HBox messageBox() {
+    public HBox messageBox(TypePlayer typePlayer) {
         HBox messageBox = new HBox();
         Label message = new Label();
         message.setStyle("-fx-background-color: rgba(255, 255, 255, 0.5); -fx-background-radius: 10; -fx-text-fill: white;");
         messageBox.getChildren().add(message);
-        //TODO: switch per posizionare il messaggio in base al giocatore
+        switch (typePlayer) {
+            case PLAYER -> messageBox.setLayoutX(800);
+            case BOT1 -> messageBox.setLayoutX(300);
+            case BOT2 -> messageBox.setLayoutX(50);
+            case BOT3 -> messageBox.setLayoutX(1050);
+        }
+
         gamePane.getChildren().add(messageBox);
         return messageBox;
     }
 
 
     public void drawHitCard(Value value, Suit suit, int score, TypePlayer player) {
+
+        drawAnimation(value, suit, player, score);
+
+    }
+
+    private void drawHitCard1(Value value, Suit suit, int score, TypePlayer player) {
         switch (player) {
             case PLAYER -> {
                 ImageView card = new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
@@ -288,6 +308,37 @@ public class Game implements WindowRoot {
                 ((Label) dealerBox.getChildren().get(0)).setText("Punteggio: " + score);
             }
         }
+    }
+
+    private void drawAnimation(Value value, Suit suit, TypePlayer player, int score) {
+        ImageView card = new ImageView(getClass().getResource("retro_card.png").toExternalForm());
+        card.setFitHeight(120);
+        card.setFitWidth(87);
+        gamePane.getChildren().add(card);
+        TranslateTransition tt = new TranslateTransition(Duration.millis(1000), card);
+        tt.setFromX(597);
+        tt.setFromY(300);
+        tt.setToX(800);
+        tt.setToY(400);
+
+        tt.setOnFinished(event -> {
+            gamePane.getChildren().remove(card);
+            drawHitCard1(value, suit, score, player);
+        });
+
+        RotateTransition rt = new RotateTransition(Duration.millis(500), card);
+        rt.setByAngle(90);
+        //rt.setAxis(Y_AXIS);//TODO: cercare per mettere asse giusto
+        RotateTransition rt1 = new RotateTransition(Duration.millis(500), card);
+        rt1.setByAngle(90);
+        //TODO: mettere assse Y
+
+        rt.setOnFinished(event -> {
+            card.setImage(new Image((getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm())));
+            rt1.play();
+        });
+        rt.play();
+        tt.play();
 
     }
 

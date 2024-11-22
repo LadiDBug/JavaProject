@@ -48,7 +48,7 @@ public class BlackJackGame extends Observable {
         //they have a username an avatars, but are choose randomly.
         TypePlayer[] types = new TypePlayer[]{TypePlayer.BOT1, TypePlayer.BOT2, TypePlayer.BOT3};
         List<ComputerPlayer> availablePlayers = new ArrayList<>(
-                IntStream.range(0, USERNAMES.length)
+                IntStream.range(0, numberOfPlayers - 1)
                         .mapToObj(i -> new ComputerPlayer(USERNAMES[i], AVATARS[i], types[i]))
                         .toList()
         );
@@ -109,19 +109,15 @@ public class BlackJackGame extends Observable {
 
     public void dealerPlay() {
         dealer.setstanding(false);
-        if (dealer.getScore() < 17) {
+        while (dealer.getScore() < 17) {
             GameCard card = deck.drawCard();
             dealer.hit(card);
             setChanged();
             sleep(1000);
             notifyObservers(new HitPackage(PackageType.HIT, card.getValue(), card.getSuit(), dealer.getScore(), TypePlayer.DEALER));
             clearChanged();
-        } else {
-            dealer.stand();
-            setChanged();
-            notifyObservers();
-            clearChanged();
         }
+        dealer.stand();
     }
 
 
@@ -149,14 +145,14 @@ public class BlackJackGame extends Observable {
     }
 
     //Se è bust ritorna true e lo passa tramite notify
-    public void checkBust(Player player) {
+    public boolean checkBust(Player player) {
         boolean isBust = player.bust();
         if (isBust) {
             setChanged();
             notifyObservers(new BustPackage(PackageType.BUST, true, player.getType()));
             clearChanged();
         }
-
+        return isBust;
     }
 
     public void stand(Player player) {

@@ -52,11 +52,11 @@ public class GameController {
             sleep(2000);
         }
 
-        sleep(2000);
         //dopo tutti i giocatori gioca il dealer
         game.dealerPlay();
         sleep(2000);
         //alla fine controllo chi vince
+        //TODO: DEALER VINCE IN BASE AL PUTNEGGIO. NON VA BENE. SE > 21 VINCE IL GIOCATORE
         game.checkWin(game.getPlayers(), game.getDealer());
     }
 
@@ -71,8 +71,10 @@ public class GameController {
             int action = takeChoice();
             if (action == 1) {
                 game.hit(player);
-                game.checkBust(player);
-                player.setstanding(true);
+                if (game.checkBust(player)) {
+                    player.setstanding(true);
+                }
+
             } else if (action == 2) {
                 game.stand(player);
                 player.setstanding(true);
