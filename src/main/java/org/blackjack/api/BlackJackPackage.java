@@ -1,4 +1,7 @@
 package org.blackjack.api;
 
-public record BlackJackPackage() {
+import org.blackjack.view.TypePlayer;
+
+public record BlackJackPackage(PackageType packageType, boolean isBlackJack,
+                               TypePlayer typePlayer) implements DataPackage {
 }

@@ -125,21 +125,35 @@ public class BlackJackGame extends Observable {
     }
 
 
-    public void checkWin(Player player, Player dealer) {
-        if (player.getScore() > dealer.getScore()) {
-            //vince player
+    public void checkWin(List<Player> players, Player dealer) {
+        for (int i = 0; i < players.size() - 1; i++) {
+            Player player = players.get(i);
+            if (player.getScore() > dealer.getScore()) {
+                //vince player
+                setChanged();
+                notifyObservers(new WinPackage(PackageType.WIN, true, player.getType()));
+                clearChanged();
+            } else if (dealer.getScore() > player.getScore()) {
+                //vince dealer
+                setChanged();
+                notifyObservers(new LosePackage(PackageType.LOSE, true, player.getType()));
+                clearChanged();
+            } else {
+                // pareggio
+                setChanged();
+                notifyObservers(new TiePackage(PackageType.TIE, true, player.getType()));
+                clearChanged();
+            }
+
+        }
+    }
+
+    //Se è bust ritorna true e lo passa tramite notify
+    public void checkBust(Player player) {
+        boolean isBust = player.bust();
+        if (isBust) {
             setChanged();
-            notifyObservers(new WinPackage(PackageType.WIN, true));
-            clearChanged();
-        } else if (dealer.getScore() > player.getScore()) {
-            //vince dealer
-            setChanged();
-            notifyObservers(new LosePackage(PackageType.LOSE, true));
-            clearChanged();
-        } else {
-            // pareggio
-            setChanged();
-            notifyObservers(new TiePackage(PackageType.TIE, true));
+            notifyObservers(new BustPackage(PackageType.BUST, true, player.getType()));
             clearChanged();
         }
 
@@ -183,43 +197,14 @@ public class BlackJackGame extends Observable {
     }
 
     public boolean checkBlackJack(Player player) {
-        if (player.hand.getHand().size() == 2) {
-            if (player.getScore() == 21) {
-                setChanged();
-                notifyObservers();
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean checkSplit(Player player) {
-        if (player.hand.getHand().size() == 2) {
-            GameCard firstCard = player.hand.getHand().get(0);
-            GameCard secondCard = player.hand.getHand().get(1);
-
-            return firstCard.getValue() == secondCard.getValue();
-        }
-
-        return false;
-    }
-
-    public boolean checkDoubleDown(Player player) {
-        if (player.hand.getHand().size() == 2) {
-            return player.getScore() >= 9 && player.getScore() <= 11;
-        }
-        return false;
-    }
-
-    //Se è bust ritorna true e lo passa tramite notify
-    public boolean checkBust(Player player) {
-        boolean isBust = player.bust();
-        if (isBust) {
+        if (player.getScore() == 21) {
             setChanged();
-            notifyObservers(new BustPackage(PackageType.BUST, true));
+            notifyObservers(new BlackJackPackage(PackageType.BLACKJACK, true, player.getType()));
             clearChanged();
+            return true;
         }
-        return isBust;
+
+        return false;
     }
 
 
@@ -228,15 +213,6 @@ public class BlackJackGame extends Observable {
         player.setTotalFiches(player.getTotalFiches() - player.getBet());
     }
 
-
-    public void splitManagement(RealPlayer player) {
-        if (!checkSplit(player)) {
-            //Errore
-            return;
-        }
-
-
-    }
 
     //TODO: metodo notify ecc
     //public void

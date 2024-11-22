@@ -4,10 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import org.blackjack.api.DataPackage;
-import org.blackjack.api.DrawPackage;
-import org.blackjack.api.HitPackage;
-import org.blackjack.api.SetupPackage;
+import org.blackjack.api.*;
 import org.blackjack.exception.CantBuildClassException;
 
 import java.util.Observable;
@@ -87,16 +84,24 @@ public class SceneManager implements Observer {
                     Platform.runLater(() -> gameView.drawHitCard(hitPackage.value(), hitPackage.suit(), hitPackage.score(), hitPackage.typePlayer()));
                 }
                 case BUST -> {
-                    Platform.runLater(() -> gameView.showBustMessage());
+                    BustPackage bustPackage = (BustPackage) dataPackage;
+                    Platform.runLater(() -> gameView.showBustMessage(bustPackage.typePlayer()));
                 }
                 case WIN -> {
-                    Platform.runLater(() -> gameView.showWinMessage());
+                    WinPackage winPackage = (WinPackage) dataPackage;
+                    Platform.runLater(() -> gameView.showWinMessage(winPackage.typePlayer()));
                 }
                 case TIE -> {
-                    Platform.runLater(() -> gameView.showTieMessage());
+                    TiePackage tiePackage = (TiePackage) dataPackage;
+                    Platform.runLater(() -> gameView.showTieMessage(tiePackage.typePlayer()));
                 }
                 case LOSE -> {
-                    Platform.runLater(() -> gameView.showLoseMessage());
+                    LosePackage losePackage = (LosePackage) dataPackage;
+                    Platform.runLater(() -> gameView.showLoseMessage(losePackage.typePlayer()));
+                }
+                case BLACKJACK -> {
+                    BlackJackPackage blackJackPackage = (BlackJackPackage) dataPackage;
+                    Platform.runLater(() -> gameView.showBJMessage(blackJackPackage.typePlayer()));
                 }
             }
         }

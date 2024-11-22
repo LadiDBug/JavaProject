@@ -3,9 +3,13 @@ package org.blackjack.controller;
 
 import org.blackjack.exception.GameOnGoingException;
 import org.blackjack.model.BlackJackGame;
+import org.blackjack.model.ComputerPlayer;
+import org.blackjack.model.Player;
 import org.blackjack.model.RealPlayer;
 import org.blackjack.view.SceneManager;
 
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameController {
 
@@ -34,44 +38,72 @@ public class GameController {
         handleTurn();
     }
 
-    public void waitGame() {
-        try {
-            gameThread.join();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
 
     public void handleTurn() {
-        game.getPlayers().forEach(player -> {
-            if (player instanceof RealPlayer) {
-                handleRealPlayerTurn((RealPlayer) player);
-            } // else {
-            //   handleComputerPlayerTurn((ComputerPlayer) player);
-            //}
-        });
 
+        List<Player> players = new ArrayList<>(game.getPlayers());
+        RealPlayer realPlayer = (RealPlayer) players.get(0);
+        handleRealPlayerTurn(realPlayer);
+        sleep(2000);
+
+
+        for (int i = 1; i < players.size() - 1; i++) {
+            handleComputerPlayerTurn((ComputerPlayer) players.get(i));
+            sleep(2000);
+        }
+
+        sleep(2000);
         //dopo tutti i giocatori gioca il dealer
         game.dealerPlay();
         sleep(2000);
         //alla fine controllo chi vince
-        game.checkWin(game.getPlayers().getFirst(), game.getDealer());
+        game.checkWin(game.getPlayers(), game.getDealer());
     }
 
     public void handleRealPlayerTurn(RealPlayer player) {
-        boolean continueTurn = true;
-        while (continueTurn) {
+        player.setstanding(false);
+
+        if (game.checkBlackJack(player)) {
+            player.setstanding(true);
+            return;
+        }
+        while (!player.getstanding()) {
             int action = takeChoice();
             if (action == 1) {
                 game.hit(player);
-            }
-            if (action == 2) {
+                game.checkBust(player);
+                player.setstanding(true);
+            } else if (action == 2) {
                 game.stand(player);
-                continueTurn = false;
+                player.setstanding(true);
             }
-            continueTurn = false;
             sceneManager.resetPlayerChoice();
         }
+
+
+    }
+
+
+    public void handleComputerPlayerTurn(ComputerPlayer player) {
+        player.setstanding(false);
+
+        if (game.checkBlackJack(player)) {
+            player.setstanding(true);
+            return;
+        }
+
+        while (!player.getstanding()) {
+            int currentScore = player.getScore();
+            if (currentScore <= 15) {
+                game.hit(player);
+            } else {
+                player.setstanding(true);
+            }
+        }
+
+        game.checkBust(player);
+
+
     }
 
     public int takeChoice() {
@@ -95,73 +127,8 @@ public class GameController {
             Thread.currentThread().interrupt();
         }
     }
-    /*
-        public void playerBust(RealPlayer player) {
-            sceneManager.showBustMessage();
-            System.out.println("Ha fatto bust");
-            //TODO: implemetare cosa fare quando un player fa bust
-        }
-    */
 
-   /* public void handleComputerPlayerTurn(ComputerPlayer player) {
-        player.setstanding(false);
-
-        if (game.checkBlackJack(player)) {
-            //display una scritta che ha fatto blackJack
-        }
-
-        while (!player.getstanding()) {
-            int currentScore = player.getScore();
-            if (currentScore <= 15) {
-                player.hit(game.getDeck().drawCard());
-            } else {
-                player.stand();
-            }
-        }
-
-        if (game.checkBust(player)) {
-            //Display una scritta che il player bust
-            return;
-        }
-
-
-    }
-
-
-
-    public void placeBet() {
-        for (Player player : game.getPlayers()) {
-            if (player instanceof RealPlayer) {
-                int bet = 50;
-
-                RealPlayer realPlayer = (RealPlayer) player;
-                realPlayer.setBet(bet);
-                realPlayer.setTotalFiches(realPlayer.getTotalFiches() - bet);
-            }
-        }
-    }
-
-
-
-
-
-
-
-
-    public void dealerPlay() {
-        game.getDealer().setstanding(false);
-
-        while (!game.getDealer().getstanding()) {
-            int dealerScore = game.getDealer().getScore();
-
-            if (dealerScore < 17) {
-                game.getDealer().hit(game.getDeck().drawCard());
-            } else {
-                game.getDealer().stand();
-            }
-        }
-    }
-
+/*
 
     public void checkWinners() {
         int dealerScore = game.getDealer().getScore();
@@ -187,12 +154,6 @@ public class GameController {
         }
     }
 
-    public void playerSplit(RealPlayer player) {
-    }
-
-
-
-}
 */
 
 }

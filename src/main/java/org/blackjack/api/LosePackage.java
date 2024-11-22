@@ -1,4 +1,6 @@
 package org.blackjack.api;
 
-public record LosePackage(PackageType packageType, boolean lose) implements DataPackage {
+import org.blackjack.view.TypePlayer;
+
+public record LosePackage(PackageType packageType, boolean lose, TypePlayer typePlayer) implements DataPackage {
 }

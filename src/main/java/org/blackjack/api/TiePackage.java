@@ -1,4 +1,6 @@
 package org.blackjack.api;
 
-public record TiePackage(PackageType packageType, boolean tie) implements DataPackage {
+import org.blackjack.view.TypePlayer;
+
+public record TiePackage(PackageType packageType, boolean tie, TypePlayer typePlayer) implements DataPackage {
 }

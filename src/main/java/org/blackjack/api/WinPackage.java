@@ -1,4 +1,6 @@
 package org.blackjack.api;
 
-public record WinPackage(PackageType packageType, boolean win) implements DataPackage {
+import org.blackjack.view.TypePlayer;
+
+public record WinPackage(PackageType packageType, boolean win, TypePlayer type) implements DataPackage {
 }

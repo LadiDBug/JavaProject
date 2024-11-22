@@ -213,26 +213,34 @@ public class Game implements WindowRoot {
         }
     }
 
-    public void showLoseMessage() {
+    public void showLoseMessage(TypePlayer typePlayer) {
         ((Label) (messageBox().getChildren().get(0))).setText("Hai perso!");
-        messageBox().setLayoutX(500);
-        messageBox().setLayoutY(360);
+        //messageBox().setLayoutX(500);
+        //messageBox().setLayoutY(360);
     }
 
-    public void showBustMessage() {
+    public void showBJMessage(TypePlayer typePlayer) {
+        ((Label) (messageBox().getChildren().get(0))).setText("Hai fatto BLACKJACK!");
+        //messageBox().setLayoutX(500);
+        //messageBox().setLayoutY(360);
+    }
+
+    public void showBustMessage(TypePlayer typePlayer) {
         ((Label) (messageBox().getChildren().get(0))).setText("Hai sballato!");
+        //messageBox().setLayoutX(500);
+        //messageBox().setLayoutY(360);
     }
 
-    public void showWinMessage() {
+    public void showWinMessage(TypePlayer typePlayer) {
         ((Label) (messageBox().getChildren().get(0))).setText("Hai vinto!");
-        messageBox().setLayoutX(500);
-        messageBox().setLayoutY(360);
+        //messageBox().setLayoutX(500);
+        //messageBox().setLayoutY(360);
     }
 
-    public void showTieMessage() {
+    public void showTieMessage(TypePlayer typePlayer) {
         ((Label) (messageBox().getChildren().get(0))).setText("E' finita in parità!");
-        messageBox().setLayoutX(500);
-        messageBox().setLayoutY(360);
+        //messageBox().setLayoutX(500);
+        //messageBox().setLayoutY(360);
     }
 
     public HBox messageBox() {
@@ -240,8 +248,7 @@ public class Game implements WindowRoot {
         Label message = new Label();
         message.setStyle("-fx-background-color: rgba(255, 255, 255, 0.5); -fx-background-radius: 10; -fx-text-fill: white;");
         messageBox.getChildren().add(message);
-        messageBox.setLayoutX(820);
-        messageBox.setLayoutY(360);
+        //TODO: switch per posizionare il messaggio in base al giocatore
         gamePane.getChildren().add(messageBox);
         return messageBox;
     }
