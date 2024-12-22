@@ -171,10 +171,8 @@ public class BlackJackGame extends Observable {
     public void resetGame() {
         for (Player player : players) {
             player.hand.clearHand();
-            if (player instanceof RealPlayer && ((RealPlayer) player).hasSecondHand()) {
-                ((RealPlayer) player).clearSecondHand();
-            }
         }
+
         dealer.hand.clearHand();
         deck.refillDeck();
         deck.shuffleDeck();

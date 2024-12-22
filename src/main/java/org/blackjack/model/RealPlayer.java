@@ -15,7 +15,7 @@ public class RealPlayer extends Player {
     private int lostGames;
     private int totalFiches;
     private int bet;
-    private Hand secondHand;
+
 
     /**
      * Constructor that initializes a RealPlayer with a username.
@@ -121,28 +121,6 @@ public class RealPlayer extends Player {
         this.totalFiches -= bet;
     }
 
-    /**
-     * This method simulates the player's decision to split their hand.
-     *
-     * @param choiceToSplit the player's choice to split the hand
-     * @return true if the player wants to split, false otherwise.
-     */
-    public boolean decideToSplit(boolean choiceToSplit) {
-        choiceToSplit = true;
-        return choiceToSplit;
-    }
-
-    /**
-     * This method simulates the player's decision to double their hand.
-     *
-     * @param choiceToDouble the player's choice to double their hand.
-     * @return true if the player wants to double, false otherwise.
-     */
-    public boolean doubleDown(boolean choiceToDouble) {
-        choiceToDouble = true;
-        return choiceToDouble;
-
-    }
 
     /**
      * This method sets to true "standing" if the player will no longer wants to asks cards.
@@ -156,19 +134,4 @@ public class RealPlayer extends Player {
         //chiamare metodo save data
     }
 
-    public void addSecondHand(Hand hand) {
-        this.secondHand = hand;
-    }
-
-    public Hand getSecondHand() {
-        return this.secondHand;
-    }
-
-    public boolean hasSecondHand() {
-        return this.secondHand != null;
-    }
-
-    public void clearSecondHand() {
-        this.secondHand = null;
-    }
 }
