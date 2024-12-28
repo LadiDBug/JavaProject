@@ -108,6 +108,7 @@ public class BlackJackGame extends Observable {
 
 
     public void dealerPlay() {
+        
         dealer.setstanding(false);
         while (dealer.getScore() < 17) {
             GameCard card = deck.drawCard();

@@ -205,73 +205,11 @@ public class Menu implements WindowRoot {
         );
     }
 
+
     /**
      * This method manage the player's bet before the game starts.
      *
      * @return
-     */
-    /*
-    public int showBetStage() {
-        Stage betStage = new Stage();
-        betStage.initStyle(StageStyle.UNDECORATED);
-        betStage.setAlwaysOnTop(true);
-        AnchorPane betPane = new AnchorPane();
-
-        Label labelBet = new Label("Choose your bet: ");
-        labelBet.setStyle("-fx-font-size: 12px; -fx-font-family: 'Verdana'; -fx-text-fill: white;");
-
-        // Buttons for the bet amounts
-        Button f20 = new Button("20");
-        Button f50 = new Button("50");
-        Button f100 = new Button("100");
-        Button f200 = new Button("200");
-
-        //set style for the button
-        String buttonStyle = "-fx-background-color: white; -fx-text-fill: black; -fx-font-size: 14px; -fx-font-weight: bold;";
-        f20.setStyle(buttonStyle);
-        f50.setStyle(buttonStyle);
-        f100.setStyle(buttonStyle);
-        f200.setStyle(buttonStyle);
-
-        //Set the actions for the buttons
-        // Set actions for the buttons
-        f20.setOnAction(e -> {
-            playerBet = 20;
-            betStage.close();
-        });
-        f50.setOnAction(e -> {
-            playerBet = 50;
-            betStage.close();
-        });
-        f100.setOnAction(e -> {
-            playerBet = 100;
-            betStage.close();
-        });
-        f200.setOnAction(e -> {
-            playerBet = 200;
-            betStage.close();
-        });
-
-        HBox betBox = new HBox(10, f20, f50, f100, f200);
-        betBox.setAlignment(Pos.CENTER);
-
-        VBox mainBox = new VBox(20, labelBet, betBox);
-        mainBox.setAlignment(Pos.CENTER);
-        mainBox.setStyle("-fx-background-color: #003100; -fx-padding: 20px; ");
-        // -fx-border-radius: 10; -fx-background-radius: 10;");
-        mainBox.setPrefSize(300, 150);
-
-        // Aggiungi VBox al contenitore principale
-        betPane.getChildren().add(mainBox);
-
-        // Crea e mostra la scena
-        Scene betScene = new Scene(betPane);
-        betStage.setScene(betScene);
-        // betStage.showAndWait();
-        betStage.show();
-        return playerBet;
-    }
-
      */
     public void showBetStage() {
         Stage betStage = new Stage();
@@ -289,7 +227,7 @@ public class Menu implements WindowRoot {
         RadioButton bet200 = new RadioButton("200");
 
         // Stile per i pulsanti
-        String radioButtonStyle = "-fx-mark-color: gold; -fx-text-fill: white; -fx-font-size: 14px;";
+        String radioButtonStyle = "-fx-mark-color: grey; -fx-text-fill: white; -fx-font-size: 14px;";
         bet20.setStyle(radioButtonStyle);
         bet50.setStyle(radioButtonStyle);
         bet100.setStyle(radioButtonStyle);
@@ -323,7 +261,7 @@ public class Menu implements WindowRoot {
         Button buttonCancel = new Button("Cancel");
 
         // Stile per i pulsanti
-        String buttonStyle = "-fx-background-color: gold; -fx-text-fill: black; -fx-font-size: 14px; -fx-font-weight: bold;";
+        String buttonStyle = " -fx-text-fill: black; -fx-font-size: 14px; -fx-font-weight: bold;";
         buttonConfirm.setStyle(buttonStyle);
         buttonCancel.setStyle("-fx-background-color: darkred; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;");
 
