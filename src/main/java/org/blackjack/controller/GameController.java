@@ -13,9 +13,9 @@ import java.util.List;
 
 public class GameController {
 
-    private BlackJackGame game;
+    private final BlackJackGame game;
     private Thread gameThread;
-    private SceneManager sceneManager;
+    private final SceneManager sceneManager;
 
     public GameController() {
 
@@ -32,10 +32,26 @@ public class GameController {
     }
 
     private void startGame1(int numberOfPlayers, String playerName) {
-        game.setUpGame(numberOfPlayers, playerName);
-        System.out.print("Game started");
+        try {
+            game.setUpGame(numberOfPlayers, playerName);
+            System.out.println("Setup completato con successo");
+        } catch (Exception e) {
+            System.err.println("Errore durante setup: " + e.getMessage());
+            e.printStackTrace();
+            return; // Interrompi l'esecuzione se si verifica un'eccezione
+        }
+
+        
+        //Puntata del giocatore
+        RealPlayer realPlayer = (RealPlayer) game.getPlayers().get(0);
+        int bet = sceneManager.getBet();
+        realPlayer.setBet(bet);  //setto la puntata
+        realPlayer.toBet();  //tolgo le fiches al giocatore
+        System.out.println("Arrivo qui");
         game.drawInitialCards();
+        System.out.println("Arrivo qui2");
         handleTurn();
+
     }
 
 
@@ -44,7 +60,7 @@ public class GameController {
         List<Player> players = new ArrayList<>(game.getPlayers());
         RealPlayer realPlayer = (RealPlayer) players.get(0);
         handleRealPlayerTurn(realPlayer);
-        sleep(2000);
+        sleep(1500);
 
 
         for (int i = 1; i < players.size() - 1; i++) {
@@ -55,15 +71,16 @@ public class GameController {
         //dopo tutti i giocatori gioca il dealer
         game.dealerPlay();
         sleep(2000);
-        //alla fine controllo chi vince
-        //TODO: DEALER VINCE IN BASE AL PUTNEGGIO. NON VA BENE. SE > 21 VINCE IL GIOCATORE
+
         game.checkWin(game.getPlayers(), game.getDealer());
+
     }
 
     public void handleRealPlayerTurn(RealPlayer player) {
         player.setstanding(false);
 
         if (game.checkBlackJack(player)) {
+            player.increaseWonGames();
             player.setstanding(true);
             return;
         }
@@ -72,6 +89,7 @@ public class GameController {
             if (action == 1) {
                 game.hit(player);
                 if (game.checkBust(player)) {
+                    player.increaseLostGames();
                     player.setstanding(true);
                 }
 
@@ -130,32 +148,5 @@ public class GameController {
         }
     }
 
-/*
-
-    public void checkWinners() {
-        int dealerScore = game.getDealer().getScore();
-
-        for (Player player : game.getPlayers()) {
-            String result = game.checkWin(player, game.getDealer());
-
-            if (player instanceof RealPlayer) {
-                if (result.contains(player.getUsername())) {
-                    ((RealPlayer) player).setTotalGames(((RealPlayer) player).getTotalGames() + 1);
-                    ((RealPlayer) player).setWonGames(((RealPlayer) player).getWonGames() + 1);
-                    ((RealPlayer) player).setTotalFiches(((RealPlayer) player).getTotalFiches() + ((RealPlayer) player).getBet() * 2);
-                } else if (result.contains("Dealer")) {
-                    ((RealPlayer) player).setTotalGames(((RealPlayer) player).getTotalGames() + 1);
-                    ((RealPlayer) player).setLostGames(((RealPlayer) player).getLostGames() + 1);
-                } else {
-                    ((RealPlayer) player).setTotalGames(((RealPlayer) player).getTotalGames() + 1);
-                }
-            } else {
-                // Gestire cosa fare quando controllo se vincono gli ai.
-            }
-
-        }
-    }
-
-*/
 
 }

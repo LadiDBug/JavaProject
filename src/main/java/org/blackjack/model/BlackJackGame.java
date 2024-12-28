@@ -122,13 +122,16 @@ public class BlackJackGame extends Observable {
 
 
     public void checkWin(List<Player> players, Player dealer) {
-        for (int i = 0; i < players.size() - 1; i++) {
+        //Controllo prima tutti
+        for (int i = 1; i < players.size() - 1; i++) {
             Player player = players.get(i);
             if (player.getScore() > dealer.getScore()) {
                 //vince player
                 setChanged();
                 notifyObservers(new WinPackage(PackageType.WIN, true, player.getType()));
                 clearChanged();
+
+
             } else if (dealer.getScore() > player.getScore()) {
                 //vince dealer
                 setChanged();
@@ -141,6 +144,31 @@ public class BlackJackGame extends Observable {
                 clearChanged();
             }
 
+        }
+
+        //controllo il real Player
+        RealPlayer realPlayer = (RealPlayer) players.get(0);
+        if (realPlayer.getScore() > dealer.getScore()) {
+            //vince player
+            setChanged();
+            notifyObservers(new WinPackage(PackageType.WIN, true, realPlayer.getType()));
+            clearChanged();
+            //aumento le partite vinte
+            realPlayer.increaseWonGames();
+
+        } else if (dealer.getScore() > realPlayer.getScore()) {
+            //vince dealer
+            setChanged();
+            notifyObservers(new LosePackage(PackageType.LOSE, true, realPlayer.getType()));
+            clearChanged();
+            //aumento le partite perse
+            realPlayer.increaseLostGames();
+        } else {
+            // pareggio
+            setChanged();
+            notifyObservers(new TiePackage(PackageType.TIE, true, realPlayer.getType()));
+            clearChanged();
+            realPlayer.setTotalGames(realPlayer.getTotalGames() + 1);
         }
     }
 
@@ -202,12 +230,4 @@ public class BlackJackGame extends Observable {
     }
 
 
-    public void playerBet(RealPlayer player) {
-        player.setBet(player.getBet());
-        player.setTotalFiches(player.getTotalFiches() - player.getBet());
-    }
-
-
-    //TODO: metodo notify ecc
-    //public void
 }

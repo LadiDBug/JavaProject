@@ -1,5 +1,6 @@
 package org.blackjack.view;
 
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -11,6 +12,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.blackjack.controller.GameController;
 
 /**
@@ -22,6 +24,7 @@ public class Menu implements WindowRoot {
     private final AnchorPane anchorPane;
     private final GameController controller;
     private int playersSelected = 1;
+    private int playerBet;
 
     /**
      * Constructor that initializes the main menu.
@@ -56,6 +59,7 @@ public class Menu implements WindowRoot {
         // Action for the "Play" buttom
         b1.setOnAction(e -> {
             Stage stage = new Stage();
+            stage.initStyle(StageStyle.UNDECORATED);
             AnchorPane anchorPane1 = new AnchorPane();
 
             // Radio button per la scelta dei giocatori
@@ -117,10 +121,11 @@ public class Menu implements WindowRoot {
             box2.setStyle(
                     "-fx-background-color:#003100;" +
                             "-fx-background-position: center;" +
-                            "-fx-padding: 20px; " +
-                            "fx-border-radius: 10;" +
-                            "-fx-background-radius: 10;"
+                            "-fx-padding: 20px; "
+                    // "fx-border-radius: 20;" +
+                    // "-fx-background-radius: 20;"
             );
+
             box2.setPrefSize(300, 200);
 
             anchorPane1.getChildren().add(box2);
@@ -128,10 +133,12 @@ public class Menu implements WindowRoot {
             buttonExit.setOnAction(event -> stage.close());
             buttonStart.setOnAction(event -> {
                 stage.close();
-                SceneManager.getInstance().displayRoot(Root.GAME);
-                //TODO: Sistema nome giocatore
-                controller.startGame(playersSelected, "SISTEMAMI!");
-                System.out.println("HA SCELTO:" + playersSelected);
+                Platform.runLater(() -> {
+                    showBetStage();
+                    SceneManager.getInstance().displayRoot(Root.GAME);
+                    controller.startGame(playersSelected, "SISTEMAMI!");
+                });
+
             });
 
             // Create and display the scene
@@ -196,5 +203,154 @@ public class Menu implements WindowRoot {
                         "-fx-focus-color: transparent;" +        // Rimuove il colore di focus
                         "-fx-hover-color: lightgray;"          // Colore del cerchio quando si passa sopra
         );
+    }
+
+    /**
+     * This method manage the player's bet before the game starts.
+     *
+     * @return
+     */
+    /*
+    public int showBetStage() {
+        Stage betStage = new Stage();
+        betStage.initStyle(StageStyle.UNDECORATED);
+        betStage.setAlwaysOnTop(true);
+        AnchorPane betPane = new AnchorPane();
+
+        Label labelBet = new Label("Choose your bet: ");
+        labelBet.setStyle("-fx-font-size: 12px; -fx-font-family: 'Verdana'; -fx-text-fill: white;");
+
+        // Buttons for the bet amounts
+        Button f20 = new Button("20");
+        Button f50 = new Button("50");
+        Button f100 = new Button("100");
+        Button f200 = new Button("200");
+
+        //set style for the button
+        String buttonStyle = "-fx-background-color: white; -fx-text-fill: black; -fx-font-size: 14px; -fx-font-weight: bold;";
+        f20.setStyle(buttonStyle);
+        f50.setStyle(buttonStyle);
+        f100.setStyle(buttonStyle);
+        f200.setStyle(buttonStyle);
+
+        //Set the actions for the buttons
+        // Set actions for the buttons
+        f20.setOnAction(e -> {
+            playerBet = 20;
+            betStage.close();
+        });
+        f50.setOnAction(e -> {
+            playerBet = 50;
+            betStage.close();
+        });
+        f100.setOnAction(e -> {
+            playerBet = 100;
+            betStage.close();
+        });
+        f200.setOnAction(e -> {
+            playerBet = 200;
+            betStage.close();
+        });
+
+        HBox betBox = new HBox(10, f20, f50, f100, f200);
+        betBox.setAlignment(Pos.CENTER);
+
+        VBox mainBox = new VBox(20, labelBet, betBox);
+        mainBox.setAlignment(Pos.CENTER);
+        mainBox.setStyle("-fx-background-color: #003100; -fx-padding: 20px; ");
+        // -fx-border-radius: 10; -fx-background-radius: 10;");
+        mainBox.setPrefSize(300, 150);
+
+        // Aggiungi VBox al contenitore principale
+        betPane.getChildren().add(mainBox);
+
+        // Crea e mostra la scena
+        Scene betScene = new Scene(betPane);
+        betStage.setScene(betScene);
+        // betStage.showAndWait();
+        betStage.show();
+        return playerBet;
+    }
+
+     */
+    public void showBetStage() {
+        Stage betStage = new Stage();
+        betStage.initStyle(StageStyle.UNDECORATED);
+        betStage.setAlwaysOnTop(true);
+
+        // Etichetta per il messaggio
+        Label labelBet = new Label("Choose your bet:");
+        labelBet.setStyle("-fx-font-size: 16px; -fx-font-family: 'Verdana'; -fx-text-fill: white;");
+
+        // Pulsanti per le puntate
+        RadioButton bet20 = new RadioButton("20");
+        RadioButton bet50 = new RadioButton("50");
+        RadioButton bet100 = new RadioButton("100");
+        RadioButton bet200 = new RadioButton("200");
+
+        // Stile per i pulsanti
+        String radioButtonStyle = "-fx-mark-color: gold; -fx-text-fill: white; -fx-font-size: 14px;";
+        bet20.setStyle(radioButtonStyle);
+        bet50.setStyle(radioButtonStyle);
+        bet100.setStyle(radioButtonStyle);
+        bet200.setStyle(radioButtonStyle);
+
+        // Gruppo per i pulsanti radio
+        ToggleGroup betGroup = new ToggleGroup();
+        bet20.setToggleGroup(betGroup);
+        bet50.setToggleGroup(betGroup);
+        bet100.setToggleGroup(betGroup);
+        bet200.setToggleGroup(betGroup);
+
+        // Selezione predefinita
+        bet20.setSelected(true);
+
+        // Listener per selezione
+        betGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == bet20) {
+                playerBet = 20;
+            } else if (newValue == bet50) {
+                playerBet = 50;
+            } else if (newValue == bet100) {
+                playerBet = 100;
+            } else if (newValue == bet200) {
+                playerBet = 200;
+            }
+        });
+
+        // Pulsanti di azione
+        Button buttonConfirm = new Button("Confirm");
+        Button buttonCancel = new Button("Cancel");
+
+        // Stile per i pulsanti
+        String buttonStyle = "-fx-background-color: gold; -fx-text-fill: black; -fx-font-size: 14px; -fx-font-weight: bold;";
+        buttonConfirm.setStyle(buttonStyle);
+        buttonCancel.setStyle("-fx-background-color: darkred; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;");
+
+        buttonConfirm.setOnAction(e -> betStage.close());
+        buttonCancel.setOnAction(e -> {
+            playerBet = 0; // Imposta a 0 se l'utente annulla
+            betStage.close();
+        });
+
+        // Layout pulsanti azione
+        HBox actionButtons = new HBox(20, buttonConfirm, buttonCancel);
+        actionButtons.setAlignment(Pos.CENTER);
+
+        // Layout principale
+        VBox mainBox = new VBox(20, labelBet, new HBox(10, bet20, bet50, bet100, bet200), actionButtons);
+        mainBox.setAlignment(Pos.CENTER);
+        mainBox.setStyle("-fx-background-color: #003100; -fx-padding: 20px;");
+
+        // Imposta la scena e mostra
+        Scene betScene = new Scene(mainBox, 300, 200);
+        betStage.setScene(betScene);
+        betStage.showAndWait();
+
+
+    }
+
+    public int getPlayerBet() {
+        return playerBet;
     }
 }

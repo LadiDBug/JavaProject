@@ -57,11 +57,17 @@ public class SceneManager implements Observer {
         return gameView.getPlayerChoice();
     }
 
+
     public void resetPlayerChoice() {
         Game gameView = (Game) Root.GAME.getWindowRoot();
         gameView.resetPlayerChoice();
     }
 
+    public int getBet() {
+        Menu menuView = (Menu) Root.MENU.getWindowRoot();
+        return menuView.getPlayerBet();
+
+    }
 
     @Override
     public void update(Observable o, Object arg) {

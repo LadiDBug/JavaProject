@@ -16,8 +16,13 @@ import org.blackjack.model.Value;
 
 import java.util.List;
 
+/**
+ * This class is the view of the game.
+ * It sets up the game interface and manages the display of the game elements.
+ */
 
 public class Game implements WindowRoot {
+
     private final AnchorPane gamePane;
     private ImageView currentPlayerAvatar;
     private VBox playerBox;
@@ -27,24 +32,29 @@ public class Game implements WindowRoot {
     private VBox bot3Box;
     private int playerChoice;
 
+    /**
+     * Constructor for the Game class.
+     * It initializes the gamePAne and sets up the UI elements.
+     */
     public Game() {
         gamePane = new AnchorPane();
 
-        //Creazione dellqa infoBx
+        //Create the info box, the box that shows up how is playing
         HBox infoBox = creaInfoBox();
         infoBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.5); -fx-background-radius: 10; -fx-text-fill: white;");
 
-        //Creazione della fiches box
+        //Create the fiches manager box
         HBox managerFichesBox = creaManagerFichesBox();
         managerFichesBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.5); -fx-background-radius: 10; -fx-text-fill: white;");
 
-        //creazione della choice box
+        //Create the choice box
         HBox choiceBox = creaChoiceBox();
         choiceBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.5); -fx-background-radius: 10; -fx-text-fill: white;");
 
+        // Set up the card deck image
         ImageView deck = new ImageView(getClass().getResource("retro_card.png").toExternalForm());
 
-        //Posizionamento delle box nella view
+        // Position UI elements in the gamePane
         infoBox.setLayoutX(10);
         infoBox.setLayoutY(10);
         managerFichesBox.setLayoutX(10);
@@ -56,24 +66,36 @@ public class Game implements WindowRoot {
         deck.setFitHeight(120);
         deck.setFitWidth(87);
 
-
+        // Add elements to the game pane
         gamePane.getChildren().addAll(infoBox, managerFichesBox, choiceBox, deck);
 
-        //Stile del gamePane
+        //Style of the gamePane
         gamePane.setStyle(
                 "-fx-background-image: url('/org/blackjack/view/blackjack_table.png');" +
                         "-fx-background-size: 100% 100%;" +
                         "-fx-background-position: center center;" +
                         "-fx-background-repeat: no-repeat;"
         );
+
     }
 
 
+    /**
+     * This method returns the gamePane.
+     *
+     * @return the gamePane
+     */
     @Override
     public Parent getPane() {
         return gamePane;
     }
 
+    /**
+     * This method creates the choice box.
+     * The choice box contains the buttons "Hit" and "Stand".
+     *
+     * @return the choice box (HBox)
+     */
     public HBox creaChoiceBox() {
         Button hit = new Button("Hit");
         Button stand = new Button("Stand");
@@ -83,18 +105,37 @@ public class Game implements WindowRoot {
         return new HBox(hit, stand);
     }
 
+    /**
+     * Resets the player choice to 0, a default value.
+     */
     public void resetPlayerChoice() {
         this.playerChoice = 0;
     }
 
+    /**
+     * Sets the player action.
+     *
+     * @param choice, the action chosen by the player. 1 for "Hit", 2 for "Stand".
+     */
     public void setPlayerAction(int choice) {
         this.playerChoice = choice;
     }
 
+    /**
+     * Gets the player's current action choice.
+     *
+     * @return the player's choice
+     */
     public int getPlayerChoice() {
         return playerChoice;
     }
 
+    /**
+     * This method creates the info box.
+     * The info box contains the player's avatar and name.
+     *
+     * @return the info box (HBox)
+     */
     public HBox creaInfoBox() {
         //TODO: Implementare correttamente la infoBox
         //Avatar del player
@@ -108,6 +149,15 @@ public class Game implements WindowRoot {
         return new HBox(labelTurn, labelPlayerName, currentPlayerAvatar);
     }
 
+
+    //TODO: Implementare bene la FICHES per farla apparire per prima
+
+    /**
+     * This method creates the fiches manager box.
+     * The fiches manager box contains the total number of fiches and the buttons to bet.
+     *
+     * @return the fiches manager box (HBox)
+     */
     public HBox creaManagerFichesBox() {
 
         //TODO: Sistemare la gestione delle fiches
@@ -127,6 +177,14 @@ public class Game implements WindowRoot {
 
     }
 
+
+    /**
+     * This methos diplayes the player boxes for each player based on the number of players.
+     *
+     * @param playerNames
+     * @param numberOfPlayers
+     * @param avatars
+     */
     public void displayPlayers(List<String> playerNames, int numberOfPlayers, List<String> avatars) {
         //rimuovo le playerbox precedenti per poter vedere di volta in volta le playerbox in base a quant giocatori scelti ci sono
         removePlayerBoxes();
@@ -167,10 +225,20 @@ public class Game implements WindowRoot {
         }
     }
 
+    /**
+     * This method removes the player boxes from the gamePane.
+     */
     private void removePlayerBoxes() {
         gamePane.getChildren().removeIf(VBox.class::isInstance);
     }
 
+    /**
+     * Creates the playerBox for each player.
+     *
+     * @param playerName
+     * @param imagePath
+     * @return the playerBox (VBox)
+     */
     private VBox createPlayerBox(String playerName, String imagePath) {
         Label totalPointsLabel = new Label("0");
         Label playerLabel = new Label(playerName);
@@ -189,6 +257,12 @@ public class Game implements WindowRoot {
     }
 
 
+    /**
+     * This method positions the playerBox based on the player's role.
+     *
+     * @param playerBox
+     * @param role
+     */
     private void positionPlayerBox(VBox playerBox, String role) {
         switch (role) {
             case "dealer":
@@ -221,6 +295,7 @@ public class Game implements WindowRoot {
         }
     }
 
+    // MESSAGE BOXES
     public void showLoseMessage(TypePlayer typePlayer) {
         ((Label) (messageBox(typePlayer).getChildren().get(0))).setText("Hai perso!");
         //messageBox().setLayoutX(500);
@@ -251,6 +326,12 @@ public class Game implements WindowRoot {
         //messageBox().setLayoutY(360);
     }
 
+    /**
+     * This method creates a message box for each player.
+     *
+     * @param typePlayer
+     * @return
+     */
     public HBox messageBox(TypePlayer typePlayer) {
         HBox messageBox = new HBox();
         Label message = new Label();
@@ -267,13 +348,28 @@ public class Game implements WindowRoot {
         return messageBox;
     }
 
-
+    /**
+     * This method displays the hit card with an animation.
+     *
+     * @param value
+     * @param suit
+     * @param score
+     * @param player
+     */
     public void drawHitCard(Value value, Suit suit, int score, TypePlayer player) {
 
         drawAnimation(value, suit, player, score);
 
     }
 
+    /**
+     * This method displays the hit card.
+     *
+     * @param value
+     * @param suit
+     * @param score
+     * @param player
+     */
     private void drawHitCard1(Value value, Suit suit, int score, TypePlayer player) {
         switch (player) {
             case PLAYER -> {
@@ -310,6 +406,16 @@ public class Game implements WindowRoot {
         }
     }
 
+    //TODO: sistemare le animazioni. Perchè vanno sempre al player
+
+    /**
+     * This method manages the animation of the card drawn.
+     *
+     * @param value
+     * @param suit
+     * @param player
+     * @param score
+     */
     private void drawAnimation(Value value, Suit suit, TypePlayer player, int score) {
         ImageView card = new ImageView(getClass().getResource("retro_card.png").toExternalForm());
         card.setFitHeight(120);
@@ -371,6 +477,6 @@ public class Game implements WindowRoot {
             }
         }
     }
-    //TODO: Pensare alle fiches
+
 
 }
