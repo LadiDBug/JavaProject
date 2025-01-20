@@ -9,6 +9,12 @@ import java.util.List;
 import java.util.Observable;
 import java.util.stream.IntStream;
 
+/**
+ * This class represents the BlackJack game.
+ * It implements the interaction between the players and the dealer.
+ * It also manages the deck of cards.
+ * It extends the Observable class to notify the observers (the view) of the changes in the game.
+ */
 public class BlackJackGame extends Observable {
     private List<Player> players;
     private Dealer dealer;
@@ -22,12 +28,16 @@ public class BlackJackGame extends Observable {
     };
 
 
+    /**
+     * Constructor of the BlackJackGame class.
+     */
     public BlackJackGame() {
         players = new ArrayList<>();
         deck = Deck.getInstance();
         dealer = new Dealer();
     }
 
+    //Getters
     public List<Player> getPlayers() {
         return players;
     }
@@ -40,12 +50,18 @@ public class BlackJackGame extends Observable {
         return dealer;
     }
 
+    /*
+     * This method sets up the game by adding the players to the game.
+     *
+     * @param numberOfPlayers the number of players in the game
+     * @param usernameRealPlayer the username of the real player
+     */
     public void setUpGame(int numberOfPlayers, String usernameRealPlayer) {
         //Add human player
         players.add(new RealPlayer(usernameRealPlayer));
 
         // Management of computer player,
-        //they have a username an avatars, but are choose randomly.
+        //they have a username an avatars, but they are choose randomly.
         TypePlayer[] types = new TypePlayer[]{TypePlayer.BOT1, TypePlayer.BOT2, TypePlayer.BOT3};
         List<ComputerPlayer> availablePlayers = new ArrayList<>(
                 IntStream.range(0, numberOfPlayers - 1)
@@ -54,12 +70,14 @@ public class BlackJackGame extends Observable {
         );
         Collections.shuffle(availablePlayers);
 
+        // Add computer players
         for (int i = 0; i < numberOfPlayers - 1; i++) {
             if (i < availablePlayers.size()) {
                 players.add(availablePlayers.get(i));
             }
         }
 
+        // Notify the observers
         List<String> usernames = players.stream().map(Player::getUsername).toList();
         List<String> avatar = players.stream().map(Player::getAvatar).toList();
 
@@ -70,9 +88,16 @@ public class BlackJackGame extends Observable {
 
     }
 
+    /**
+     * This method draws the initial cards for all players and the dealer.
+     * Each player receive two cards.
+     * The update is sent to the observers.
+     */
     public void drawInitialCards() {
         List<Integer> scores = new ArrayList<>(players.stream().map(Player::getScore).toList());
         scores.add(dealer.getScore());
+
+        // Draw two cards for each player
         for (Player player : players) {
             for (int i = 0; i < 2; i++) {
                 GameCard card = deck.drawCard();
@@ -85,6 +110,7 @@ public class BlackJackGame extends Observable {
             }
         }
 
+        // Draw card for the dealer
         for (int i = 0; i < 2; i++) {
             GameCard card = deck.drawCard();
             dealer.hit(card);
@@ -96,6 +122,11 @@ public class BlackJackGame extends Observable {
         }
     }
 
+    /**
+     * This method is called when a player decides to hit.
+     *
+     * @param player The player that decide to hit.
+     */
     public void hit(Player player) {
         GameCard card = deck.drawCard();
         player.hit(card);
@@ -106,14 +137,18 @@ public class BlackJackGame extends Observable {
 
     }
 
-
+    /**
+     * This method manage the dealer turn.
+     * The dealer hit a card if his score is under 17.
+     */
     public void dealerPlay() {
-        
+
         dealer.setstanding(false);
         while (dealer.getScore() < 17) {
             GameCard card = deck.drawCard();
             dealer.hit(card);
             setChanged();
+            //sleep to see the dealer's cards
             sleep(1000);
             notifyObservers(new HitPackage(PackageType.HIT, card.getValue(), card.getSuit(), dealer.getScore(), TypePlayer.DEALER));
             clearChanged();
@@ -121,25 +156,28 @@ public class BlackJackGame extends Observable {
         dealer.stand();
     }
 
-
+    /**
+     * This method check the results between the players and the dealer.
+     * It notifys the observer of win, loss, or tie
+     */
     public void checkWin(List<Player> players, Player dealer) {
-        //Controllo prima tutti
+        // Check the computer players
         for (int i = 1; i < players.size() - 1; i++) {
             Player player = players.get(i);
             if (player.getScore() > dealer.getScore()) {
-                //vince player
+                // AI wins
                 setChanged();
                 notifyObservers(new WinPackage(PackageType.WIN, true, player.getType()));
                 clearChanged();
 
 
             } else if (dealer.getScore() > player.getScore()) {
-                //vince dealer
+                // dealer wins
                 setChanged();
                 notifyObservers(new LosePackage(PackageType.LOSE, true, player.getType()));
                 clearChanged();
             } else {
-                // pareggio
+                // tie
                 setChanged();
                 notifyObservers(new TiePackage(PackageType.TIE, true, player.getType()));
                 clearChanged();
@@ -147,33 +185,39 @@ public class BlackJackGame extends Observable {
 
         }
 
-        //controllo il real Player
+        // Check the real player
         RealPlayer realPlayer = (RealPlayer) players.get(0);
         if (realPlayer.getScore() > dealer.getScore()) {
-            //vince player
+            // Human player wins
             setChanged();
             notifyObservers(new WinPackage(PackageType.WIN, true, realPlayer.getType()));
             clearChanged();
-            //aumento le partite vinte
+            // it increases the number of games won
             realPlayer.increaseWonGames();
 
         } else if (dealer.getScore() > realPlayer.getScore()) {
-            //vince dealer
+            // dealer wins
             setChanged();
             notifyObservers(new LosePackage(PackageType.LOSE, true, realPlayer.getType()));
             clearChanged();
-            //aumento le partite perse
+            // it increases the number of game lost
             realPlayer.increaseLostGames();
         } else {
-            // pareggio
+            // tie
             setChanged();
             notifyObservers(new TiePackage(PackageType.TIE, true, realPlayer.getType()));
             clearChanged();
+            // it increases the number of games tied
             realPlayer.setTotalGames(realPlayer.getTotalGames() + 1);
         }
     }
 
-    //Se è bust ritorna true e lo passa tramite notify
+    /**
+     * This method check if a player is bust.
+     *
+     * @param player
+     * @return True if the player is bust, false otherwise.
+     */
     public boolean checkBust(Player player) {
         boolean isBust = player.bust();
         if (isBust) {
@@ -184,10 +228,20 @@ public class BlackJackGame extends Observable {
         return isBust;
     }
 
+    /**
+     * This method is called when a player decides to stand.
+     *
+     * @param player
+     */
     public void stand(Player player) {
         player.setstanding(true);
     }
 
+    /**
+     * This method pause the game for an amount of time.
+     *
+     * @param milliSec
+     */
     private void sleep(int milliSec) {
         try {
             Thread.sleep(milliSec);
@@ -196,7 +250,9 @@ public class BlackJackGame extends Observable {
         }
     }
 
-
+    /**
+     * This method reset the game when the player decide to play again.
+     */
     public void resetGame() {
         for (Player player : players) {
             player.hand.clearHand();
@@ -210,6 +266,9 @@ public class BlackJackGame extends Observable {
         notifyObservers();
     }
 
+    /**
+     * This method quit the game.
+     */
     public void quitGame() {
         players.clear();
         deck = null;
@@ -219,6 +278,12 @@ public class BlackJackGame extends Observable {
         notifyObservers();
     }
 
+    /**
+     * This method check if a player has a BlackJack.
+     *
+     * @param player
+     * @return
+     */
     public boolean checkBlackJack(Player player) {
         if (player.getScore() == 21) {
             setChanged();
