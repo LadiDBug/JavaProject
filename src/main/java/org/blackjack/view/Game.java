@@ -2,7 +2,9 @@ package org.blackjack.view;
 
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
@@ -10,9 +12,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.blackjack.model.Suit;
 import org.blackjack.model.Value;
@@ -54,8 +60,13 @@ public class Game implements WindowRoot {
         // Set up the card deck image
         ImageView deck = new ImageView(getClass().getResource("retro_card.png").toExternalForm());
 
+        // Adding the "back" button
+        Button backButton = createBackButton();
+        backButton.setLayoutX(10);
+        backButton.setLayoutY(10);
+
         // Position UI elements in the gamePane
-        infoBox.setLayoutX(10);
+        infoBox.setLayoutX(1080);
         infoBox.setLayoutY(10);
         choiceBox.setLayoutX(1000);
         choiceBox.setLayoutY(600);
@@ -65,7 +76,7 @@ public class Game implements WindowRoot {
         deck.setFitWidth(87);
 
         // Add elements to the game pane
-        gamePane.getChildren().addAll(infoBox, choiceBox, deck);
+        gamePane.getChildren().addAll(infoBox, choiceBox, deck, backButton);
 
         //Style of the gamePane
         gamePane.setStyle(
@@ -89,6 +100,70 @@ public class Game implements WindowRoot {
     }
 
     /**
+     * This method creates the back button.
+     * It also creates a dialog box to confirm the exit from the game.
+     *
+     * @return the back button
+     */
+    private Button createBackButton() {
+        Button backButton = new Button();
+        backButton.setStyle("-fx-background-color: trasparent");
+
+        //Adding an icon to the button
+        Image backIcon = new Image(getClass().getResource("left.png").toExternalForm());
+        ImageView backIconView = new ImageView(backIcon);
+        backIconView.setFitHeight(40);
+        backIconView.setFitWidth(40);
+        backButton.setGraphic(backIconView);
+
+        // Adding an action on the button
+        backButton.setOnAction(event -> showConfirmDialog());
+        return backButton;
+    }
+
+    private void showConfirmDialog() {
+        Stage dialog = new Stage();
+        // Utility = minimal
+        dialog.initStyle(StageStyle.TRANSPARENT);
+        dialog.setAlwaysOnTop(true);
+        dialog.initModality(Modality.APPLICATION_MODAL); // Blocca interazione con la finestra principale
+
+        Label confirmLabel = new Label("Are you sure?");
+        Button yesButton = new Button("Yes");
+        yesButton.setStyle(
+                "-fx-background-color: #007f00; -fx-text-fill: white; -fx-font-size: 14px;"
+                // "-fx-border-color: gold; -fx-border-width: 2px; -fx-border-radius: 5px;"
+        );
+        yesButton.setOnAction(event -> {
+            dialog.close();
+            SceneManager.getInstance().displayRoot(Root.MENU);
+        });
+
+        Button noButton = new Button("No");
+        noButton.setStyle(
+                "-fx-background-color: #b30000; -fx-text-fill: white; -fx-font-size: 14px;"
+                //      "-fx-border-color: gold; -fx-border-width: 2px; -fx-border-radius: 5px;"
+        );
+        noButton.setOnAction(event -> dialog.close());
+
+        HBox buttons = new HBox(10, yesButton, noButton);
+        buttons.setAlignment(Pos.CENTER);
+
+        VBox dialogLayout = new VBox(10, confirmLabel, buttons);
+        dialogLayout.setAlignment(Pos.CENTER);
+        dialogLayout.setStyle(
+                "-fx-background-color: #32CD32; -fx-border-color: gold; -fx-border-width: 3px; " +
+                        "-fx-border-radius: 10; -fx-background-radius: 10;");
+
+
+        Scene dialogScene = new Scene(dialogLayout, 200, 100);
+        dialogScene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+        dialog.setScene(dialogScene);
+        dialog.showAndWait();
+    }
+
+
+    /**
      * This method creates the choice box.
      * The choice box contains the buttons "Hit" and "Stand".
      *
@@ -98,7 +173,7 @@ public class Game implements WindowRoot {
         Button hit = new Button();
         Button stand = new Button();
 
-        String standButton = "-fx-background-color: rgb(235, 21, 21);"
+        String standButton = "-fx-background-color: rgb(200, 32, 21);"
                 + "-fx-text-fill: black;"                        // Testo bianco (se serve)
                 + "-fx-font-size: 14px;"                         // Dimensione del testo
                 + "-fx-font-weight: bold;"                       // Testo in grassetto
@@ -111,8 +186,8 @@ public class Game implements WindowRoot {
                 + "-fx-alignment: center;";                      // Allineamento centrale
 
 
-        String hitButton = "-fx-background-color: rgb(32, 220, 51);"
-                + "-fx-text-fill: white;"                        // Testo bianco (se serve)
+        String hitButton = "-fx-background-color: rgb(0, 102, 0);"
+                + "-fx-text-fill: black;"                        // Testo bianco (se serve)
                 + "-fx-font-size: 14px;"                         // Dimensione del testo
                 + "-fx-font-weight: bold;"                       // Testo in grassetto
                 + "-fx-border-radius: 50%;"                      // Bordo arrotondato
@@ -126,13 +201,13 @@ public class Game implements WindowRoot {
         hit.setStyle(hitButton);
         stand.setStyle(standButton);
         DropShadow shadowHit = new DropShadow();
-        shadowHit.setColor(Color.GREEN);
+        shadowHit.setColor(Color.LIGHTGREEN);
 
         hit.setOnMouseEntered(event -> hit.setEffect(shadowHit)); // Aggiunge ombra
         hit.setOnMouseExited(event -> hit.setEffect(null));
 
         DropShadow shadowStand = new DropShadow();
-        shadowStand.setColor(Color.DARKRED);
+        shadowStand.setColor(Color.ORANGERED);
 
         stand.setOnMouseEntered(event -> stand.setEffect(shadowStand)); // Aggiunge ombra
         stand.setOnMouseExited(event -> stand.setEffect(null));
@@ -157,7 +232,7 @@ public class Game implements WindowRoot {
         standIconView.setFitHeight(40);
         standIconView.setFitWidth(40);
         Text standText = new Text("Stand");
-        standText.setStyle("-fx-fill: black; -fx-font-size: 14px;");
+        standText.setStyle("-fx-fill: white; -fx-font-size: 14px;");
 
         VBox standBox = new VBox(1, standIconView, standText);
         standBox.setAlignment(javafx.geometry.Pos.CENTER);
@@ -294,8 +369,9 @@ public class Game implements WindowRoot {
         HBox avatarUsername = new HBox(10, playerAvatar, playerLabel);
         avatarUsername.setAlignment(javafx.geometry.Pos.CENTER);
 
-        HBox playerCards = new HBox();
-        playerCards.setSpacing(10);
+        StackPane playerCards = new StackPane();
+        playerCards.setPrefSize(100, 140);
+        //playerCards.setSpacing(10);
 
 
         VBox playerBox = new VBox(10, totalPointsLabel, playerCards, avatarUsername);
@@ -388,7 +464,7 @@ public class Game implements WindowRoot {
         messageBox.getChildren().add(message);
         switch (typePlayer) {
             case PLAYER -> messageBox.setLayoutX(800);
-            
+
             case BOT1 -> messageBox.setLayoutX(300);
             case BOT2 -> messageBox.setLayoutX(50);
             case BOT3 -> messageBox.setLayoutX(1050);
@@ -421,39 +497,19 @@ public class Game implements WindowRoot {
      * @param player
      */
     private void drawHitCard1(Value value, Suit suit, int score, TypePlayer player) {
-        switch (player) {
-            case PLAYER -> {
-                ImageView card = new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
-                ((HBox) playerBox.getChildren().get(1)).getChildren().remove(0);
-                ((HBox) playerBox.getChildren().get(1)).getChildren().add(card);
-                ((Label) playerBox.getChildren().get(0)).setText("Punteggio: " + score);
-            }
-            case BOT1 -> {
-                ImageView card = new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
-                ((HBox) bot1Box.getChildren().get(1)).getChildren().remove(0);
-                ((HBox) bot1Box.getChildren().get(1)).getChildren().add(card);
-                ((Label) bot1Box.getChildren().get(0)).setText("Punteggio: " + score);
 
-            }
-            case BOT2 -> {
-                ImageView card = new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
-                ((HBox) bot2Box.getChildren().get(1)).getChildren().remove(0);
-                ((HBox) bot2Box.getChildren().get(1)).getChildren().add(card);
-                ((Label) bot2Box.getChildren().get(0)).setText("Punteggio: " + score);
-            }
-            case BOT3 -> {
-                ImageView card = new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
-                ((HBox) bot3Box.getChildren().get(1)).getChildren().remove(0);
-                ((HBox) bot3Box.getChildren().get(1)).getChildren().add(card);
-                ((Label) bot3Box.getChildren().get(0)).setText("Punteggio: " + score);
-            }
-            case DEALER -> {
-                ImageView card = new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
-                ((HBox) dealerBox.getChildren().get(1)).getChildren().remove(0);
-                ((HBox) dealerBox.getChildren().get(1)).getChildren().add(card);
-                ((Label) dealerBox.getChildren().get(0)).setText("Punteggio: " + score);
-            }
-        }
+        ImageView card = createImageCard(value, suit);
+
+        StackPane stackPlayerCard = getStackPane(player);
+
+        int cardCount = stackPlayerCard.getChildren().size();
+        double offsetX = cardCount * 15;
+
+        card.setTranslateX(offsetX);
+
+        stackPlayerCard.getChildren().add(card);
+        updateScore(score, player);
+
     }
 
     //TODO: sistemare le animazioni. Perchè vanno sempre al player
@@ -467,66 +523,124 @@ public class Game implements WindowRoot {
      * @param score
      */
     private void drawAnimation(Value value, Suit suit, TypePlayer player, int score) {
-        ImageView card = new ImageView(getClass().getResource("retro_card.png").toExternalForm());
+
+        ImageView card = createImageCard(value, suit);
         card.setFitHeight(120);
         card.setFitWidth(87);
         gamePane.getChildren().add(card);
-        TranslateTransition tt = new TranslateTransition(Duration.millis(1000), card);
-        tt.setFromX(597);
-        tt.setFromY(300);
-        tt.setToX(800);
-        tt.setToY(400);
 
+        // Calcola la posizione di destinazione in base al giocatore
+        double toX = 0;
+        double toY = 0;
+
+        // Determino la posizione di dove va la carta quando viene pescata
+        switch (player) {
+            case PLAYER:
+                toX = playerBox.getLayoutX() + playerBox.getWidth() / 2 - card.getFitWidth() / 2;
+                toY = playerBox.getLayoutY() + playerBox.getHeight() / 2 - card.getFitHeight() / 2;
+                break;
+            case DEALER:
+                toX = dealerBox.getLayoutX() + dealerBox.getWidth() / 2 - card.getFitWidth() / 2;
+                toY = dealerBox.getLayoutY() + dealerBox.getHeight() / 2 - card.getFitHeight() / 2;
+                break;
+            case BOT1:
+                toX = bot1Box.getLayoutX() + bot1Box.getWidth() / 2 - card.getFitWidth() / 2;
+                toY = bot1Box.getLayoutY() + bot1Box.getHeight() / 2 - card.getFitHeight() / 2;
+                break;
+            case BOT2:
+                toX = bot2Box.getLayoutX() + bot2Box.getWidth() / 2 - card.getFitWidth() / 2;
+                toY = bot2Box.getLayoutY() + bot2Box.getHeight() / 2 - card.getFitHeight() / 2;
+                break;
+            case BOT3:
+                toX = bot3Box.getLayoutX() + bot3Box.getWidth() / 2 - card.getFitWidth() / 2;
+                toY = bot3Box.getLayoutY() + bot3Box.getHeight() / 2 - card.getFitHeight() / 2;
+                break;
+        }
+
+        // Crea la transizione di movimento
+        TranslateTransition tt = new TranslateTransition(Duration.millis(1000), card);
+        tt.setFromX(597);  // Centro di partenza
+        tt.setFromY(300);  // Centro di partenza
+        tt.setToX(toX);    // Posizione di arrivo
+        tt.setToY(toY);
+
+        // Aggiungi l'animazione alla scena
         tt.setOnFinished(event -> {
-            gamePane.getChildren().remove(card);
-            drawHitCard1(value, suit, score, player);
+            gamePane.getChildren().remove(card);  // Rimuovi il retro della carta
+            drawHitCard1(value, suit, score, player);  // Mostra la carta finale
         });
 
+        // Aggiungo animazione di rotazione
         RotateTransition rt = new RotateTransition(Duration.millis(500), card);
-        rt.setByAngle(90);
-        //rt.setAxis(Y_AXIS);//TODO: cercare per mettere asse giusto
+        rt.setByAngle(90);  // Ruota di 90 gradi
         RotateTransition rt1 = new RotateTransition(Duration.millis(500), card);
-        rt1.setByAngle(90);
-        //TODO: mettere assse Y
+        rt1.setByAngle(90);  // Ruota ancora di 90 gradi
 
         rt.setOnFinished(event -> {
+            // Mostra la carta finale (dopo la rotazione)
             card.setImage(new Image((getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm())));
-            rt1.play();
+            rt1.play();  // Avvia la seconda rotazione
         });
+
+        // Avvia le animazioni
         rt.play();
         tt.play();
 
     }
 
     public void drawCards(Value value, Suit suit, TypePlayer player, int score) {
+        ImageView card = createImageCard(value, suit);
+        addCardToPlayerBox(card, player);
+        updateScore(score, player);
+    }
+
+    private ImageView createImageCard(Value value, Suit suit) {
+        return new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
+    }
+
+    private void addCardToPlayerBox(ImageView card, TypePlayer player) {
+        StackPane playerCardStack = getStackPane(player);
+        // Calcola lo spostamento per ogni carta, in modo che si sovrappongano leggermente
+        int cardCount = playerCardStack.getChildren().size();
+        double offsetX = cardCount * 15;
+
+        // Sovrapponi le carte spostandole leggermente
+        card.setTranslateX(offsetX);  // Sposta la carta verso destra
+
+        // Aggiungi la carta al StackPane
+        playerCardStack.getChildren().add(card);
+    }
+
+    private StackPane getStackPane(TypePlayer player) {
+        StackPane playerCardStack;
+        switch (player) {
+            case PLAYER -> playerCardStack = (StackPane) playerBox.getChildren().get(1);
+            case DEALER -> playerCardStack = (StackPane) dealerBox.getChildren().get(1);
+            case BOT1 -> playerCardStack = (StackPane) bot1Box.getChildren().get(1);
+            case BOT2 -> playerCardStack = (StackPane) bot2Box.getChildren().get(1);
+            case BOT3 -> playerCardStack = (StackPane) bot3Box.getChildren().get(1);
+            default -> throw new IllegalStateException("Unexpected value: " + player);
+        }
+        return playerCardStack;
+    }
+
+    private void updateScore(int score, TypePlayer player) {
         switch (player) {
             case PLAYER -> {
-                ImageView card = new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
-                ((HBox) playerBox.getChildren().get(1)).getChildren().add(card);
                 ((Label) playerBox.getChildren().get(0)).setText("Points: " + score);
             }
             case DEALER -> {
-                ImageView card = new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
-                ((HBox) dealerBox.getChildren().get(1)).getChildren().add(card);
                 ((Label) dealerBox.getChildren().get(0)).setText("Points: " + score);
             }
             case BOT1 -> {
-                ImageView card = new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
-                ((HBox) bot1Box.getChildren().get(1)).getChildren().add(card);
                 ((Label) bot1Box.getChildren().get(0)).setText("Points: " + score);
             }
             case BOT2 -> {
-                ImageView card = new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
-                ((HBox) bot2Box.getChildren().get(1)).getChildren().add(card);
                 ((Label) bot2Box.getChildren().get(0)).setText("Points: " + score);
             }
             case BOT3 -> {
-                ImageView card = new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
-                ((HBox) bot3Box.getChildren().get(1)).getChildren().add(card);
                 ((Label) bot3Box.getChildren().get(0)).setText("Points: " + score);
             }
         }
     }
-
-
 }

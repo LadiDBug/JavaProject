@@ -110,7 +110,28 @@ public class BlackJackGame extends Observable {
             }
         }
 
+
         // Draw card for the dealer
+        GameCard firstCard = deck.drawCard();
+        firstCard.setVisible(false);
+        dealer.hit(firstCard);
+        scores.set(players.size(), dealer.getScore());
+        setChanged();
+        notifyObservers(new DrawDealerCardPackage(PackageType.DRAW, firstCard.getValue(), firstCard.getSuit(), TypePlayer.DEALER, dealer.getScore(), firstCard.getVisible()));
+        notifyObservers(new ScorePackage(PackageType.SCORE, scores, TypePlayer.DEALER));
+        clearChanged();
+
+
+        GameCard secondCard = deck.drawCard();
+        secondCard.setVisible(true);
+        dealer.hit(secondCard);
+        scores.set(players.size(), dealer.getScore());
+        setChanged();
+        notifyObservers(new DrawDealerCardPackage(PackageType.DRAW, secondCard.getValue(), secondCard.getSuit(), TypePlayer.DEALER, dealer.getScore(), secondCard.getVisible()));
+        notifyObservers(new ScorePackage(PackageType.SCORE, scores, TypePlayer.DEALER));
+        clearChanged();
+
+        /*
         for (int i = 0; i < 2; i++) {
             GameCard card = deck.drawCard();
             dealer.hit(card);
@@ -120,6 +141,8 @@ public class BlackJackGame extends Observable {
             notifyObservers(new ScorePackage(PackageType.SCORE, scores, TypePlayer.DEALER));
             clearChanged();
         }
+
+         */
     }
 
     /**
@@ -144,6 +167,7 @@ public class BlackJackGame extends Observable {
     public void dealerPlay() {
 
         dealer.setstanding(false);
+
         while (dealer.getScore() < 17) {
             GameCard card = deck.drawCard();
             dealer.hit(card);

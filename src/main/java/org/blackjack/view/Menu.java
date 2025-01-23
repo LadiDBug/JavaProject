@@ -59,7 +59,7 @@ public class Menu implements WindowRoot {
         // Action for the "Play" buttom
         b1.setOnAction(e -> {
             Stage stage = new Stage();
-            stage.initStyle(StageStyle.UNDECORATED);
+            stage.initStyle(StageStyle.TRANSPARENT);
             AnchorPane anchorPane1 = new AnchorPane();
 
             // Radio button per la scelta dei giocatori
@@ -121,13 +121,15 @@ public class Menu implements WindowRoot {
             box2.setStyle(
                     "-fx-background-color:#003100;" +
                             "-fx-background-position: center;" +
-                            "-fx-padding: 20px; "
-                    // "fx-border-radius: 20;" +
-                    // "-fx-background-radius: 20;"
+                            "-fx-padding: 20px; " +
+                            "fx-border-radius: 20;" +
+                            "-fx-background-radius: 20;"
             );
 
             box2.setPrefSize(300, 200);
 
+            // Imposta stile trasparente al contenitore principale (AnchorPane)
+            anchorPane1.setStyle("-fx-background-color: transparent;");
             anchorPane1.getChildren().add(box2);
 
             buttonExit.setOnAction(event -> stage.close());
@@ -143,6 +145,7 @@ public class Menu implements WindowRoot {
 
             // Create and display the scene
             Scene scene = new Scene(anchorPane1, 300, 200);
+            scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
             stage.setScene(scene);
             stage.showAndWait();
 
@@ -213,7 +216,7 @@ public class Menu implements WindowRoot {
      */
     public void showBetStage() {
         Stage betStage = new Stage();
-        betStage.initStyle(StageStyle.UNDECORATED);
+        betStage.initStyle(StageStyle.TRANSPARENT);
         betStage.setAlwaysOnTop(true);
 
         // Etichetta per il messaggio
@@ -268,7 +271,7 @@ public class Menu implements WindowRoot {
         buttonConfirm.setOnAction(e -> betStage.close());
         buttonCancel.setOnAction(e -> {
             playerBet = 0; // Imposta a 0 se l'utente annulla
-            betStage.close();
+            betStage.close(); //devo rimanere in menu no nel gioco
         });
 
         // Layout pulsanti azione
@@ -278,10 +281,11 @@ public class Menu implements WindowRoot {
         // Layout principale
         VBox mainBox = new VBox(20, labelBet, new HBox(10, bet20, bet50, bet100, bet200), actionButtons);
         mainBox.setAlignment(Pos.CENTER);
-        mainBox.setStyle("-fx-background-color: #003100; -fx-padding: 20px;");
+        mainBox.setStyle("-fx-background-color: #003100; -fx-padding: 20px; -fx-background-radius: 20;");
 
         // Imposta la scena e mostra
         Scene betScene = new Scene(mainBox, 300, 200);
+        betScene.setFill(javafx.scene.paint.Color.TRANSPARENT);
         betStage.setScene(betScene);
         betStage.showAndWait();
 

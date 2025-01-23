@@ -41,7 +41,7 @@ public class GameController {
             return; // Interrompi l'esecuzione se si verifica un'eccezione
         }
 
-        
+
         //Puntata del giocatore
         RealPlayer realPlayer = (RealPlayer) game.getPlayers().get(0);
         int bet = sceneManager.getBet();
@@ -63,9 +63,10 @@ public class GameController {
         sleep(1500);
 
 
-        for (int i = 1; i < players.size() - 1; i++) {
+        for (int i = 1; i < players.size(); i++) {
             handleComputerPlayerTurn((ComputerPlayer) players.get(i));
             sleep(2000);
+          
         }
 
         //dopo tutti i giocatori gioca il dealer

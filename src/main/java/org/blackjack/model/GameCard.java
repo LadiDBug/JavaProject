@@ -52,7 +52,7 @@ public class GameCard implements Card {
     /**
      * @param visible true to make the card visible, false to hide it.
      **/
-    public void setViswible(boolean visible) {
+    public void setVisible(boolean visible) {
         this.visible = visible;
     }
 
