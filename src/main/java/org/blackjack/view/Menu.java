@@ -1,6 +1,8 @@
 package org.blackjack.view;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -8,6 +10,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -34,137 +38,140 @@ public class Menu implements WindowRoot {
         anchorPane = new AnchorPane();
 
         // Menu Buttons
-        Button b1 = new Button("Play");
-        Button b2 = new Button("Profile");
-        Button b3 = new Button("Settings");
-        Button b4 = new Button("Exit");
+        Button b1 = createButton("/org/blackjack/view/menuButton/play_button.png", e -> preGameQuestion());
+        Button b2 = createButton("/org/blackjack/view/menuButton/profile_button.png", e -> SceneManager.getInstance().displayRoot(Root.PROFILE));
+        Button b3 = createButton("/org/blackjack/view/menuButton/settings_button.png", e -> SceneManager.getInstance().displayRoot(Root.SETTINGS));
+        Button b4 = createButton("/org/blackjack/view/menuButton/exit_button.png", e -> System.exit(0));
+
 
         // Vbox for the buttons
-        VBox vBox = new VBox(b1, b2, b3, b4);
-        vBox.setStyle("-fx-background-color: transparent");
-        vBox.setPrefWidth(200);
-        vBox.setPrefHeight(400);
-        vBox.setLayoutX(540);
-        vBox.setLayoutY(100);
-        vBox.setAlignment(Pos.CENTER);
-        vBox.setSpacing(20);
+        HBox hBox = new HBox(b1, b2, b3, b4);
+        hBox.setStyle("-fx-background-color: transparent");
+        hBox.setPrefWidth(600);
+        hBox.setPrefHeight(100);
+        hBox.setLayoutX(200);
+        hBox.setLayoutY(90);
+        hBox.setAlignment(Pos.CENTER);
+        //vBox.setSpacing();
 
-        // Apply button styles
-        styleButton(b1);
-        styleButton(b2);
-        styleButton(b3);
-        styleButton(b4);
+        anchorPane.getChildren().add(hBox);
+        anchorPane.setStyle(
+                "-fx-background-image: url('/org/blackjack/view/sfondo_c.jpg');" +
+                        "-fx-background-size: cover;"
+        );
 
+    }
 
-        // Action for the "Play" buttom
-        b1.setOnAction(e -> {
-            Stage stage = new Stage();
-            stage.initStyle(StageStyle.TRANSPARENT);
-            AnchorPane anchorPane1 = new AnchorPane();
+    private Button createButton(String imagePath, EventHandler<ActionEvent> action) {
+        Button button = new Button();
+        button.setStyle("-fx-background-color: trasparent");
 
-            // Radio button per la scelta dei giocatori
-            RadioButton onePlayer = new RadioButton("1");
-            RadioButton twoPlayer = new RadioButton("2");
-            RadioButton threePlayer = new RadioButton("3");
-            RadioButton fourPlayer = new RadioButton("4");
+        Image image = new Image(getClass().getResource(imagePath).toExternalForm());
+        ImageView imageView = new ImageView(image);
+        imageView.setFitWidth(200);
+        imageView.setFitHeight(70);
+        button.setGraphic(imageView);
 
-            // Apply style for the radio buttons
-            customStyle(onePlayer);
-            customStyle(twoPlayer);
-            customStyle(threePlayer);
-            customStyle(fourPlayer);
+        button.setOnAction(action);
+        return button;
+    }
 
-            // ToggleGroup for the RadioButtons
-            ToggleGroup numberOfPlayers = new ToggleGroup();
-            onePlayer.setToggleGroup(numberOfPlayers);
-            twoPlayer.setToggleGroup(numberOfPlayers);
-            threePlayer.setToggleGroup(numberOfPlayers);
-            fourPlayer.setToggleGroup(numberOfPlayers);
+    private void preGameQuestion() {
+        Stage stage = new Stage();
+        stage.initStyle(StageStyle.TRANSPARENT);
+        AnchorPane anchorPane1 = new AnchorPane();
 
-            // set default selection
-            onePlayer.setSelected(true);
+        // Radio button per la scelta dei giocatori
+        RadioButton onePlayer = new RadioButton("1");
+        RadioButton twoPlayer = new RadioButton("2");
+        RadioButton threePlayer = new RadioButton("3");
+        RadioButton fourPlayer = new RadioButton("4");
 
-            numberOfPlayers.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue == onePlayer) {
-                    playersSelected = 1;
-                } else if (newValue == twoPlayer) {
-                    playersSelected = 2;
-                } else if (newValue == threePlayer) {
-                    playersSelected = 3;
-                } else if (newValue == fourPlayer) {
-                    playersSelected = 4;
-                }
+        // Apply style for the radio buttons
+        customStyle(onePlayer);
+        customStyle(twoPlayer);
+        customStyle(threePlayer);
+        customStyle(fourPlayer);
 
-            });
+        // ToggleGroup for the RadioButtons
+        ToggleGroup numberOfPlayers = new ToggleGroup();
+        onePlayer.setToggleGroup(numberOfPlayers);
+        twoPlayer.setToggleGroup(numberOfPlayers);
+        threePlayer.setToggleGroup(numberOfPlayers);
+        fourPlayer.setToggleGroup(numberOfPlayers);
 
-            // Label to ask the number of players
-            Label labelAskNumberPlayers = new Label("Choose the number of players: ");
-            labelAskNumberPlayers.setStyle("-fx-font-size: 12px; -fx-font-family: 'Verdana'; -fx-text-fill: white;");
+        // set default selection
+        onePlayer.setSelected(true);
 
-            // HBox for radioBotton
-            HBox choicePlayers = new HBox(onePlayer, twoPlayer, threePlayer, fourPlayer);
-            choicePlayers.setAlignment(Pos.CENTER);
-
-            // Button to start the game and exit
-            Button buttonStart = new Button("Start");
-            Button buttonExit = new Button("Cancel");
-            buttonStart.setStyle("-fx-background-colodr: #FFD700; -fx-text-fill: black; -fx-font-size: 14px; -fx-font-weight: bold;"); // Oro
-            buttonExit.setStyle("-fx-background-color: #8B0000; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;"); // Rosso scuro
-
-            // Horizontal layout for the "Start" and "Cancel" buttons
-            HBox startExitBox = new HBox(20, buttonStart, buttonExit);
-            startExitBox.setAlignment(Pos.CENTER);
-
-            // Main VBox
-            VBox box2 = new VBox(20, labelAskNumberPlayers, choicePlayers, startExitBox);
-            box2.setAlignment(Pos.CENTER);
-            box2.setStyle(
-                    "-fx-background-color:#003100;" +
-                            "-fx-background-position: center;" +
-                            "-fx-padding: 20px; " +
-                            "fx-border-radius: 20;" +
-                            "-fx-background-radius: 20;"
-            );
-
-            box2.setPrefSize(300, 200);
-
-            // Imposta stile trasparente al contenitore principale (AnchorPane)
-            anchorPane1.setStyle("-fx-background-color: transparent;");
-            anchorPane1.getChildren().add(box2);
-
-            buttonExit.setOnAction(event ->
-                    stage.close());
-            Platform.runLater(() -> {
-                SceneManager.getInstance().displayRoot(Root.MENU);
-            });
-            buttonStart.setOnAction(event -> {
-                stage.close();
-                Platform.runLater(() -> {
-                    showBetStage(playersSelected);
-
-                });
-
-            });
-
-            // Create and display the scene
-            Scene scene = new Scene(anchorPane1, 300, 200);
-            scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
-            stage.setScene(scene);
-            stage.showAndWait();
+        numberOfPlayers.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == onePlayer) {
+                playersSelected = 1;
+            } else if (newValue == twoPlayer) {
+                playersSelected = 2;
+            } else if (newValue == threePlayer) {
+                playersSelected = 3;
+            } else if (newValue == fourPlayer) {
+                playersSelected = 4;
+            }
 
         });
 
-        b2.setOnAction(e -> SceneManager.getInstance().displayRoot(Root.PROFILE));
-        b3.setOnAction(e -> SceneManager.getInstance().displayRoot(Root.SETTINGS));
-        b4.setOnAction(e -> System.exit(0));
+        // Label to ask the number of players
+        Label labelAskNumberPlayers = new Label("Choose the number of players: ");
+        labelAskNumberPlayers.setStyle("-fx-font-size: 12px; -fx-font-family: 'Verdana'; -fx-text-fill: white;");
 
-        anchorPane.getChildren().add(vBox);
-        anchorPane.setStyle(
-                "-fx-background-image: url('/org/blackjack/view/immagine_iniziale.jpg');" +
-                        "-fx-background-size: cover;"
+        // HBox for radioBotton
+        HBox choicePlayers = new HBox(onePlayer, twoPlayer, threePlayer, fourPlayer);
+        choicePlayers.setAlignment(Pos.CENTER);
+
+        // Button to start the game and exit
+        Button buttonStart = new Button("Start");
+        Button buttonExit = new Button("Cancel");
+        buttonStart.setStyle("-fx-background-colodr: #FFD700; -fx-text-fill: black; -fx-font-size: 14px; -fx-font-weight: bold;"); // Oro
+        buttonExit.setStyle("-fx-background-color: #8B0000; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;"); // Rosso scuro
+
+        // Horizontal layout for the "Start" and "Cancel" buttons
+        HBox startExitBox = new HBox(20, buttonStart, buttonExit);
+        startExitBox.setAlignment(Pos.CENTER);
+
+        // Main VBox
+        VBox box2 = new VBox(20, labelAskNumberPlayers, choicePlayers, startExitBox);
+        box2.setAlignment(Pos.CENTER);
+        box2.setStyle(
+                "-fx-background-color:#003100;" +
+                        "-fx-background-position: center;" +
+                        "-fx-padding: 20px; " +
+                        "fx-border-radius: 20;" +
+                        "-fx-background-radius: 20;"
         );
-    }
 
+        box2.setPrefSize(300, 200);
+
+        // Imposta stile trasparente al contenitore principale (AnchorPane)
+        anchorPane1.setStyle("-fx-background-color: transparent;");
+        anchorPane1.getChildren().add(box2);
+
+        buttonExit.setOnAction(event ->
+                stage.close());
+        Platform.runLater(() -> {
+            SceneManager.getInstance().displayRoot(Root.MENU);
+        });
+        buttonStart.setOnAction(event -> {
+            stage.close();
+            Platform.runLater(() -> {
+                showBetStage(playersSelected);
+
+            });
+
+        });
+
+        // Create and display the scene
+        Scene scene = new Scene(anchorPane1, 300, 200);
+        scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+        stage.setScene(scene);
+        stage.showAndWait();
+
+    }
 
     /**
      * Method that returns the main menu.
