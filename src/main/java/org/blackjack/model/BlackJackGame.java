@@ -110,39 +110,27 @@ public class BlackJackGame extends Observable {
             }
         }
 
-
-        // Draw card for the dealer
+        // Draw two cards for the dealer
         GameCard firstCard = deck.drawCard();
-        firstCard.setVisible(false);
-        dealer.hit(firstCard);
-        scores.set(players.size(), dealer.getScore());
-        setChanged();
-        notifyObservers(new DrawDealerCardPackage(PackageType.DRAW, firstCard.getValue(), firstCard.getSuit(), TypePlayer.DEALER, dealer.getScore(), firstCard.getVisible()));
-        notifyObservers(new ScorePackage(PackageType.SCORE, scores, TypePlayer.DEALER));
-        clearChanged();
+        firstCard.setVisible(true);
+        giveCard(scores, firstCard);
 
 
         GameCard secondCard = deck.drawCard();
-        secondCard.setVisible(true);
-        dealer.hit(secondCard);
+        secondCard.setVisible(false);
+        giveCard(scores, secondCard);
+    }
+
+
+    private void giveCard(List<Integer> scores, GameCard card) {
+        dealer.hit(card);
         scores.set(players.size(), dealer.getScore());
+        //System.out.println("Dealer riceve carta");
         setChanged();
-        notifyObservers(new DrawDealerCardPackage(PackageType.DRAW, secondCard.getValue(), secondCard.getSuit(), TypePlayer.DEALER, dealer.getScore(), secondCard.getVisible()));
+        notifyObservers(new DrawDealerCardPackage(PackageType.DRAW_DEALER, card.getValue(), card.getSuit(), TypePlayer.DEALER, dealer.getScore(), card.getVisible()));
+        // System.out.println("Notifica mandata");
         notifyObservers(new ScorePackage(PackageType.SCORE, scores, TypePlayer.DEALER));
         clearChanged();
-
-        /*
-        for (int i = 0; i < 2; i++) {
-            GameCard card = deck.drawCard();
-            dealer.hit(card);
-            scores.set(players.size(), dealer.getScore());
-            setChanged();
-            notifyObservers(new DrawPackage(PackageType.DRAW, card.getValue(), card.getSuit(), TypePlayer.DEALER, dealer.getScore()));
-            notifyObservers(new ScorePackage(PackageType.SCORE, scores, TypePlayer.DEALER));
-            clearChanged();
-        }
-
-         */
     }
 
     /**
@@ -186,54 +174,64 @@ public class BlackJackGame extends Observable {
      */
     public void checkWin(List<Player> players, Player dealer) {
         // Check the computer players
-        for (int i = 1; i < players.size() - 1; i++) {
+        for (int i = 1; i < players.size(); i++) {
             Player player = players.get(i);
-            if (player.getScore() > dealer.getScore()) {
-                // AI wins
+            if (player.bust()) {
+                setChanged();
+                notifyObservers(new BustPackage(PackageType.LOSE, true, player.getType()));
+                clearChanged();
+            } else if (dealer.bust()) {
                 setChanged();
                 notifyObservers(new WinPackage(PackageType.WIN, true, player.getType()));
                 clearChanged();
-
-
-            } else if (dealer.getScore() > player.getScore()) {
-                // dealer wins
+            } else if (player.getScore() > dealer.getScore()) {
+                setChanged();
+                notifyObservers(new WinPackage(PackageType.WIN, true, player.getType()));
+                clearChanged();
+            } else if (player.getScore() < dealer.getScore()) {
                 setChanged();
                 notifyObservers(new LosePackage(PackageType.LOSE, true, player.getType()));
                 clearChanged();
             } else {
-                // tie
+                // Tie
                 setChanged();
                 notifyObservers(new TiePackage(PackageType.TIE, true, player.getType()));
                 clearChanged();
             }
-
         }
 
-        // Check the real player
+        //vcheck real player
         RealPlayer realPlayer = (RealPlayer) players.get(0);
-        if (realPlayer.getScore() > dealer.getScore()) {
-            // Human player wins
-            setChanged();
-            notifyObservers(new WinPackage(PackageType.WIN, true, realPlayer.getType()));
-            clearChanged();
-            // it increases the number of games won
-            realPlayer.increaseWonGames();
-
-        } else if (dealer.getScore() > realPlayer.getScore()) {
-            // dealer wins
+        if (realPlayer.bust()) {
             setChanged();
             notifyObservers(new LosePackage(PackageType.LOSE, true, realPlayer.getType()));
             clearChanged();
-            // it increases the number of game lost
+            realPlayer.increaseLostGames();
+        } else if (dealer.bust()) {
+            setChanged();
+            notifyObservers(new WinPackage(PackageType.WIN, true, realPlayer.getType()));
+            clearChanged();
+            realPlayer.increaseWonGames();
+        } else if (realPlayer.getScore() > dealer.getScore()) {
+            setChanged();
+            notifyObservers(new WinPackage(PackageType.WIN, true, realPlayer.getType()));
+            clearChanged();
+            realPlayer.increaseWonGames();
+        } else if (realPlayer.getScore() < dealer.getScore()) {
+            // Dealer wins by higher score
+            setChanged();
+            notifyObservers(new LosePackage(PackageType.LOSE, true, realPlayer.getType()));
+            clearChanged();
             realPlayer.increaseLostGames();
         } else {
-            // tie
+            // Tie
             setChanged();
             notifyObservers(new TiePackage(PackageType.TIE, true, realPlayer.getType()));
             clearChanged();
-            // it increases the number of games tied
             realPlayer.setTotalGames(realPlayer.getTotalGames() + 1);
         }
+
+
     }
 
     /**

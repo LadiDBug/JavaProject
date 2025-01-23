@@ -69,6 +69,11 @@ public class SceneManager implements Observer {
 
     }
 
+    public void removeHiddenCard(int score) {
+        Game gameView = (Game) Root.GAME.getWindowRoot();
+        Platform.runLater(() -> gameView.revealHiddenCard(score));
+    }
+
     @Override
     public void update(Observable o, Object arg) {
 
@@ -83,7 +88,7 @@ public class SceneManager implements Observer {
                 }
                 case DRAW -> {
                     DrawPackage drawPackage = (DrawPackage) dataPackage;
-                    System.out.println("Draw package received " + drawPackage.player());
+                    // System.out.println("Draw package received " + drawPackage.player());
                     Platform.runLater(() -> gameView.drawCards(drawPackage.value(), drawPackage.suit(), drawPackage.player(), drawPackage.score()));
                 }
                 case HIT -> {
@@ -92,23 +97,28 @@ public class SceneManager implements Observer {
                 }
                 case BUST -> {
                     BustPackage bustPackage = (BustPackage) dataPackage;
-                    Platform.runLater(() -> gameView.showBustMessage(bustPackage.typePlayer()));
+                    Platform.runLater(() -> gameView.showMessage(bustPackage.typePlayer(), MessageType.BUST));
                 }
                 case WIN -> {
                     WinPackage winPackage = (WinPackage) dataPackage;
-                    Platform.runLater(() -> gameView.showWinMessage(winPackage.typePlayer()));
+                    Platform.runLater(() -> gameView.showMessage(winPackage.typePlayer(), MessageType.WIN));
                 }
                 case TIE -> {
                     TiePackage tiePackage = (TiePackage) dataPackage;
-                    Platform.runLater(() -> gameView.showTieMessage(tiePackage.typePlayer()));
+                    Platform.runLater(() -> gameView.showMessage(tiePackage.typePlayer(), MessageType.TIE));
                 }
                 case LOSE -> {
                     LosePackage losePackage = (LosePackage) dataPackage;
-                    Platform.runLater(() -> gameView.showLoseMessage(losePackage.typePlayer()));
+                    Platform.runLater(() -> gameView.showMessage(losePackage.typePlayer(), MessageType.LOSE));
                 }
                 case BLACKJACK -> {
                     BlackJackPackage blackJackPackage = (BlackJackPackage) dataPackage;
-                    Platform.runLater(() -> gameView.showBJMessage(blackJackPackage.typePlayer()));
+                    Platform.runLater(() -> gameView.showMessage(blackJackPackage.typePlayer(), MessageType.BLACKJACK));
+                }
+                case DRAW_DEALER -> {
+                    DrawDealerCardPackage drawDealerPackage = (DrawDealerCardPackage) dataPackage;
+                    // System.out.print("Draw dealer card");
+                    Platform.runLater(() -> gameView.drawDealerCard(drawDealerPackage.value(), drawDealerPackage.suit(), drawDealerPackage.score(), drawDealerPackage.visible()));
                 }
             }
         }

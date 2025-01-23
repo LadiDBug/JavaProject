@@ -132,13 +132,16 @@ public class Menu implements WindowRoot {
             anchorPane1.setStyle("-fx-background-color: transparent;");
             anchorPane1.getChildren().add(box2);
 
-            buttonExit.setOnAction(event -> stage.close());
+            buttonExit.setOnAction(event ->
+                    stage.close());
+            Platform.runLater(() -> {
+                SceneManager.getInstance().displayRoot(Root.MENU);
+            });
             buttonStart.setOnAction(event -> {
                 stage.close();
                 Platform.runLater(() -> {
-                    showBetStage();
-                    SceneManager.getInstance().displayRoot(Root.GAME);
-                    controller.startGame(playersSelected, "SISTEMAMI!");
+                    showBetStage(playersSelected);
+
                 });
 
             });
@@ -214,7 +217,7 @@ public class Menu implements WindowRoot {
      *
      * @return
      */
-    public void showBetStage() {
+    public void showBetStage(int playersSelected) {
         Stage betStage = new Stage();
         betStage.initStyle(StageStyle.TRANSPARENT);
         betStage.setAlwaysOnTop(true);
@@ -268,10 +271,21 @@ public class Menu implements WindowRoot {
         buttonConfirm.setStyle(buttonStyle);
         buttonCancel.setStyle("-fx-background-color: darkred; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;");
 
-        buttonConfirm.setOnAction(e -> betStage.close());
+        buttonConfirm.setOnAction(e -> {
+            betStage.close();
+            Platform.runLater(() -> {
+                        SceneManager.getInstance().displayRoot(Root.GAME);
+                        controller.startGame(playersSelected, "SISTEMAMI!");
+                    }
+            );
+        });
+
         buttonCancel.setOnAction(e -> {
             playerBet = 0; // Imposta a 0 se l'utente annulla
             betStage.close(); //devo rimanere in menu no nel gioco
+            Platform.runLater(() -> {
+                SceneManager.getInstance().displayRoot(Root.MENU);
+            });
         });
 
         // Layout pulsanti azione

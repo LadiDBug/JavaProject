@@ -11,5 +11,6 @@ public enum PackageType {
     TIE,
     SETUP,
     SCORE,
-    HIT
+    HIT,
+    DRAW_DEALER
 }

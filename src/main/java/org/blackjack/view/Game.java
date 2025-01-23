@@ -2,6 +2,7 @@ package org.blackjack.view;
 
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -16,6 +17,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Rotate;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -40,6 +42,11 @@ public class Game implements WindowRoot {
     private VBox bot2Box;
     private VBox bot3Box;
     private int playerChoice;
+    private int dealerScore = 0;
+    private int hideScore;
+    private ImageView hiddenCard;
+    private Value hiddenValue;
+    private Suit hiddenSuit;
 
     /**
      * Constructor for the Game class.
@@ -420,58 +427,70 @@ public class Game implements WindowRoot {
         }
     }
 
-    // MESSAGE BOXES
-    public void showLoseMessage(TypePlayer typePlayer) {
-        ((Label) (messageBox(typePlayer).getChildren().get(0))).setText("Hai perso!");
-        //messageBox().setLayoutX(500);
-        //messageBox().setLayoutY(360);
+    public void showMessage(TypePlayer typePlayer, MessageType msg) {
+        HBox messageBox = getMessageBox(typePlayer);
+        Label message = (Label) messageBox.getChildren().get(0);
+        message.setText(msg.getMessage());
+
+        // Rimuovi messaggio dopo 3 secondi
+        new Thread(() -> {
+            try {
+                Thread.sleep(3000); // Attendi 3 secondi
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Platform.runLater(() -> {
+                gamePane.getChildren().remove(messageBox); // Rimuove il messaggio
+            });
+        }).start();
     }
 
-    public void showBJMessage(TypePlayer typePlayer) {
-        ((Label) (messageBox(typePlayer).getChildren().get(0))).setText("Hai fatto BLACKJACK!");
-        //messageBox().setLayoutX(500);
-        //messageBox().setLayoutY(360);
-    }
-
-    public void showBustMessage(TypePlayer typePlayer) {
-        ((Label) (messageBox(typePlayer).getChildren().get(0))).setText("Hai sballato!");
-        //messageBox().setLayoutX(500);
-        //messageBox().setLayoutY(360);
-    }
-
-    public void showWinMessage(TypePlayer typePlayer) {
-        ((Label) (messageBox(typePlayer).getChildren().get(0))).setText("Hai vinto!");
-        //messageBox().setLayoutX(500);
-        //messageBox().setLayoutY(360);
-    }
-
-    public void showTieMessage(TypePlayer typePlayer) {
-        ((Label) (messageBox(typePlayer).getChildren().get(0))).setText("E' finita in parità!");
-        //messageBox().setLayoutX(500);
-        //messageBox().setLayoutY(360);
-    }
-
-    /**
-     * This method creates a message box for each player.
-     *
-     * @param typePlayer
-     * @return HBox
-     */
-    public HBox messageBox(TypePlayer typePlayer) {
+    private HBox getMessageBox(TypePlayer typePlayer) {
         HBox messageBox = new HBox();
         Label message = new Label();
-        message.setStyle("-fx-background-color: rgba(255, 255, 255, 0.5); -fx-background-radius: 10; -fx-text-fill: white;");
+
+        // Stile della scritta
+        message.setStyle("""
+                    -fx-text-fill: black;
+                    -fx-font-size: 24px;
+                    -fx-font-weight: bold;
+                """);
+
+        // Posiziona il messaggio sopra il player
+        messageBox.setAlignment(Pos.CENTER);
         messageBox.getChildren().add(message);
-        switch (typePlayer) {
-            case PLAYER -> messageBox.setLayoutX(800);
 
-            case BOT1 -> messageBox.setLayoutX(300);
-            case BOT2 -> messageBox.setLayoutX(50);
-            case BOT3 -> messageBox.setLayoutX(1050);
-        }
+        // Posiziona il messaggio dinamicamente
+        positionMessageBox(messageBox, typePlayer);
 
-        gamePane.getChildren().add(messageBox);
+        gamePane.getChildren().add(messageBox); // Aggiungi il messaggio al gamePane
         return messageBox;
+    }
+
+    private void positionMessageBox(HBox messageBox, TypePlayer typePlayer) {
+        switch (typePlayer) {
+            case DEALER -> {
+                messageBox.setLayoutX(550); // Sopra il dealer
+                messageBox.setLayoutY(0);
+            }
+            case PLAYER -> {
+                messageBox.setLayoutX(800); // Sopra il player umano
+                messageBox.setLayoutY(360);
+            }
+            case BOT1 -> {
+                messageBox.setLayoutX(300); // Sopra il bot 1
+                messageBox.setLayoutY(360);
+            }
+            case BOT2 -> {
+                messageBox.setLayoutX(50); // Sopra il bot 2
+                messageBox.setLayoutY(160);
+            }
+            case BOT3 -> {
+                messageBox.setLayoutX(1050); // Sopra il bot 3
+                messageBox.setLayoutY(160);
+            }
+            default -> throw new IllegalArgumentException("Invalid player type");
+        }
     }
 
     /**
@@ -594,6 +613,29 @@ public class Game implements WindowRoot {
         updateScore(score, player);
     }
 
+    public void drawDealerCard(Value value, Suit suit, int score, boolean visible) {
+        ImageView card = createImageCard(value, suit);
+        if (!visible) {
+            card.setImage(new Image(getClass().getResource("retro_card.png").toExternalForm()));
+            card.setFitHeight(120); // Imposta l'altezza della carta
+            card.setFitWidth(87);
+
+            addCardToPlayerBox(card, TypePlayer.DEALER);
+
+            dealerScore -= score;
+            hideScore = score;
+            hiddenCard = card;
+            hiddenSuit = suit;
+            hiddenValue = value;
+
+        } else {
+            addCardToPlayerBox(card, TypePlayer.DEALER);
+            updateScore(dealerScore + score, TypePlayer.DEALER);
+        }
+
+    }
+
+
     private ImageView createImageCard(Value value, Suit suit) {
         return new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
     }
@@ -624,12 +666,14 @@ public class Game implements WindowRoot {
         return playerCardStack;
     }
 
+
     private void updateScore(int score, TypePlayer player) {
         switch (player) {
             case PLAYER -> {
                 ((Label) playerBox.getChildren().get(0)).setText("Points: " + score);
             }
             case DEALER -> {
+                System.out.println("Score: " + score);
                 ((Label) dealerBox.getChildren().get(0)).setText("Points: " + score);
             }
             case BOT1 -> {
@@ -643,4 +687,41 @@ public class Game implements WindowRoot {
             }
         }
     }
+
+    public void revealHiddenCard(int score) {
+
+        // mi prendo lo stack del dealer
+        StackPane dealerCardStack = getStackPane(TypePlayer.DEALER);
+
+        // creo la carta nascosta
+        ImageView realCard = createImageCard(hiddenValue, hiddenSuit);
+        realCard.setFitHeight(120);
+        realCard.setFitWidth(87);
+
+        // prendo il retro della carta
+        ImageView retroCard = (ImageView) dealerCardStack.getChildren().getLast();
+
+        //Rimuovo la cart coperta con animazione
+        RotateTransition rt = new RotateTransition(Duration.millis(500), retroCard);
+        rt.setAxis(Rotate.Y_AXIS);  // Ruota attorno all'asse Y
+        rt.setFromAngle(0);
+        rt.setFromAngle(90);
+
+        rt.setOnFinished(event -> {
+            dealerCardStack.getChildren().remove(retroCard);  // Rimuovi il retro della carta
+            //dealerCardStack.getChildren().add(realCard);  // Mostra la carta finale
+
+            RotateTransition rt1 = new RotateTransition(Duration.millis(500), realCard);
+            rt1.setAxis(Rotate.Y_AXIS);
+            rt1.setFromAngle(90);
+            rt1.setToAngle(0);
+
+            rt1.play();  // Avvia la seconda rotazione
+            addCardToPlayerBox(realCard, TypePlayer.DEALER);
+        });
+        rt.play();
+        updateScore(score, TypePlayer.DEALER);
+    }
+
+
 }

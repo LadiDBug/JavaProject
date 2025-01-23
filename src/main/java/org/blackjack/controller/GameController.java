@@ -34,7 +34,7 @@ public class GameController {
     private void startGame1(int numberOfPlayers, String playerName) {
         try {
             game.setUpGame(numberOfPlayers, playerName);
-            System.out.println("Setup completato con successo");
+            // System.out.println("Setup completato con successo");
         } catch (Exception e) {
             System.err.println("Errore durante setup: " + e.getMessage());
             e.printStackTrace();
@@ -47,9 +47,9 @@ public class GameController {
         int bet = sceneManager.getBet();
         realPlayer.setBet(bet);  //setto la puntata
         realPlayer.toBet();  //tolgo le fiches al giocatore
-        System.out.println("Arrivo qui");
+        //System.out.println("Arrivo qui");
         game.drawInitialCards();
-        System.out.println("Arrivo qui2");
+        //System.out.println("Arrivo qui2");
         handleTurn();
 
     }
@@ -65,11 +65,13 @@ public class GameController {
 
         for (int i = 1; i < players.size(); i++) {
             handleComputerPlayerTurn((ComputerPlayer) players.get(i));
-            sleep(2000);
-          
+            sleep(1000);
+
         }
 
         //dopo tutti i giocatori gioca il dealer
+        sceneManager.removeHiddenCard(game.getDealer().getScore());
+        sleep(1000);
         game.dealerPlay();
         sleep(2000);
 
