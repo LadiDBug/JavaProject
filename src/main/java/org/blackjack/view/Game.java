@@ -145,6 +145,7 @@ public class Game implements WindowRoot {
         );
 
         yesButton.setOnAction(event -> {
+            SceneManager.getInstance().resetPlayerSel();
             dialog.close();
             SceneManager.getInstance().displayRoot(Root.MENU);
         });
@@ -193,6 +194,7 @@ public class Game implements WindowRoot {
         noButton.setOnAction(
                 event -> {
                     setPlayAgain(false);
+                    SceneManager.getInstance().resetPlayerSel();
                     ps.close();
                     SceneManager.getInstance().displayRoot(Root.MENU);
                 }
@@ -407,18 +409,25 @@ public class Game implements WindowRoot {
         //per ogni tipo di giocatore, devo rimuovere le carte disegnate, tranne per il dealer
         switch (typePlayer) {
             case PLAYER -> {
+                StackPane playerCardStack = getStackPane(TypePlayer.PLAYER);
+                playerCardStack.getChildren().clear();
 
             }
             case BOT1 -> {
-
+                StackPane bot1CardStack = getStackPane(TypePlayer.BOT1);
+                bot1CardStack.getChildren().clear();
             }
             case BOT2 -> {
-
+                StackPane bot2CardStack = getStackPane(TypePlayer.BOT2);
+                bot2CardStack.getChildren().clear();
             }
             case BOT3 -> {
-
+                StackPane bot3CardStack = getStackPane(TypePlayer.BOT3);
+                bot3CardStack.getChildren().clear();
             }
             case DEALER -> {
+                StackPane dealerCardStack = getStackPane(TypePlayer.DEALER);
+                dealerCardStack.getChildren().clear();
                 dealerScore = 0;
                 hideScore = 0;
             }

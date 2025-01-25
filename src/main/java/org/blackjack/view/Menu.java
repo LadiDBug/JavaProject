@@ -152,7 +152,10 @@ public class Menu implements WindowRoot {
         anchorPane1.setStyle("-fx-background-color: transparent;");
         anchorPane1.getChildren().add(box2);
 
-        buttonExit.setOnAction(event -> stage.close());
+        buttonExit.setOnAction(event -> {
+            stage.close();
+            resetPlayerSelected();
+        });
 
         buttonStart.setOnAction(event -> {
             stage.close();
@@ -291,6 +294,7 @@ public class Menu implements WindowRoot {
         buttonCancel.setOnAction(e -> {
             playerBet = 20; // Imposta a 0 se l'utente annulla
             betStage.close(); //devo rimanere in menu no nel gioco
+            resetPlayerSelected();
             Platform.runLater(() -> {
                 SceneManager.getInstance().displayRoot(Root.MENU);
             });
@@ -314,6 +318,12 @@ public class Menu implements WindowRoot {
 
     }
 
+    public void resetPlayerSelected() {
+
+
+        this.playersSelected = 1;
+        System.out.println("Ho resettato i giocatori" + playersSelected);
+    }
 
     public int getPlayerBet() {
         return playerBet;

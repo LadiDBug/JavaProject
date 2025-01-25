@@ -35,16 +35,18 @@ public class GameController {
 
     private void startGame1(int numberOfPlayers, String playerName) {
         boolean play = true;
-        while (play) {
-            try {
-                game.setUpGame(numberOfPlayers, playerName);
-                // System.out.println("Setup completato con successo");
-            } catch (Exception e) {
-                System.err.println("Errore durante setup: " + e.getMessage());
-                e.printStackTrace();
-                return; // Interrompi l'esecuzione se si verifica un'eccezione
-            }
 
+        try {
+            game.setUpGame(numberOfPlayers, playerName);
+
+            // System.out.println("Setup completato con successo");
+        } catch (Exception e) {
+            System.err.println("Errore durante setup: " + e.getMessage());
+            e.printStackTrace();
+            return; // Interrompi l'esecuzione se si verifica un'eccezione
+        }
+
+        while (play) {
 
             //Puntata del giocatore
             RealPlayer realPlayer = (RealPlayer) game.getPlayers().get(0);
@@ -53,6 +55,7 @@ public class GameController {
             realPlayer.toBet();  //tolgo le fiches al giocatore
             //System.out.println("Arrivo qui");
             game.drawInitialCards();
+
             //System.out.println("Arrivo qui2");
             handleTurn();
 
@@ -74,7 +77,7 @@ public class GameController {
 
 
         System.out.println("ciao");
-
+    
     }
 
 

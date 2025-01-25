@@ -89,9 +89,14 @@ public class SceneManager implements Observer {
         return gameView.getPlayAgain();
     }
 
-    public static void cleanGameView() {
+    public void setPlayAgain(boolean play) {
         Game gameView = (Game) Root.GAME.getWindowRoot();
-        Platform.runLater(gameView::removePlayerBoxes);
+        gameView.setPlayAgain(play);
+    }
+
+    public void resetPlayerSel() {
+        Menu menuView = (Menu) Root.MENU.getWindowRoot();
+        menuView.resetPlayerSelected();
     }
 
     @Override

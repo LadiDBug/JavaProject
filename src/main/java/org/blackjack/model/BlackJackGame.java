@@ -103,6 +103,7 @@ public class BlackJackGame extends Observable {
                 GameCard card = deck.drawCard();
                 player.hit(card);
                 scores.set(players.indexOf(player), player.getScore());
+                System.out.println(player.getType() + ": " + card.getSuit() + " " + card.getValue());
                 setChanged();
                 notifyObservers(new DrawPackage(PackageType.DRAW, card.getValue(), card.getSuit(), player.getType(), player.getScore()));
                 notifyObservers(new ScorePackage(PackageType.SCORE, scores, player.getType()));
@@ -186,6 +187,7 @@ public class BlackJackGame extends Observable {
                 clearChanged();
             } else if (checkBlackJack(dealer)) {
                 setChanged();
+                System.out.println(player.getType() + " ha perso");
                 notifyObservers(new LosePackage(PackageType.LOSE, true, player.getType()));
                 clearChanged();
             } else if (player.getScore() > dealer.getScore()) {
@@ -194,6 +196,7 @@ public class BlackJackGame extends Observable {
                 clearChanged();
             } else if (player.getScore() < dealer.getScore()) {
                 setChanged();
+                System.out.println(player.getType() + " ha perso");
                 notifyObservers(new LosePackage(PackageType.LOSE, true, player.getType()));
                 clearChanged();
             } else {
@@ -208,6 +211,7 @@ public class BlackJackGame extends Observable {
         RealPlayer realPlayer = (RealPlayer) players.get(0);
         if (realPlayer.bust()) {
             setChanged();
+            System.out.println("real p  ha perso");
             notifyObservers(new LosePackage(PackageType.LOSE, true, realPlayer.getType()));
             clearChanged();
             realPlayer.increaseLostGames();
@@ -218,6 +222,7 @@ public class BlackJackGame extends Observable {
             realPlayer.increaseWonGames();
         } else if (checkBlackJack(dealer)) {
             setChanged();
+            System.out.println("real p  ha perso");
             notifyObservers(new LosePackage(PackageType.LOSE, true, realPlayer.getType()));
             clearChanged();
             realPlayer.increaseLostGames();
@@ -229,6 +234,7 @@ public class BlackJackGame extends Observable {
         } else if (realPlayer.getScore() < dealer.getScore()) {
             // Dealer wins by higher score
             setChanged();
+            System.out.println("real p  ha perso");
             notifyObservers(new LosePackage(PackageType.LOSE, true, realPlayer.getType()));
             clearChanged();
             realPlayer.increaseLostGames();
@@ -307,9 +313,11 @@ public class BlackJackGame extends Observable {
         clearChanged();
 
         deck.initializeDeck();
-        setChanged();
-        notifyObservers(new DeckResetPackage(PackageType.RESET_DECK, deck));
-        clearChanged();
+        deck.shuffleDeck();
+        System.out.println("Dim deck: " + deck.getDeckSize());
+        // setChanged();
+        // notifyObservers(new DeckResetPackage(PackageType.RESET_DECK, deck));
+        // clearChanged();
     }
 
     /**
