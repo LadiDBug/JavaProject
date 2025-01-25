@@ -48,6 +48,8 @@ public class Game implements WindowRoot {
     private Value hiddenValue;
     private Suit hiddenSuit;
 
+    private boolean playAgain;
+
     /**
      * Constructor for the Game class.
      * It initializes the gamePAne and sets up the UI elements.
@@ -141,6 +143,7 @@ public class Game implements WindowRoot {
                 "-fx-background-color: #007f00; -fx-text-fill: white; -fx-font-size: 14px;"
                 // "-fx-border-color: gold; -fx-border-width: 2px; -fx-border-radius: 5px;"
         );
+
         yesButton.setOnAction(event -> {
             dialog.close();
             SceneManager.getInstance().displayRoot(Root.MENU);
@@ -169,6 +172,51 @@ public class Game implements WindowRoot {
         dialog.showAndWait();
     }
 
+    public void askToPlayAgain() {
+        Stage ps = new Stage();
+        ps.initStyle(StageStyle.TRANSPARENT);
+        ps.setAlwaysOnTop(true);
+        ps.initModality(Modality.APPLICATION_MODAL);
+
+        Label label = new Label("Do you want to play again?");
+        Button yesButton = new Button("Yes");
+        Button noButton = new Button("No");
+
+        yesButton.setOnAction(
+                event -> {
+                    setPlayAgain(true);
+                    ps.close();
+
+                }
+        );
+
+        noButton.setOnAction(
+                event -> {
+                    setPlayAgain(false);
+                    ps.close();
+                    SceneManager.getInstance().displayRoot(Root.MENU);
+                }
+        );
+
+        HBox buttons = new HBox(10, yesButton, noButton);
+        buttons.setAlignment(Pos.CENTER);
+        VBox layout = new VBox(10, label, buttons);
+        layout.setAlignment(Pos.CENTER);
+        layout.setStyle("-fx-background-color: #32CD32; -fx-border-color: gold; -fx-border-width: 3px; -fx-border-radius: 10; -fx-background-radius: 10;");
+
+        Scene scene = new Scene(layout, 200, 100);
+        scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+        ps.setScene(scene);
+        ps.showAndWait();
+    }
+
+    public void setPlayAgain(boolean playAgain) {
+        this.playAgain = playAgain;
+    }
+
+    public boolean getPlayAgain() {
+        return playAgain;
+    }
 
     /**
      * This method creates the choice box.
@@ -351,9 +399,32 @@ public class Game implements WindowRoot {
     /**
      * This method removes the player boxes from the gamePane.
      */
-    private void removePlayerBoxes() {
+    public void removePlayerBoxes() {
         gamePane.getChildren().removeIf(VBox.class::isInstance);
     }
+
+    public void resetGame(TypePlayer typePlayer) {
+        //per ogni tipo di giocatore, devo rimuovere le carte disegnate, tranne per il dealer
+        switch (typePlayer) {
+            case PLAYER -> {
+
+            }
+            case BOT1 -> {
+
+            }
+            case BOT2 -> {
+
+            }
+            case BOT3 -> {
+
+            }
+            case DEALER -> {
+                dealerScore = 0;
+                hideScore = 0;
+            }
+        }
+    }
+
 
     /**
      * Creates the playerBox for each player.
@@ -701,6 +772,9 @@ public class Game implements WindowRoot {
         // prendo il retro della carta
         ImageView retroCard = (ImageView) dealerCardStack.getChildren().getLast();
 
+        // realCard.setOpacity(0);
+        //dealerCardStack.getChildren().add(realCard);
+        // addCardToPlayerBox(realCard, TypePlayer.DEALER);
         //Rimuovo la cart coperta con animazione
         RotateTransition rt = new RotateTransition(Duration.millis(500), retroCard);
         rt.setAxis(Rotate.Y_AXIS);  // Ruota attorno all'asse Y
@@ -710,7 +784,7 @@ public class Game implements WindowRoot {
         rt.setOnFinished(event -> {
             dealerCardStack.getChildren().remove(retroCard);  // Rimuovi il retro della carta
             //dealerCardStack.getChildren().add(realCard);  // Mostra la carta finale
-
+            realCard.setOpacity(1);
             RotateTransition rt1 = new RotateTransition(Duration.millis(500), realCard);
             rt1.setAxis(Rotate.Y_AXIS);
             rt1.setFromAngle(90);
@@ -724,4 +798,98 @@ public class Game implements WindowRoot {
     }
 
 
+    /*
+    public void showBetMessage() {
+
+        setPlayAgain(true);
+        System.out.println(getPlayAgain() + "sono in showBetMessage");
+        Stage betStage = new Stage();
+        betStage.initStyle(StageStyle.TRANSPARENT);
+        betStage.setAlwaysOnTop(true);
+
+        // Etichetta per il messaggio
+        Label labelBet = new Label("Choose your bet to play again:");
+        labelBet.setStyle("-fx-font-size: 16px; -fx-font-family: 'Verdana'; -fx-text-fill: white;");
+
+        // Pulsanti per le puntate
+        RadioButton bet20 = new RadioButton("20");
+        RadioButton bet50 = new RadioButton("50");
+        RadioButton bet100 = new RadioButton("100");
+        RadioButton bet200 = new RadioButton("200");
+
+        // Stile per i pulsanti
+        String radioButtonStyle = "-fx-mark-color: grey; -fx-text-fill: white; -fx-font-size: 14px;";
+        bet20.setStyle(radioButtonStyle);
+        bet50.setStyle(radioButtonStyle);
+        bet100.setStyle(radioButtonStyle);
+        bet200.setStyle(radioButtonStyle);
+
+        // Gruppo per i pulsanti radio
+        ToggleGroup betGroup = new ToggleGroup();
+        bet20.setToggleGroup(betGroup);
+        bet50.setToggleGroup(betGroup);
+        bet100.setToggleGroup(betGroup);
+        bet200.setToggleGroup(betGroup);
+
+        // Selezione predefinita
+        bet20.setSelected(true);
+
+        // Listener per selezione
+        betGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+
+            if (newValue == bet20) {
+                setBet(20);
+            } else if (newValue == bet50) {
+                setBet(50);
+            } else if (newValue == bet100) {
+                setBet(100);
+            } else if (newValue == bet200) {
+                setBet(200);
+            }
+        });
+
+        // Pulsanti di azione
+        Button buttonConfirm = new Button("Play");
+        Button buttonCancel = new Button("Exit");
+
+        // Stile per i pulsanti
+        String buttonStyle = " -fx-text-fill: black; -fx-font-size: 14px; -fx-font-weight: bold;";
+        buttonConfirm.setStyle(buttonStyle);
+        buttonCancel.setStyle("-fx-background-color: darkred; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;");
+
+        buttonConfirm.setOnAction(e -> {
+
+            setPlayAgain(true);
+            betStage.close();
+
+        });
+
+        buttonCancel.setOnAction(e -> {
+
+                    setPlayAgain(false);
+                    betStage.close();
+                }
+        );
+
+        // Layout pulsanti azione
+        HBox actionButtons = new HBox(20, buttonConfirm, buttonCancel);
+        actionButtons.setAlignment(Pos.CENTER);
+
+        // Layout principale
+        VBox mainBox = new VBox(20, labelBet, new HBox(10, bet20, bet50, bet100, bet200), actionButtons);
+        mainBox.setAlignment(Pos.CENTER);
+        mainBox.setStyle("-fx-background-color: #003100; -fx-padding: 20px; -fx-background-radius: 20;");
+
+        // Imposta la scena e mostra
+        Scene betScene = new Scene(mainBox, 300, 200);
+        betScene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+        betStage.setScene(betScene);
+        betStage.showAndWait();
+
+
+    }
+*/
+
+
 }
+

@@ -16,12 +16,14 @@ public class GameController {
     private final BlackJackGame game;
     private Thread gameThread;
     private final SceneManager sceneManager;
+    private boolean play;
 
     public GameController() {
 
         this.game = new BlackJackGame();
         this.sceneManager = SceneManager.getInstance();
         game.addObserver(sceneManager);
+        this.play = true;
     }
 
 
@@ -32,25 +34,46 @@ public class GameController {
     }
 
     private void startGame1(int numberOfPlayers, String playerName) {
-        try {
-            game.setUpGame(numberOfPlayers, playerName);
-            // System.out.println("Setup completato con successo");
-        } catch (Exception e) {
-            System.err.println("Errore durante setup: " + e.getMessage());
-            e.printStackTrace();
-            return; // Interrompi l'esecuzione se si verifica un'eccezione
+        boolean play = true;
+        while (play) {
+            try {
+                game.setUpGame(numberOfPlayers, playerName);
+                // System.out.println("Setup completato con successo");
+            } catch (Exception e) {
+                System.err.println("Errore durante setup: " + e.getMessage());
+                e.printStackTrace();
+                return; // Interrompi l'esecuzione se si verifica un'eccezione
+            }
+
+
+            //Puntata del giocatore
+            RealPlayer realPlayer = (RealPlayer) game.getPlayers().get(0);
+            int bet = sceneManager.getBet();
+            realPlayer.setBet(bet);  //setto la puntata
+            realPlayer.toBet();  //tolgo le fiches al giocatore
+            //System.out.println("Arrivo qui");
+            game.drawInitialCards();
+            //System.out.println("Arrivo qui2");
+            handleTurn();
+
+            sceneManager.showPlayAgain();
+            play = getIfPlayAgain();
+            if (!play) {
+                //se non vuole giocare piu esco dal while
+                break;
+
+            } else {
+                //se vuole giocare ancora resetto il gioco
+                game.resetGame();
+
+            }
+            //System.out.print("PArtita finita");
+
+
         }
 
 
-        //Puntata del giocatore
-        RealPlayer realPlayer = (RealPlayer) game.getPlayers().get(0);
-        int bet = sceneManager.getBet();
-        realPlayer.setBet(bet);  //setto la puntata
-        realPlayer.toBet();  //tolgo le fiches al giocatore
-        //System.out.println("Arrivo qui");
-        game.drawInitialCards();
-        //System.out.println("Arrivo qui2");
-        handleTurn();
+        System.out.println("ciao");
 
     }
 
@@ -76,6 +99,8 @@ public class GameController {
         sleep(2000);
 
         game.checkWin(game.getPlayers(), game.getDealer());
+        sleep(2000);
+
 
     }
 
@@ -140,6 +165,19 @@ public class GameController {
             action = sceneManager.getPlayerAction();
         }
         return action;
+    }
+
+    private boolean getIfPlayAgain() {
+        boolean play = sceneManager.getPlayAgain();
+        while (!play) {
+            try {
+                Thread.sleep(100); // Piccola pausa per non sovraccaricare la CPU
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            play = sceneManager.getPlayAgain();
+        }
+        return play;
     }
 
 

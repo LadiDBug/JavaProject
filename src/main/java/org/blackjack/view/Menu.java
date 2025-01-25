@@ -28,7 +28,8 @@ public class Menu implements WindowRoot {
     private final AnchorPane anchorPane;
     private final GameController controller;
     private int playersSelected = 1;
-    private int playerBet;
+    private int playerBet = 20;
+
 
     /**
      * Constructor that initializes the main menu.
@@ -76,6 +77,7 @@ public class Menu implements WindowRoot {
         return button;
     }
 
+
     private void preGameQuestion() {
         Stage stage = new Stage();
         stage.initStyle(StageStyle.TRANSPARENT);
@@ -113,7 +115,6 @@ public class Menu implements WindowRoot {
             } else if (newValue == fourPlayer) {
                 playersSelected = 4;
             }
-
         });
 
         // Label to ask the number of players
@@ -125,7 +126,7 @@ public class Menu implements WindowRoot {
         choicePlayers.setAlignment(Pos.CENTER);
 
         // Button to start the game and exit
-        Button buttonStart = new Button("Start");
+        Button buttonStart = new Button("Continue");
         Button buttonExit = new Button("Cancel");
         buttonStart.setStyle("-fx-background-colodr: #FFD700; -fx-text-fill: black; -fx-font-size: 14px; -fx-font-weight: bold;"); // Oro
         buttonExit.setStyle("-fx-background-color: #8B0000; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;"); // Rosso scuro
@@ -151,15 +152,12 @@ public class Menu implements WindowRoot {
         anchorPane1.setStyle("-fx-background-color: transparent;");
         anchorPane1.getChildren().add(box2);
 
-        buttonExit.setOnAction(event ->
-                stage.close());
-        Platform.runLater(() -> {
-            SceneManager.getInstance().displayRoot(Root.MENU);
-        });
+        buttonExit.setOnAction(event -> stage.close());
+
         buttonStart.setOnAction(event -> {
             stage.close();
             Platform.runLater(() -> {
-                showBetStage(playersSelected);
+                showBetStage();
 
             });
 
@@ -172,6 +170,7 @@ public class Menu implements WindowRoot {
         stage.showAndWait();
 
     }
+
 
     /**
      * Method that returns the main menu.
@@ -218,13 +217,13 @@ public class Menu implements WindowRoot {
         );
     }
 
-
-    /**
-     * This method manage the player's bet before the game starts.
-     *
-     * @return
-     */
-    public void showBetStage(int playersSelected) {
+    /*
+        /**
+         * This method manage the player's bet before the game starts.
+         *
+         * @return
+         */
+    public void showBetStage() {
         Stage betStage = new Stage();
         betStage.initStyle(StageStyle.TRANSPARENT);
         betStage.setAlwaysOnTop(true);
@@ -282,13 +281,15 @@ public class Menu implements WindowRoot {
             betStage.close();
             Platform.runLater(() -> {
                         SceneManager.getInstance().displayRoot(Root.GAME);
+                        System.out.println("Player selected: " + playersSelected);
+                        System.out.println("Player bet: " + playerBet);
                         controller.startGame(playersSelected, "SISTEMAMI!");
                     }
             );
         });
 
         buttonCancel.setOnAction(e -> {
-            playerBet = 0; // Imposta a 0 se l'utente annulla
+            playerBet = 20; // Imposta a 0 se l'utente annulla
             betStage.close(); //devo rimanere in menu no nel gioco
             Platform.runLater(() -> {
                 SceneManager.getInstance().displayRoot(Root.MENU);
@@ -313,7 +314,17 @@ public class Menu implements WindowRoot {
 
     }
 
+
     public int getPlayerBet() {
         return playerBet;
     }
+
+    public int getNumberOfPlayers() {
+        return playersSelected;
+    }
+
+    public void setPlayerBet(int playerBet) {
+        this.playerBet = playerBet;
+    }
+
 }

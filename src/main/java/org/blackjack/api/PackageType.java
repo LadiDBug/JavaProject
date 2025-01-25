@@ -12,5 +12,7 @@ public enum PackageType {
     SETUP,
     SCORE,
     HIT,
-    DRAW_DEALER
+    DRAW_DEALER,
+    RESET,
+    RESET_DECK
 }

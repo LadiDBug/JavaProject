@@ -34,9 +34,11 @@ public class SceneManager implements Observer {
     private final Stage window;
     private static SceneManager instance;
 
+
     private SceneManager(Stage window) {
         this.window = window;
         window.setScene(new Scene(new AnchorPane()));
+
     }
 
     public static SceneManager getInstance() {
@@ -69,9 +71,27 @@ public class SceneManager implements Observer {
 
     }
 
+
     public void removeHiddenCard(int score) {
         Game gameView = (Game) Root.GAME.getWindowRoot();
         Platform.runLater(() -> gameView.revealHiddenCard(score));
+    }
+
+
+    public void showPlayAgain() {
+        Game gameView = (Game) Root.GAME.getWindowRoot();
+        Platform.runLater(() -> gameView.askToPlayAgain());
+
+    }
+
+    public boolean getPlayAgain() {
+        Game gameView = (Game) Root.GAME.getWindowRoot();
+        return gameView.getPlayAgain();
+    }
+
+    public static void cleanGameView() {
+        Game gameView = (Game) Root.GAME.getWindowRoot();
+        Platform.runLater(gameView::removePlayerBoxes);
     }
 
     @Override
@@ -119,6 +139,17 @@ public class SceneManager implements Observer {
                     DrawDealerCardPackage drawDealerPackage = (DrawDealerCardPackage) dataPackage;
                     // System.out.print("Draw dealer card");
                     Platform.runLater(() -> gameView.drawDealerCard(drawDealerPackage.value(), drawDealerPackage.suit(), drawDealerPackage.score(), drawDealerPackage.visible()));
+                }
+                case RESET -> {
+                    // quando resetto devo rimuovere i box dei giocatori
+                    // devo resettare la scelta del giocatore
+                    // la bet la lascio cosi
+                    //     System.out.println("PAcchetto arrivato");
+                    ResetPackage resetPackage = (ResetPackage) dataPackage;
+                    Platform.runLater(() -> {
+                        gameView.resetGame(resetPackage.typePlayer());
+                    });
+
                 }
             }
         }

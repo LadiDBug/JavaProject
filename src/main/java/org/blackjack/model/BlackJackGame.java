@@ -85,7 +85,7 @@ public class BlackJackGame extends Observable {
 
         setChanged();
         notifyObservers(new SetupPackage(PackageType.SETUP, usernames, numberOfPlayers, avatar));
-
+        clearChanged();
     }
 
     /**
@@ -184,6 +184,10 @@ public class BlackJackGame extends Observable {
                 setChanged();
                 notifyObservers(new WinPackage(PackageType.WIN, true, player.getType()));
                 clearChanged();
+            } else if (checkBlackJack(dealer)) {
+                setChanged();
+                notifyObservers(new LosePackage(PackageType.LOSE, true, player.getType()));
+                clearChanged();
             } else if (player.getScore() > dealer.getScore()) {
                 setChanged();
                 notifyObservers(new WinPackage(PackageType.WIN, true, player.getType()));
@@ -212,6 +216,11 @@ public class BlackJackGame extends Observable {
             notifyObservers(new WinPackage(PackageType.WIN, true, realPlayer.getType()));
             clearChanged();
             realPlayer.increaseWonGames();
+        } else if (checkBlackJack(dealer)) {
+            setChanged();
+            notifyObservers(new LosePackage(PackageType.LOSE, true, realPlayer.getType()));
+            clearChanged();
+            realPlayer.increaseLostGames();
         } else if (realPlayer.getScore() > dealer.getScore()) {
             setChanged();
             notifyObservers(new WinPackage(PackageType.WIN, true, realPlayer.getType()));
@@ -276,16 +285,31 @@ public class BlackJackGame extends Observable {
      * This method reset the game when the player decide to play again.
      */
     public void resetGame() {
+
+
         for (Player player : players) {
-            player.hand.clearHand();
+            //System.out.println(player.getType() + "tipo player");
+            player.getHand().clearHand();
+            player.setScore(0);
+            player.setstanding(false);
+            //System.out.println(" score player: " + player.getScore());
+            setChanged();
+            notifyObservers(new ResetPackage(PackageType.RESET, player.getType()));
+            clearChanged();
         }
 
-        dealer.hand.clearHand();
-        deck.refillDeck();
-        deck.shuffleDeck();
-
+        dealer.getHand().clearHand();
+        dealer.setScore(0);
+        dealer.setstanding(false);
+        //System.out.println(" score: " + dealer.getScore());
         setChanged();
-        notifyObservers();
+        notifyObservers(new ResetPackage(PackageType.RESET, TypePlayer.DEALER));
+        clearChanged();
+
+        deck.initializeDeck();
+        setChanged();
+        notifyObservers(new DeckResetPackage(PackageType.RESET_DECK, deck));
+        clearChanged();
     }
 
     /**
