@@ -19,6 +19,7 @@ public class BlackJackGame extends Observable {
     private List<Player> players;
     private Dealer dealer;
     private Deck deck;
+    private SaveData saveData;
 
     private static final String[] USERNAMES = {"Mario", "Michelangelo", "Batman"};
     private static final String[] AVATARS = {
@@ -35,6 +36,7 @@ public class BlackJackGame extends Observable {
         players = new ArrayList<>();
         deck = Deck.getInstance();
         dealer = new Dealer();
+        this.saveData = new SaveData();
     }
 
     //Getters
@@ -42,9 +44,6 @@ public class BlackJackGame extends Observable {
         return players;
     }
 
-    public Deck getDeck() {
-        return deck;
-    }
 
     public Dealer getDealer() {
         return dealer;
@@ -56,9 +55,12 @@ public class BlackJackGame extends Observable {
      * @param numberOfPlayers the number of players in the game
      * @param usernameRealPlayer the username of the real player
      */
-    public void setUpGame(int numberOfPlayers, String usernameRealPlayer) {
+    public void setUpGame(int numberOfPlayers) {
+
         //Add human player
-        players.add(new RealPlayer(usernameRealPlayer));
+        RealPlayer realPlayer = new RealPlayer(saveData.getUsername());
+
+        players.add(realPlayer);
 
         // Management of computer player,
         //they have a username an avatars, but they are choose randomly.
@@ -199,9 +201,11 @@ public class BlackJackGame extends Observable {
         } else if (dealer.getScore() > 21) {
             sendWinPackage(realPlayer);
             realPlayer.increaseWonGames();
+            realPlayer.increaseLevel();
         } else if (realPlayer.getScore() > dealer.getScore()) {
             sendWinPackage(realPlayer);
             realPlayer.increaseWonGames();
+            realPlayer.increaseLevel();
         } else if (realPlayer.getScore() < dealer.getScore()) {
             sendLosePackage(realPlayer);
             realPlayer.increaseLostGames();

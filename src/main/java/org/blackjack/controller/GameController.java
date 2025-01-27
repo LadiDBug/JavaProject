@@ -27,17 +27,17 @@ public class GameController {
     }
 
 
-    public void startGame(int numerOfPlayers, String playerName) {
+    public void startGame(int numerOfPlayers) {
         if (gameThread != null && gameThread.isAlive()) throw new GameOnGoingException("Thread still alive");
-        gameThread = new Thread(() -> startGame1(numerOfPlayers, playerName));
+        gameThread = new Thread(() -> startGame1(numerOfPlayers));
         gameThread.start();
     }
 
-    private void startGame1(int numberOfPlayers, String playerName) {
+    private void startGame1(int numberOfPlayers) {
         boolean play = true;
 
         try {
-            game.setUpGame(numberOfPlayers, playerName);
+            game.setUpGame(numberOfPlayers);
 
             // System.out.println("Setup completato con successo");
         } catch (Exception e) {

@@ -286,7 +286,7 @@ public class Menu implements WindowRoot {
                         SceneManager.getInstance().displayRoot(Root.GAME);
                         System.out.println("Player selected: " + playersSelected);
                         System.out.println("Player bet: " + playerBet);
-                        controller.startGame(playersSelected, "SISTEMAMI!");
+                        controller.startGame(playersSelected);
                     }
             );
         });

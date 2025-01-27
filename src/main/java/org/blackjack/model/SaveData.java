@@ -1,83 +1,135 @@
 package org.blackjack.model;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class saves and manages data of the player
- * 
+ *
  * @author Diana Pamfile
  */
 public class SaveData {
-	
-	private static final String FILE_PATH = "src/resources/userData.json";
-	
-	// Method to save player data for the first time
-    public static boolean savePlayerData(RealPlayer player) {
-        String jsonData = generateJson(player);
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
-            writer.write(jsonData);
-            return true; // Operation successful
+
+    private String path;
+
+    public SaveData() {
+        // Definiamo il percorso del file
+        this.path = "src/main/data/userData.txt"; // Percorso relativo dalla cartella src al file
+    }
+
+    //Metodo che vede se lo username è presente nel file, lo crea altrimenti
+    public void initializeFile(String path, String username) {
+        try (FileWriter fw = new FileWriter(new File(path))) {
+            fw.write("Username = " + username + "\n");
+            fw.write("TotalGames = 0\n");
+            fw.write("TotalWins = 0\n");
+            fw.write("TotalLosses = 0\n");
+            fw.write("TotalFiches = 10000\n");
+            fw.write("Avatar = \n");
+            fw.write("Level = 0\n");
+
+
         } catch (IOException e) {
-            return false; // Operation failed
+            e.printStackTrace();
         }
+
     }
 
-    // Method to update player data
-    public static boolean updatePlayerData(RealPlayer player) {
-        String existingData = getPlayerData();
-        if (existingData != null) {
-            // Update player stats
-            String updatedData = existingData.replaceAll(
-                "\"wonGames\": \\d+", "\"wonGames\": " + player.getWonGames())
-                .replaceAll("\"totalGames\": \\d+", "\"totalGames\": " + player.getTotalGames())
-                .replaceAll("\"totalFiches\": \\d+", "\"totalFiches\": " + player.getTotalFiches());
-            
-            return saveDataToFile(updatedData); // Save updated data
-        }
-        return false; // Player data not found
-    }
-
-    // Method to retrieve player data as a String
-    public static String getPlayerData() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
-            StringBuilder contentBuilder = new StringBuilder();
-            String currentLine;
-            while ((currentLine = reader.readLine()) != null) {
-                contentBuilder.append(currentLine);
+    //Metodo per leggere il dato dal file
+    public String readFromFile(String value) {
+        try (BufferedReader br = new BufferedReader(new FileReader(new File(path)))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith(value)) {
+                    return line.split(" = ")[1];
+                }
             }
-            return contentBuilder.toString(); // Return all data
         } catch (IOException e) {
-            return null; // Error occurred
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private void updateData(String key, String newValue) {
+        try {
+            List<String> lines = new ArrayList<>(Files.readAllLines(Paths.get(path)));
+
+            for (int i = 0; i < lines.size(); i++) {
+                if (lines.get(i).startsWith(key)) {
+                    lines.set(i, key + " = " + newValue);
+                    break;
+                }
+            }
+
+            Files.write(Paths.get(path), lines);
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    // Helper method to generate JSON data
-    private static String generateJson(RealPlayer player) {
-        return "{\n" +
-                "\"username\": \"" + player.getUsername() + "\",\n" +
-                "\"level\": " + player.getLevel() + ",\n" +
-                "\"totalGames\": " + player.getTotalGames() + ",\n" +
-                "\"wonGames\": " + player.getWonGames() + ",\n" +
-                "\"lostGames\": " + player.getLostGames() + ",\n" +
-                "\"totalFiches\": " + player.getTotalFiches() + ",\n" +
-                "\"bet\": " + player.getBet() + "\n" +
-                "}";
+    public String getAvatar() {
+        return readFromFile("Avatar");
     }
 
-    // Save data back to file
-    private static boolean saveDataToFile(String data) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
-            writer.write(data);
-            return true; // Operation successful
-        } catch (IOException e) {
-            return false; // Operation failed
-        }
+    public String getUsername() {
+        return readFromFile("Username");
     }
 
-	
+    public int getLevel() {
+        return Integer.parseInt(readFromFile("Level"));
+    }
+
+    public int getTotalGames() {
+        return Integer.parseInt(readFromFile("TotalGames"));
+    }
+
+    public int getTotalWins() {
+        return Integer.parseInt(readFromFile("TotalWins"));
+    }
+
+    public int getTotalLosses() {
+        return Integer.parseInt(readFromFile("TotalLosses"));
+    }
+
+    public int getTotalFiches() {
+        return Integer.parseInt(readFromFile("TotalFiches"));
+    }
+
+    public void setAvatar(String avatar) {
+        updateData("Avatar", avatar);
+    }
+
+    public void setUsername(String username) {
+        updateData("Username", username);
+    }
+
+    public void setTotalGames(int totalGames) {
+        updateData("TotalGames", String.valueOf(totalGames));
+    }
+
+    public void setTotalWins(int totalWins) {
+        updateData("TotalWins", String.valueOf(totalWins));
+    }
+
+    public void setTotalLosses(int totalLosses) {
+        updateData("TotalLosses", String.valueOf(totalLosses));
+    }
+
+    public void setTotalFiches(int totalFiches) {
+        updateData("TotalFiches", String.valueOf(totalFiches));
+    }
+
+    public void setLevel(int level) {
+        updateData("Level", String.valueOf(level));
+    }
+
+    public String getPath() {
+        return path;
+    }
+
 }
 

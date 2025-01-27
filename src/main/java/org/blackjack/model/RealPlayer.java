@@ -15,7 +15,7 @@ public class RealPlayer extends Player {
     private int lostGames;
     private int totalFiches;
     private int bet;
-
+    private SaveData saveData;
 
     /**
      * Constructor that initializes a RealPlayer with a username.
@@ -25,24 +25,25 @@ public class RealPlayer extends Player {
      */
     public RealPlayer(String username) {
         super(username, TypePlayer.PLAYER);
-        this.level = 0;
-        this.totalGames = 0;
-        this.wonGames = 0;
-        this.lostGames = 0;
-        this.totalFiches = 5000;
+        this.saveData = new SaveData();
+
+        //Se i dati non sono presenti, inizializzo file
+        if (saveData.readFromFile("Username") == null) {
+            saveData.initializeFile(saveData.getPath(), username);
+        }
+        //Se i dati sono presenti li carico dal file
+        this.level = saveData.getLevel();
+        this.totalGames = saveData.getTotalGames();
+        this.wonGames = saveData.getTotalWins();
+        this.lostGames = saveData.getTotalLosses();
+        this.totalFiches = saveData.getTotalFiches();
         this.bet = 0;
+        this.avatar = saveData.getAvatar();
     }
 
     /**
      * Getter and setter methods for player attributes..
      */
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
 
     public int getTotalGames() {
         return totalGames;
@@ -50,35 +51,9 @@ public class RealPlayer extends Player {
 
     public void setTotalGames(int totalGames) {
         this.totalGames = totalGames;
+        saveData.setTotalGames(totalGames);
     }
 
-    public int getWonGames() {
-        return wonGames;
-    }
-
-    public void setWonGames(int wonGames) {
-        this.wonGames = wonGames;
-    }
-
-    public int getLostGames() {
-        return lostGames;
-    }
-
-    public void setLostGames(int lostGames) {
-        this.lostGames = lostGames;
-    }
-
-    public int getTotalFiches() {
-        return totalFiches;
-    }
-
-    public void setTotalFiches(int totalFiches) {
-        this.totalFiches = totalFiches;
-    }
-
-    public int getBet() {
-        return bet;
-    }
 
     public void setBet(int bet) {
         this.bet = bet;
@@ -89,6 +64,7 @@ public class RealPlayer extends Player {
      */
     public void toBet() {
         this.totalFiches -= bet;
+        saveData.setTotalFiches(totalFiches);
     }
 
     /*
@@ -97,6 +73,7 @@ public class RealPlayer extends Player {
     public void increaseLevel() {
         if (wonGames % 5 == 0) {
             this.level++;
+            saveData.setLevel(level);
         }
 
     }
@@ -109,6 +86,10 @@ public class RealPlayer extends Player {
         this.wonGames++;
         this.totalGames++;
         this.totalFiches += bet * 2;
+
+        saveData.setTotalWins(wonGames);
+        saveData.setTotalGames(totalGames);
+        saveData.setTotalFiches(totalFiches);
     }
 
     /**
@@ -119,6 +100,10 @@ public class RealPlayer extends Player {
         this.lostGames++;
         this.totalGames++;
         this.totalFiches -= bet;
+
+        saveData.setTotalLosses(lostGames);
+        saveData.setTotalGames(totalGames);
+        saveData.setTotalFiches(totalFiches);
     }
 
 
@@ -129,9 +114,5 @@ public class RealPlayer extends Player {
         this.standing = true;
     }
 
-
-    public void SaveData() {
-        //chiamare metodo save data
-    }
 
 }
