@@ -60,6 +60,7 @@ public class GameController {
             handleTurn();
 
             sceneManager.showPlayAgain();
+            sleep(1000);
             play = getIfPlayAgain();
             if (!play) {
                 //se non vuole giocare piu esco dal while
@@ -77,7 +78,7 @@ public class GameController {
 
 
         System.out.println("ciao");
-    
+
     }
 
 

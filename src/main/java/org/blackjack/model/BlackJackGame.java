@@ -174,79 +174,60 @@ public class BlackJackGame extends Observable {
      * It notifys the observer of win, loss, or tie
      */
     public void checkWin(List<Player> players, Player dealer) {
-        // Check the computer players
+
+        //Check per i computer player
         for (int i = 1; i < players.size(); i++) {
             Player player = players.get(i);
-            if (player.bust()) {
-                setChanged();
-                notifyObservers(new BustPackage(PackageType.LOSE, true, player.getType()));
-                clearChanged();
-            } else if (dealer.bust()) {
-                setChanged();
-                notifyObservers(new WinPackage(PackageType.WIN, true, player.getType()));
-                clearChanged();
-            } else if (checkBlackJack(dealer)) {
-                setChanged();
-                System.out.println(player.getType() + " ha perso");
-                notifyObservers(new LosePackage(PackageType.LOSE, true, player.getType()));
-                clearChanged();
+            // se il player fa > 21 perde in automatico
+            if (player.getScore() > 21) {
+                sendLosePackage(player);
+            } else if (dealer.getScore() > 21) {
+                sendWinPackage(player);
             } else if (player.getScore() > dealer.getScore()) {
-                setChanged();
-                notifyObservers(new WinPackage(PackageType.WIN, true, player.getType()));
-                clearChanged();
+                sendWinPackage(player);
             } else if (player.getScore() < dealer.getScore()) {
-                setChanged();
-                System.out.println(player.getType() + " ha perso");
-                notifyObservers(new LosePackage(PackageType.LOSE, true, player.getType()));
-                clearChanged();
+                sendLosePackage(player);
             } else {
-                // Tie
-                setChanged();
-                notifyObservers(new TiePackage(PackageType.TIE, true, player.getType()));
-                clearChanged();
+                sendTiePackage(player);
             }
         }
 
-        //vcheck real player
         RealPlayer realPlayer = (RealPlayer) players.get(0);
-        if (realPlayer.bust()) {
-            setChanged();
-            System.out.println("real p  ha perso");
-            notifyObservers(new LosePackage(PackageType.LOSE, true, realPlayer.getType()));
-            clearChanged();
+        if (realPlayer.getScore() > 21) {
+            sendLosePackage(realPlayer);
             realPlayer.increaseLostGames();
-        } else if (dealer.bust()) {
-            setChanged();
-            notifyObservers(new WinPackage(PackageType.WIN, true, realPlayer.getType()));
-            clearChanged();
+        } else if (dealer.getScore() > 21) {
+            sendWinPackage(realPlayer);
             realPlayer.increaseWonGames();
-        } else if (checkBlackJack(dealer)) {
-            setChanged();
-            System.out.println("real p  ha perso");
-            notifyObservers(new LosePackage(PackageType.LOSE, true, realPlayer.getType()));
-            clearChanged();
-            realPlayer.increaseLostGames();
         } else if (realPlayer.getScore() > dealer.getScore()) {
-            setChanged();
-            notifyObservers(new WinPackage(PackageType.WIN, true, realPlayer.getType()));
-            clearChanged();
+            sendWinPackage(realPlayer);
             realPlayer.increaseWonGames();
         } else if (realPlayer.getScore() < dealer.getScore()) {
-            // Dealer wins by higher score
-            setChanged();
-            System.out.println("real p  ha perso");
-            notifyObservers(new LosePackage(PackageType.LOSE, true, realPlayer.getType()));
-            clearChanged();
+            sendLosePackage(realPlayer);
             realPlayer.increaseLostGames();
         } else {
-            // Tie
-            setChanged();
-            notifyObservers(new TiePackage(PackageType.TIE, true, realPlayer.getType()));
-            clearChanged();
+            sendTiePackage(realPlayer);
             realPlayer.setTotalGames(realPlayer.getTotalGames() + 1);
         }
 
+    }
 
+    private void sendWinPackage(Player player) {
+        setChanged();
+        notifyObservers(new WinPackage(PackageType.WIN, true, player.getType()));
+        clearChanged();
+    }
+
+    private void sendLosePackage(Player player) {
+        setChanged();
+        notifyObservers(new LosePackage(PackageType.LOSE, true, player.getType()));
+        clearChanged();
+    }
+
+    private void sendTiePackage(Player player) {
+        setChanged();
+        notifyObservers(new TiePackage(PackageType.TIE, true, player.getType()));
+        clearChanged();
     }
 
     /**

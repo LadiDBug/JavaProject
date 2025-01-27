@@ -174,6 +174,7 @@ public class Game implements WindowRoot {
     }
 
     public void askToPlayAgain() {
+        setPlayAgain(false);
         Stage ps = new Stage();
         ps.initStyle(StageStyle.TRANSPARENT);
         ps.setAlwaysOnTop(true);
