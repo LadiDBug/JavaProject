@@ -334,5 +334,12 @@ public class BlackJackGame extends Observable {
         return false;
     }
 
+    //lo devo chiamare in gameController
+    public void updateData(RealPlayer player) {
+        setChanged();
+        notifyObservers(new UpdatePackage(PackageType.UPDATE, player.getTotalGames(), player.getWonGames(), player.getLostGames(), player.getAvatar(), player.getUsername(), player.getTotalFiches(), player.getLevel()));
+        clearChanged();
+    }
+
 
 }

@@ -10,11 +10,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.blackjack.controller.GameController;
@@ -36,14 +38,29 @@ public class Menu implements WindowRoot {
      */
     public Menu() {
         this.controller = new GameController();
+
         anchorPane = new AnchorPane();
 
         // Menu Buttons
         Button b1 = createButton("/org/blackjack/view/menuButton/play_button.png", e -> preGameQuestion());
-        Button b2 = createButton("/org/blackjack/view/menuButton/profile_button.png", e -> SceneManager.getInstance().displayRoot(Root.PROFILE));
+        Button b2 = createButton("/org/blackjack/view/menuButton/profile_button.png", e -> {
+            SceneManager.getInstance().displayRoot(Root.PROFILE);
+            controller.createProfile();
+            controller.createStats();
+            controller.createLevel();
+        });
         Button b3 = createButton("/org/blackjack/view/menuButton/settings_button.png", e -> SceneManager.getInstance().displayRoot(Root.SETTINGS));
         Button b4 = createButton("/org/blackjack/view/menuButton/exit_button.png", e -> System.exit(0));
-
+        DropShadow shadow = new DropShadow();
+        shadow.setColor(Color.LIGHTYELLOW);
+        b1.setOnMouseEntered(e -> b1.setEffect(shadow));
+        b1.setOnMouseExited(e -> b1.setEffect(null));
+        b2.setOnMouseEntered(e -> b2.setEffect(shadow));
+        b2.setOnMouseExited(e -> b2.setEffect(null));
+        b3.setOnMouseEntered(e -> b3.setEffect(shadow));
+        b3.setOnMouseExited(e -> b3.setEffect(null));
+        b4.setOnMouseEntered(e -> b4.setEffect(shadow));
+        b4.setOnMouseExited(e -> b4.setEffect(null));
 
         // Vbox for the buttons
         HBox hBox = new HBox(b1, b2, b3, b4);

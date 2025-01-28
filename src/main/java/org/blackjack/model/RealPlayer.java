@@ -39,6 +39,8 @@ public class RealPlayer extends Player {
         this.totalFiches = saveData.getTotalFiches();
         this.bet = 0;
         this.avatar = saveData.getAvatar();
+
+
     }
 
     /**
@@ -57,6 +59,22 @@ public class RealPlayer extends Player {
 
     public void setBet(int bet) {
         this.bet = bet;
+    }
+
+    public int getWonGames() {
+        return wonGames;
+    }
+
+    public int getLostGames() {
+        return lostGames;
+    }
+
+    public int getTotalFiches() {
+        return totalFiches;
+    }
+
+    public int getLevel() {
+        return level;
     }
 
     /**

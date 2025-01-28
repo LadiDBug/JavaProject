@@ -99,11 +99,28 @@ public class SceneManager implements Observer {
         menuView.resetPlayerSelected();
     }
 
+    public void createProfile(String username, String imagePath) {
+        Profile profileView = (Profile) Root.PROFILE.getWindowRoot();
+        Platform.runLater(() -> profileView.createProfileBox(username, imagePath));
+    }
+
+    public void createStats(String totalGames, String totalWon, String totalLoses, String totalFiches) {
+        Profile profileView = (Profile) Root.PROFILE.getWindowRoot();
+        Platform.runLater(() -> profileView.createStats(totalGames, totalWon, totalLoses, totalFiches));
+    }
+
+    public void createLevel(String level) {
+        Profile profileView = (Profile) Root.PROFILE.getWindowRoot();
+        Platform.runLater(() -> profileView.createLevel(level));
+    }
+
+
     @Override
     public void update(Observable o, Object arg) {
 
         if (arg instanceof DataPackage dataPackage) {
             Game gameView = (Game) Root.GAME.getWindowRoot();
+            Profile profileView = (Profile) Root.PROFILE.getWindowRoot();
             switch (dataPackage.packageType()) {
 
                 case SETUP -> {
@@ -153,6 +170,15 @@ public class SceneManager implements Observer {
                     ResetPackage resetPackage = (ResetPackage) dataPackage;
                     Platform.runLater(() -> {
                         gameView.resetGame(resetPackage.typePlayer());
+                    });
+
+                }
+                case UPDATE -> {
+                    UpdatePackage updatePackage = (UpdatePackage) dataPackage;
+                    Platform.runLater(() -> {
+                        profileView.updateProfile(updatePackage.username(), updatePackage.avatar());
+                        profileView.updateLevel(updatePackage.level());
+                        profileView.updateStats(updatePackage.totalGames(), updatePackage.wonGames(), updatePackage.lostGames(), updatePackage.totalFiches());
                     });
 
                 }

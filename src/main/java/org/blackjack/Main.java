@@ -5,6 +5,4 @@ public class Main {
         Launcher.main(args);
     }
 
-    //qui creo cartella per salvare i dati
-    
 }

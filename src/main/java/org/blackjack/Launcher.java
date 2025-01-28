@@ -26,8 +26,6 @@ public class Launcher extends Application {
         window.setHeight(720);
         window.show();
 
-        //aggiungere observable
-
 
     }
 

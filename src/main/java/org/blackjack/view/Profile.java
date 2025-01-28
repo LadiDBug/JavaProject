@@ -20,35 +20,17 @@ public class Profile implements WindowRoot {
 
 
     public Profile() {
+
         profilePane = new AnchorPane();
+
 
         //Bottone per tornare indiero
         Button backButton = createBackButton();
         backButton.setLayoutX(10);
         backButton.setLayoutY(10);
 
-        // Box per l'immagine del profilo e username
-        VBox profileBox = createProfileBox();
-
-        // Hbox per la parola statistiche
-
-        // Box per statistiche
-        VBox statsBox = createStatsBox();
-
-        //Box per il livello
-        HBox levelBox = createLevelBox();
-
-        //posizionali sullo schermo
-        profileBox.setLayoutX(520);
-        profileBox.setLayoutY(100);
-
-        statsBox.setLayoutX(520);
-        statsBox.setLayoutY(400);
-
-        levelBox.setLayoutX(1100);
-        levelBox.setLayoutY(10);
         //Aggiungo elementi al profilePane
-        profilePane.getChildren().addAll(backButton, profileBox, statsBox, levelBox);
+        profilePane.getChildren().addAll(backButton);
 
         profilePane.setStyle("-fx-background-image: url('/org/blackjack/view/sfondo_profilo.jpg');" +
                 "-fx-background-size: cover;");
@@ -58,6 +40,7 @@ public class Profile implements WindowRoot {
     public Parent getPane() {
         return profilePane;
     }
+
 
     private Button createBackButton() {
         Button backButton = new Button();
@@ -117,39 +100,82 @@ public class Profile implements WindowRoot {
         dialog.showAndWait();
     }
 
-    private VBox createProfileBox() {
-        Label username = new Label("Username: " + "nomeSuo");
-        username.setStyle("-fx-font-size: 20px; -fx-text-fill: white;");
-        username.setAlignment(Pos.CENTER);
 
-        Image profileImage = new Image(getClass().getResource("defaultUser.png").toExternalForm());
+    public void createProfileBox(String username, String imagePath) {
+        System.out.println("Sono qui" + username + " " + imagePath);
+        Label usernameLabel = new Label("Username: " + username);
+        usernameLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: white;");
+
+        Image profileImage = new Image(getClass().getResource(imagePath).toExternalForm());
         ImageView profileImageView = new ImageView(profileImage);
         profileImageView.setFitHeight(200);
         profileImageView.setFitWidth(200);
 
-        return new VBox(10, profileImageView, username);
+        VBox profileBox = new VBox(10, profileImageView, usernameLabel);
+        profileBox.setAlignment(Pos.CENTER);
+        profileBox.setLayoutX(550);
+        profileBox.setLayoutY(100);
+        profilePane.getChildren().add(profileBox);
+
     }
 
-    private VBox createStatsBox() {
+    public void createStats(String totalGames, String totalWon, String totalLoses, String totalFiches) {
+        Label games = new Label("Games played: " + totalGames);
+        Label win = new Label("Total wins: " + totalWon);
+        Label lose = new Label("Total losses: " + totalLoses);
+        Label fiches = new Label("Fiches: " + totalFiches);
 
-        Label gamesPlayed = new Label("Games played: " + "totalGamesSuo");
-        gamesPlayed.setStyle("-fx-font-size: 20px; -fx-text-fill: white;");
+        games.setStyle("-fx-font-size: 20px; -fx-text-fill: white");
+        win.setStyle("-fx-font-size: 20px; -fx-text-fill: white");
+        lose.setStyle("-fx-font-size: 20px; -fx-text-fill: white");
+        fiches.setStyle("-fx-font-size: 20px; -fx-text-fill: white");
 
-        Label gamesWon = new Label("Games won: " + "gamesWonSuo");
-        gamesWon.setStyle("-fx-font-size: 20px; -fx-text-fill: white;");
-
-        Label gamesLost = new Label("Games lost: " + "gamesLostSuo");
-        gamesLost.setStyle("-fx-font-size: 20px; -fx-text-fill: white;");
-
-        Label totalFiches = new Label("Total fiches: " + "totalFichesSuo");
-        totalFiches.setStyle("-fx-font-size: 20px; -fx-text-fill: white;");
-
-        return new VBox(10, gamesPlayed, gamesWon, gamesLost);
+        VBox statsBox = new VBox(10, games, win, lose, fiches);
+        statsBox.setLayoutY(400);
+        statsBox.setLayoutX(500);
+        profilePane.getChildren().add(statsBox);
     }
 
-    private HBox createLevelBox() {
-        Label level = new Label("Level: " + "levelSuo");
-        level.setStyle("-fx-font-size: 20px; -fx-text-fill: white;");
-        return new HBox(10, level);
+    public void createLevel(String level) {
+        Label liv = new Label("Level: " + level);
+        liv.setStyle("-fx-font-size: 20px; -fx-text-fill: white");
+        liv.setLayoutY(10);
+        liv.setLayoutX(1100);
+        //   HBox livBox = new HBox(10, liv);
+        profilePane.getChildren().add(liv);
+
     }
+
+    public void updateStats(int totalGames, int totalWon, int totalLosses, int totalFiches) {
+        VBox stats = (VBox) profilePane.getChildren().get(1);
+
+        Label games = (Label) stats.getChildren().get(0);
+        games.setText("Games played: " + totalGames);
+        Label win = (Label) stats.getChildren().get(1);
+        win.setText("Total wins: " + totalWon);
+        Label lose = (Label) stats.getChildren().get(2);
+        lose.setText("Total losses: " + totalLosses);
+        Label fiches = (Label) stats.getChildren().get(3);
+        fiches.setText("Fiches: " + totalFiches);
+
+    }
+
+    public void updateLevel(int level) {
+        Label liv = (Label) profilePane.getChildren().get(3);
+
+        liv.setText("Level: " + level);
+
+    }
+
+    public void updateProfile(String username, String avatar) {
+        VBox profile = (VBox) profilePane.getChildren().get(1);
+        Label user = (Label) profile.getChildren().get(1);
+        user.setText("Username: " + username);
+
+        ImageView image = (ImageView) profile.getChildren().getFirst();
+        Image im = new Image(getClass().getResource(avatar).toExternalForm());
+        image.setImage(im);
+    }
+
+
 }

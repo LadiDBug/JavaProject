@@ -14,5 +14,6 @@ public enum PackageType {
     HIT,
     DRAW_DEALER,
     RESET,
-    RESET_DECK
+    RESET_DECK,
+    UPDATE
 }
