@@ -585,7 +585,7 @@ public class Game implements WindowRoot {
     public void drawHitCard(Value value, Suit suit, int score, TypePlayer player) {
 
         drawAnimation(value, suit, player, score);
-
+        SceneManager.getInstance().playDrawCardAudio();
     }
 
     /**
@@ -612,7 +612,6 @@ public class Game implements WindowRoot {
 
     }
 
-    //TODO: sistemare le animazioni. Perchè vanno sempre al player
 
     /**
      * This method manages the animation of the card drawn.

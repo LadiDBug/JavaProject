@@ -17,6 +17,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.blackjack.controller.GameController;
@@ -49,8 +50,10 @@ public class Menu implements WindowRoot {
             controller.createStats();
             controller.createLevel();
         });
-        Button b3 = createButton("/org/blackjack/view/menuButton/settings_button.png", e -> SceneManager.getInstance().displayRoot(Root.SETTINGS));
+        Button b3 = createButton("/org/blackjack/view/menuButton/settings_button.png", e -> settingsDialog());
         Button b4 = createButton("/org/blackjack/view/menuButton/exit_button.png", e -> System.exit(0));
+
+
         DropShadow shadow = new DropShadow();
         shadow.setColor(Color.LIGHTYELLOW);
         b1.setOnMouseEntered(e -> b1.setEffect(shadow));
@@ -98,7 +101,9 @@ public class Menu implements WindowRoot {
     private void preGameQuestion() {
         Stage stage = new Stage();
         stage.initStyle(StageStyle.TRANSPARENT);
-        AnchorPane anchorPane1 = new AnchorPane();
+        stage.setAlwaysOnTop(true);
+        stage.initModality(Modality.APPLICATION_MODAL);
+
 
         // Radio button per la scelta dei giocatori
         RadioButton onePlayer = new RadioButton("1");
@@ -165,9 +170,6 @@ public class Menu implements WindowRoot {
 
         box2.setPrefSize(300, 200);
 
-        // Imposta stile trasparente al contenitore principale (AnchorPane)
-        anchorPane1.setStyle("-fx-background-color: transparent;");
-        anchorPane1.getChildren().add(box2);
 
         buttonExit.setOnAction(event -> {
             stage.close();
@@ -184,7 +186,7 @@ public class Menu implements WindowRoot {
         });
 
         // Create and display the scene
-        Scene scene = new Scene(anchorPane1, 300, 200);
+        Scene scene = new Scene(box2, 300, 200);
         scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
         stage.setScene(scene);
         stage.showAndWait();
@@ -202,20 +204,6 @@ public class Menu implements WindowRoot {
         return anchorPane;
     }
 
-    /**
-     * Applies a specific style to a button.
-     *
-     * @param button The button to style.
-     */
-    public void styleButton(Button button) {
-
-        button.setStyle(
-                "-fx-background-color: #006400;" +
-                        "-fx-text-fill: white;" +
-                        "-fx-font-size: 18px;" +
-                        "-fx-font-family: 'Helvetica';"
-        );
-    }
 
     /**
      * Applies a specific style to a RadioButton.
@@ -247,6 +235,7 @@ public class Menu implements WindowRoot {
         Stage betStage = new Stage();
         betStage.initStyle(StageStyle.TRANSPARENT);
         betStage.setAlwaysOnTop(true);
+        betStage.initModality(Modality.APPLICATION_MODAL);
 
         // Etichetta per il messaggio
         Label labelBet = new Label("Choose your bet:");
@@ -336,22 +325,35 @@ public class Menu implements WindowRoot {
     }
 
     public void resetPlayerSelected() {
-
-
         this.playersSelected = 1;
-        System.out.println("Ho resettato i giocatori" + playersSelected);
+        // System.out.println("Ho resettato i giocatori" + playersSelected);
     }
 
     public int getPlayerBet() {
         return playerBet;
     }
 
-    public int getNumberOfPlayers() {
-        return playersSelected;
-    }
+    public void settingsDialog() {
+        Stage settingStage = new Stage();
+        settingStage.initStyle(StageStyle.TRANSPARENT);
+        settingStage.setAlwaysOnTop(true);
+        settingStage.initModality(Modality.APPLICATION_MODAL);
 
-    public void setPlayerBet(int playerBet) {
-        this.playerBet = playerBet;
-    }
 
+        Label setting = new Label("Settings");
+        setting.setStyle("-fx-font-size: 16px; -fx-font-fx-family: 'Verdana'; -fx-text-fill: white;");
+
+        Button close = new Button("Close");
+        close.setStyle("-fx-background-color: #8B0000; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;");
+
+        VBox box = new VBox(20, setting, close);
+        box.setAlignment(Pos.CENTER);
+        close.setOnAction(e -> settingStage.close());
+        Scene setScene = new Scene(box, 300, 200);
+        setScene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+        settingStage.setScene(setScene);
+        settingStage.showAndWait();
+
+
+    }
 }

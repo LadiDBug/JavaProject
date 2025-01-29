@@ -3,6 +3,8 @@ package org.blackjack.view;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import org.blackjack.api.*;
 import org.blackjack.exception.CantBuildClassException;
@@ -33,12 +35,13 @@ public class SceneManager implements Observer {
 
     private final Stage window;
     private static SceneManager instance;
-
+    private static MediaPlayer audioPlayer;
+    private MediaPlayer drawCardAudio;
 
     private SceneManager(Stage window) {
         this.window = window;
         window.setScene(new Scene(new AnchorPane()));
-
+        startMusic();
     }
 
     public static SceneManager getInstance() {
@@ -114,6 +117,25 @@ public class SceneManager implements Observer {
         Platform.runLater(() -> profileView.createLevel(level));
     }
 
+    public void startMusic() {
+        if (audioPlayer == null) {
+            String musicPath = getClass().getResource("/org/blackjack/view/audio/sound.mp3").toString();
+            Media media = new Media(musicPath);
+            audioPlayer = new MediaPlayer(media);
+            audioPlayer.setOnEndOfMedia(() -> audioPlayer.seek(audioPlayer.getStartTime()));
+            audioPlayer.setVolume(0.4);
+            audioPlayer.play();
+        }
+    }
+
+    public void playDrawCardAudio() {
+        String musicPath = getClass().getResource("/org/blackjack/view/audio/card.mp3").toString();
+
+        Media media = new Media(musicPath);
+        drawCardAudio = new MediaPlayer(media);
+        drawCardAudio.setVolume(0.4);
+        drawCardAudio.play();
+    }
 
     @Override
     public void update(Observable o, Object arg) {

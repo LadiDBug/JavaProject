@@ -102,7 +102,6 @@ public class Profile implements WindowRoot {
 
 
     public void createProfileBox(String username, String imagePath) {
-        System.out.println("Sono qui" + username + " " + imagePath);
         Label usernameLabel = new Label("Username: " + username);
         usernameLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: white;");
 
