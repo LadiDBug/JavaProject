@@ -5,32 +5,54 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.blackjack.controller.GameController;
 
 
 public class Profile implements WindowRoot {
     private final AnchorPane profilePane;
-
+    private final GameController controller;
+    private String avatarPath;
 
     public Profile() {
 
         profilePane = new AnchorPane();
-
+        this.controller = new GameController();
+        this.avatarPath = controller.getData("Avatar");
 
         //Bottone per tornare indiero
         Button backButton = createBackButton();
         backButton.setLayoutX(10);
         backButton.setLayoutY(10);
 
+        Button modifyUsernameB = createButton("/org/blackjack/view/username.png");
+        Button modifyAvatarB = createButton("/org/blackjack/view/avatar_button.png");
+        addShadow(modifyUsernameB);
+        addShadow(modifyAvatarB);
+
+        HBox choice = new HBox(5, modifyUsernameB, modifyAvatarB);
+        choice.setLayoutX(850);
+        choice.setLayoutY(600);
+        choice.setStyle("-fx-background-color: transparent");
+        modifyUsernameB.setOnAction(e -> askUsername());
+        modifyAvatarB.setOnAction(e -> askAvatar());
+
+        VBox profileBox = createProfileBox();
+        VBox statsBox = createStats();
+        HBox levelBox = createLevel();
+
         //Aggiungo elementi al profilePane
-        profilePane.getChildren().addAll(backButton);
+        profilePane.getChildren().addAll(backButton, choice, profileBox, statsBox, levelBox);
 
         profilePane.setStyle("-fx-background-image: url('/org/blackjack/view/sfondo_profilo.jpg');" +
                 "-fx-background-size: cover;");
@@ -101,11 +123,11 @@ public class Profile implements WindowRoot {
     }
 
 
-    public void createProfileBox(String username, String imagePath) {
-        Label usernameLabel = new Label("Username: " + username);
+    public VBox createProfileBox() {
+        Label usernameLabel = new Label("Username: " + controller.getData("Username"));
         usernameLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: white;");
 
-        Image profileImage = new Image(getClass().getResource(imagePath).toExternalForm());
+        Image profileImage = new Image(getClass().getResource(controller.getData("Avatar")).toExternalForm());
         ImageView profileImageView = new ImageView(profileImage);
         profileImageView.setFitHeight(200);
         profileImageView.setFitWidth(200);
@@ -114,15 +136,15 @@ public class Profile implements WindowRoot {
         profileBox.setAlignment(Pos.CENTER);
         profileBox.setLayoutX(550);
         profileBox.setLayoutY(100);
-        profilePane.getChildren().add(profileBox);
+        return profileBox;
 
     }
 
-    public void createStats(String totalGames, String totalWon, String totalLoses, String totalFiches) {
-        Label games = new Label("Games played: " + totalGames);
-        Label win = new Label("Total wins: " + totalWon);
-        Label lose = new Label("Total losses: " + totalLoses);
-        Label fiches = new Label("Fiches: " + totalFiches);
+    public VBox createStats() {
+        Label games = new Label("Games played: " + controller.getData("TotalGames"));
+        Label win = new Label("Total wins: " + controller.getData("TotalWins"));
+        Label lose = new Label("Total losses: " + controller.getData("TotalLosses"));
+        Label fiches = new Label("Fiches: " + controller.getData("TotalFiches"));
 
         games.setStyle("-fx-font-size: 20px; -fx-text-fill: white");
         win.setStyle("-fx-font-size: 20px; -fx-text-fill: white");
@@ -132,22 +154,25 @@ public class Profile implements WindowRoot {
         VBox statsBox = new VBox(10, games, win, lose, fiches);
         statsBox.setLayoutY(400);
         statsBox.setLayoutX(500);
-        profilePane.getChildren().add(statsBox);
+        return statsBox;
     }
 
-    public void createLevel(String level) {
-        Label liv = new Label("Level: " + level);
+    public HBox createLevel() {
+        Label liv = new Label("Level: " + controller.getData("Level"));
         liv.setStyle("-fx-font-size: 20px; -fx-text-fill: white");
-        liv.setLayoutY(10);
-        liv.setLayoutX(1100);
-        //   HBox livBox = new HBox(10, liv);
-        profilePane.getChildren().add(liv);
+
+        HBox levelBox = new HBox(liv);
+        levelBox.setAlignment(Pos.CENTER);
+        levelBox.setStyle("-fx-background-color: darkgreen; -fx-background-radius: 10;");
+        levelBox.setLayoutY(10);
+        levelBox.setLayoutX(1150);
+        return levelBox;
 
     }
 
     public void updateStats(int totalGames, int totalWon, int totalLosses, int totalFiches) {
-        VBox stats = (VBox) profilePane.getChildren().get(1);
-
+        VBox stats = (VBox) profilePane.getChildren().get(3);
+        System.out.println(totalGames);
         Label games = (Label) stats.getChildren().get(0);
         games.setText("Games played: " + totalGames);
         Label win = (Label) stats.getChildren().get(1);
@@ -160,21 +185,162 @@ public class Profile implements WindowRoot {
     }
 
     public void updateLevel(int level) {
-        Label liv = (Label) profilePane.getChildren().get(3);
 
+        HBox levelBox = (HBox) profilePane.getChildren().get(4);
+        Label liv = (Label) levelBox.getChildren().get(0);
         liv.setText("Level: " + level);
 
     }
 
     public void updateProfile(String username, String avatar) {
-        VBox profile = (VBox) profilePane.getChildren().get(1);
-        Label user = (Label) profile.getChildren().get(1);
-        user.setText("Username: " + username);
+        VBox profile = (VBox) profilePane.getChildren().get(2);
 
-        ImageView image = (ImageView) profile.getChildren().getFirst();
-        Image im = new Image(getClass().getResource(avatar).toExternalForm());
-        image.setImage(im);
+        Label usernameLabel = (Label) profile.getChildren().get(1);
+        usernameLabel.setText("Username: " + username);
+
+        Image profileImage = new Image(getClass().getResource(avatar).toExternalForm());
+        ImageView profileImageView = (ImageView) profile.getChildren().get(0);
+        profileImageView.setImage(profileImage);
+
+    }
+
+    private void modifyProfile(String key, String value) {
+        if (key == "Username") {
+            controller.replaceData("Username", value);
+            updateProfile(value, avatarPath);
+        } else {
+            controller.replaceData("Avatar", value);
+            updateProfile(controller.getData("Username"), value);
+        }
     }
 
 
+    private Button createButton(String imagePath) {
+        Button button = new Button();
+        button.setStyle("-fx-background-color: transparent");
+        Image icon = new Image(getClass().getResource(imagePath).toExternalForm());
+        ImageView iconView = new ImageView(icon);
+        iconView.setFitHeight(70);
+        iconView.setFitWidth(200);
+        button.setGraphic(iconView);
+        return button;
+    }
+
+    private void askUsername() {
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.initStyle(StageStyle.TRANSPARENT);
+        stage.setAlwaysOnTop(true);
+
+        Label ask = new Label("Insert username");
+        ask.setStyle("-fx-font-size: 14px; -fx-font-family: Verdana; -fx-text-fill: white;");
+        ask.setAlignment(Pos.CENTER);
+
+        TextField username = new TextField();
+        Button confirm = new Button("Confirm");
+        Button cancel = new Button("Cancel");
+        addShadow(confirm);
+        addShadow(cancel);
+        confirm.setStyle("-fx-background-colodr: #FFD700; -fx-text-fill: black; -fx-font-size: 14px; -fx-font-weight: bold;"); // Oro
+        cancel.setStyle("-fx-background-color: #8B0000; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;");
+
+        confirm.setOnAction(e -> {
+            modifyProfile("Username", username.getText());
+            stage.close();
+        });
+
+        cancel.setOnAction(e -> stage.close());
+        HBox confirmBox = new HBox(10, confirm, cancel);
+
+        VBox box = new VBox(10.0, ask, username, confirmBox);
+        box.setStyle(
+                "-fx-background-color:#003100;" +
+                        "-fx-background-position: center;" +
+                        "-fx-padding: 20px; " +
+                        "fx-border-radius: 20;" +
+                        "-fx-background-radius: 20;"
+        );
+        box.setAlignment(Pos.CENTER);
+
+        Scene scene = new Scene(box, 250, 150);
+        scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
+
+    private void askAvatar() {
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.initStyle(StageStyle.TRANSPARENT);
+        stage.setAlwaysOnTop(true);
+
+        Label ask = new Label("Choose your avatar");
+        ask.setStyle("-fx-font-size: 14px; -fx-font-family: Verdana; -fx-text-fill: white;");
+        ask.setAlignment(Pos.CENTER);
+
+        Button confirm = new Button("Confirm");
+        Button cancel = new Button("Cancel");
+        cancel.setOnAction(e -> stage.close());
+        confirm.setOnAction(e -> {
+            stage.close();
+            modifyProfile("Avatar", avatarPath);
+        });
+        addShadow(confirm);
+        addShadow(cancel);
+        confirm.setStyle("-fx-background-colodr: #FFD700; -fx-text-fill: black; -fx-font-size: 14px; -fx-font-weight: bold;"); // Oro
+        cancel.setStyle("-fx-background-color: #8B0000; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;");
+
+        Button a1 = createButtonAvatar("/org/blackjack/view/avatars/girl.png");
+        Button a2 = createButtonAvatar("/org/blackjack/view/avatars/blonde_girl.png");
+        Button a3 = createButtonAvatar("/org/blackjack/view/avatars/gamer.png");
+        Button a4 = createButtonAvatar("/org/blackjack/view/avatars/man.png");
+        a1.setOnAction(e -> avatarPath = "/org/blackjack/view/avatars/girl.png");
+        a2.setOnAction(e -> avatarPath = "/org/blackjack/view/avatars/blonde_girl.png");
+        a3.setOnAction(e -> avatarPath = "/org/blackjack/view/avatars/gamer.png");
+        a4.setOnAction(e -> avatarPath = "/org/blackjack/view/avatars/man.png");
+
+        addShadow(a1);
+        addShadow(a2);
+        addShadow(a3);
+        addShadow(a4);
+
+        HBox b1 = new HBox(10, a1, a2, a3, a4);
+
+        HBox confirmBox = new HBox(10, confirm, cancel);
+        confirmBox.setAlignment(Pos.CENTER);
+
+        VBox box = new VBox(20.0, ask, b1, confirmBox);
+        box.setStyle(
+                "-fx-background-color:#003100;" +
+                        "-fx-background-position: center;" +
+                        "-fx-padding: 20px; " +
+                        "fx-border-radius: 20;" +
+                        "-fx-background-radius: 20;"
+        );
+        box.setAlignment(Pos.CENTER);
+        Scene scene = new Scene(box, 500, 220);
+        scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+        stage.setScene(scene);
+        stage.showAndWait();
+
+    }
+
+    private Button createButtonAvatar(String imagePath) {
+        Button button = new Button();
+        button.setStyle("-fx-background-color: transparent");
+        Image icon = new Image(getClass().getResource(imagePath).toExternalForm());
+        ImageView iconView = new ImageView(icon);
+        iconView.setFitHeight(100);
+        iconView.setFitWidth(100);
+        button.setGraphic(iconView);
+        return button;
+    }
+
+    private void addShadow(Button b) {
+        DropShadow shadow = new DropShadow();
+        shadow.setColor(Color.LIGHTGRAY);
+        b.setOnMouseEntered(e -> b.setEffect(shadow));
+        b.setOnMouseExited(e -> b.setEffect(null));
+
+    }
 }

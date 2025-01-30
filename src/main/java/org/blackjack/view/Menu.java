@@ -6,10 +6,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -46,9 +43,7 @@ public class Menu implements WindowRoot {
         Button b1 = createButton("/org/blackjack/view/menuButton/play_button.png", e -> preGameQuestion());
         Button b2 = createButton("/org/blackjack/view/menuButton/profile_button.png", e -> {
             SceneManager.getInstance().displayRoot(Root.PROFILE);
-            controller.createProfile();
-            controller.createStats();
-            controller.createLevel();
+
         });
         Button b3 = createButton("/org/blackjack/view/menuButton/settings_button.png", e -> settingsDialog());
         Button b4 = createButton("/org/blackjack/view/menuButton/exit_button.png", e -> System.exit(0));
@@ -186,7 +181,7 @@ public class Menu implements WindowRoot {
         });
 
         // Create and display the scene
-        Scene scene = new Scene(box2, 300, 200);
+        Scene scene = new Scene(box2, 300, 250);
         scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
         stage.setScene(scene);
         stage.showAndWait();
@@ -339,15 +334,54 @@ public class Menu implements WindowRoot {
         settingStage.setAlwaysOnTop(true);
         settingStage.initModality(Modality.APPLICATION_MODAL);
 
+        Label settings = new Label("Settings");
+        settings.setStyle("-fx-font-size: 22px; -fx-font-family: 'Verdana'; -fx-text-fill: white;");
 
-        Label setting = new Label("Settings");
-        setting.setStyle("-fx-font-size: 16px; -fx-font-fx-family: 'Verdana'; -fx-text-fill: white;");
+        Label settingVol = new Label("Volume: ");
+        settingVol.setStyle("-fx-font-size: 18px; -fx-font-fx-family: 'Verdana'; -fx-text-fill: white;");
 
         Button close = new Button("Close");
         close.setStyle("-fx-background-color: #8B0000; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;");
 
-        VBox box = new VBox(20, setting, close);
+        Slider volumeSlider = new Slider();
+        volumeSlider.setMin(0);
+        volumeSlider.setMax(100);
+        volumeSlider.setBlockIncrement(5);
+        volumeSlider.setValue(50);
+        volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            double volume = newValue.doubleValue() / 100;
+            SceneManager.getInstance().setVolume(volume);
+        });
+
+        HBox volumeBox = new HBox(10, settingVol, volumeSlider);
+        volumeBox.setAlignment(Pos.CENTER_LEFT);
+
+        ToggleButton effects = new ToggleButton("Yes");
+        effects.setSelected(true);
+        effects.setOnAction(e -> {
+            if (effects.isSelected()) {
+                SceneManager.getInstance().setEffects(true);
+                effects.setText("Yes");
+            } else {
+                SceneManager.getInstance().setEffects(false);
+                effects.setText("No");
+            }
+        });
+
+
+        Label effectLabel = new Label("Sound Effects: ");
+        effectLabel.setStyle("-fx-font-size: 16px; -fx-font-family: 'Verdana'; -fx-text-fill: white;");
+        HBox effectBox = new HBox(20, effectLabel, effects);
+
+
+        VBox box = new VBox(20, settings, volumeBox, effectBox, close);
         box.setAlignment(Pos.CENTER);
+        box.setStyle("-fx-background-color:#003100;" +
+                "-fx-background-position: center;" +
+                "-fx-padding: 20px; " +
+                "fx-border-radius: 20;" +
+                "-fx-background-radius: 20;");
+
         close.setOnAction(e -> settingStage.close());
         Scene setScene = new Scene(box, 300, 200);
         setScene.setFill(javafx.scene.paint.Color.TRANSPARENT);

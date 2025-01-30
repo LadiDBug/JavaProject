@@ -341,5 +341,14 @@ public class BlackJackGame extends Observable {
         clearChanged();
     }
 
+    public String readData(String key) {
+        return saveData.readFromFile(key);
+    }
+
+    //Scrivi i nuovi dati
+    public void replaceData(String key, String newValue) {
+        saveData.updateData(key, newValue);
+    }
+
 
 }

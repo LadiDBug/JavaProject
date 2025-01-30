@@ -53,7 +53,7 @@ public class SaveData {
         return null;
     }
 
-    private void updateData(String key, String newValue) {
+    public void updateData(String key, String newValue) {
         try {
             List<String> lines = new ArrayList<>(Files.readAllLines(Paths.get(path)));
 

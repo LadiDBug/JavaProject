@@ -6,6 +6,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.blackjack.api.*;
 import org.blackjack.exception.CantBuildClassException;
 
@@ -37,6 +38,7 @@ public class SceneManager implements Observer {
     private static SceneManager instance;
     private static MediaPlayer audioPlayer;
     private MediaPlayer drawCardAudio;
+    private boolean soundEffect = true;
 
     private SceneManager(Stage window) {
         this.window = window;
@@ -92,30 +94,12 @@ public class SceneManager implements Observer {
         return gameView.getPlayAgain();
     }
 
-    public void setPlayAgain(boolean play) {
-        Game gameView = (Game) Root.GAME.getWindowRoot();
-        gameView.setPlayAgain(play);
-    }
 
     public void resetPlayerSel() {
         Menu menuView = (Menu) Root.MENU.getWindowRoot();
         menuView.resetPlayerSelected();
     }
 
-    public void createProfile(String username, String imagePath) {
-        Profile profileView = (Profile) Root.PROFILE.getWindowRoot();
-        Platform.runLater(() -> profileView.createProfileBox(username, imagePath));
-    }
-
-    public void createStats(String totalGames, String totalWon, String totalLoses, String totalFiches) {
-        Profile profileView = (Profile) Root.PROFILE.getWindowRoot();
-        Platform.runLater(() -> profileView.createStats(totalGames, totalWon, totalLoses, totalFiches));
-    }
-
-    public void createLevel(String level) {
-        Profile profileView = (Profile) Root.PROFILE.getWindowRoot();
-        Platform.runLater(() -> profileView.createLevel(level));
-    }
 
     public void startMusic() {
         if (audioPlayer == null) {
@@ -128,13 +112,35 @@ public class SceneManager implements Observer {
         }
     }
 
-    public void playDrawCardAudio() {
-        String musicPath = getClass().getResource("/org/blackjack/view/audio/card.mp3").toString();
 
-        Media media = new Media(musicPath);
-        drawCardAudio = new MediaPlayer(media);
-        drawCardAudio.setVolume(0.4);
-        drawCardAudio.play();
+    public void setVolume(double volume) {
+        if (audioPlayer != null) {
+            audioPlayer.setVolume(volume);
+        }
+    }
+
+    public void drawCardAudio() {
+        if (soundEffect) {
+            if (drawCardAudio == null) {
+                String musicPath = getClass().getResource("/org/blackjack/view/audio/draw_card.mp3").toString();
+                Media media = new Media(musicPath);
+                drawCardAudio = new MediaPlayer(media);
+                drawCardAudio.setVolume(0.4);
+            } else {
+                drawCardAudio.stop();
+                drawCardAudio.seek(Duration.ZERO);
+            }
+            drawCardAudio.play();
+        }
+    }
+
+    public void setEffects(boolean soundEffect) {
+        this.soundEffect = soundEffect;
+        if (!soundEffect) {
+            if (drawCardAudio != null) {
+                drawCardAudio.stop();
+            }
+        }
     }
 
     @Override
@@ -198,6 +204,7 @@ public class SceneManager implements Observer {
                 case UPDATE -> {
                     UpdatePackage updatePackage = (UpdatePackage) dataPackage;
                     Platform.runLater(() -> {
+                        System.out.println("Update package received");
                         profileView.updateProfile(updatePackage.username(), updatePackage.avatar());
                         profileView.updateLevel(updatePackage.level());
                         profileView.updateStats(updatePackage.totalGames(), updatePackage.wonGames(), updatePackage.lostGames(), updatePackage.totalFiches());

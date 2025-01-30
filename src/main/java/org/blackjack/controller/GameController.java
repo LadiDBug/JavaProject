@@ -8,10 +8,6 @@ import org.blackjack.model.Player;
 import org.blackjack.model.RealPlayer;
 import org.blackjack.view.SceneManager;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +52,7 @@ public class GameController {
 
             //Puntata del giocatore
             RealPlayer realPlayer = (RealPlayer) game.getPlayers().get(0);
-            game.updateData(realPlayer);
+
             int bet = sceneManager.getBet();
             realPlayer.setBet(bet);  //setto la puntata
             realPlayer.toBet();  //tolgo le fiches al giocatore
@@ -65,10 +61,11 @@ public class GameController {
 
             //System.out.println("Arrivo qui2");
             handleTurn();
-
+            game.updateData(realPlayer);
             sceneManager.showPlayAgain();
             sleep(1000);
             play = getIfPlayAgain();
+
             if (!play) {
                 //se non vuole giocare piu esco dal while
                 break;
@@ -205,32 +202,13 @@ public class GameController {
     }
 
 
-    //Metodo per creare la prima volta il profilo con username e avatar
-    public void createProfile() {
-        sceneManager.createProfile(getData("Username"), getData("Avatar"));
-    }
-
-    public void createStats() {
-        sceneManager.createStats(getData("TotalGames"), getData("TotalWins"), getData("TotalLosses"), getData("TotalFiches"));
-    }
-
-    public void createLevel() {
-        sceneManager.createLevel(getData("Level"));
-    }
-
     //Metodo per leggere i dati
-    public String getData(String value) {
-        try (BufferedReader br = new BufferedReader(new FileReader(new File(path)))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.startsWith(value)) {
-                    return line.split(" = ")[1];
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public String getData(String key) {
+        return game.readData(key);
+    }
+
+    public void replaceData(String key, String newValue) {
+        game.replaceData(key, newValue);
     }
 
 
