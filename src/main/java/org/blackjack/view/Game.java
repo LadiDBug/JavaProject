@@ -36,19 +36,70 @@ import java.util.List;
 
 public class Game implements WindowRoot {
 
+    /**
+     * The AnchorPane that holds everything you see in the game.
+     */
     private final AnchorPane gamePane;
-    private ImageView currentPlayerAvatar;
+    //  private ImageView currentPlayerAvatar;
+
+    /**
+     * The VBox that holds the cards, the username and the score of the player.
+     */
     private VBox playerBox;
+
+    /**
+     * The VBox that holds the cards, the username and the score of the dealer.
+     */
     private VBox dealerBox;
+
+    /**
+     * The VBox that holds the cards, the username and the score of the bot1.
+     */
     private VBox bot1Box;
+
+    /**
+     * The VBox that holds the cards, the username and the score of the bot2.
+     */
     private VBox bot2Box;
+
+    /**
+     * The VBox that holds the cards, the username and the score of the bot3.
+     */
     private VBox bot3Box;
+
+    /**
+     * The player's choice (1 for Hit, 2 for Stand).
+     */
     private int playerChoice;
+
+    /**
+     * The dealer's score.
+     */
     private int dealerScore = 0;
+
+    /**
+     * The score of the hidden card.
+     */
     private int hideScore;
+
+    /**
+     * The hidden card.
+     */
     private ImageView hiddenCard;
+
+    /**
+     * The hidden card value.
+     */
     private Value hiddenValue;
+
+    /**
+     * The hidden card suit.
+     */
     private Suit hiddenSuit;
+
+    /**
+     * A boolean value to determine if the player wants to play again.
+     */
     private boolean playAgain;
 
 

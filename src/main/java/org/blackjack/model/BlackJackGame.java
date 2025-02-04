@@ -18,12 +18,35 @@ import java.util.stream.IntStream;
  * @author Diana Pamfile
  */
 public class BlackJackGame extends Observable {
+
+    /**
+     * A list of players in the game.
+     */
     private List<Player> players;
+
+    /**
+     * The dealer in the game.
+     */
     private Dealer dealer;
+
+    /**
+     * The deck of cards.
+     */
     private Deck deck;
+
+    /**
+     * The saveData object used to save the data of the player.
+     */
     private SaveData saveData;
 
+    /**
+     * Usernames of the computer players.
+     */
     private static final String[] USERNAMES = {"Mario", "Michael", "Batman"};
+
+    /**
+     * Avatars of the computer players.
+     */
     private static final String[] AVATARS = {
             "/org/blackjack/view/super-mario.png",
             "/org/blackjack/view/michaelangelo.png",

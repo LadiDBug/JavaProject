@@ -10,7 +10,14 @@ import java.util.List;
  */
 public class Hand {
 
+    /**
+     * List of GameCard objects representing the hand of the player.
+     */
     private List<GameCard> hand;
+
+    /**
+     * The total points of the hand.
+     */
     private int totalPoints;
 
     /*

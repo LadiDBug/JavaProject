@@ -8,7 +8,14 @@ package org.blackjack.model;
  **/
 public class GameCard implements Card {
 
+    /**
+     * The suit of the card.
+     */
     private final Suit suit;
+
+    /**
+     * The value of the card.
+     */
     private final Value value;
     private boolean visible;
 

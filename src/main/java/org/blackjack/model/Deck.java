@@ -13,7 +13,15 @@ import java.util.List;
  * @author Diana Pamfile
  */
 public class Deck {
+
+    /**
+     * List of GameCard objects representing the deck of cards.
+     */
     private List<GameCard> deck;
+
+    /**
+     * The instance of the deck.
+     */
     private static Deck instance;
 
     /**

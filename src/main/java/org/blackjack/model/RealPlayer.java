@@ -9,12 +9,40 @@ import org.blackjack.view.TypePlayer;
  * @author Diana Pamfile
  */
 public class RealPlayer extends Player {
+
+    /**
+     * The level of the player.
+     */
     private int level;
+
+    /**
+     * The total number of games played by the player.
+     */
     private int totalGames;
+
+    /**
+     * The number of games won by the player.
+     */
     private int wonGames;
+
+    /**
+     * The number of games lost by the player.
+     */
     private int lostGames;
+
+    /**
+     * The total number of fiches owned by the player.
+     */
     private int totalFiches;
+
+    /**
+     * The current bet of the player.
+     */
     private int bet;
+
+    /**
+     * The save data object that manages the player's data.
+     */
     private SaveData saveData;
 
     /**

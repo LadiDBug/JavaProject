@@ -13,6 +13,9 @@ import java.util.List;
  */
 public class SaveData {
 
+    /**
+     * The path of the file where the data is saved.
+     */
     private String path;
 
     /**

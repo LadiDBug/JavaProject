@@ -19,10 +19,29 @@ import java.util.List;
  */
 public class GameController {
 
+    /**
+     * The game instance, the model part of the MVC pattern.
+     */
     private final BlackJackGame game;
+
+    /**
+     * The thread that runs the game.
+     */
     private Thread gameThread;
+
+    /**
+     * The scene manager instance, the view part of the MVC pattern.
+     */
     private final SceneManager sceneManager;
+
+    /**
+     * The play variable that is used to check if the player wants to play again.
+     */
     private boolean play;
+
+    /**
+     * The path of the file where the data is stored.
+     */
     private final String path = "src/main/data/userData.txt";
 
     /**

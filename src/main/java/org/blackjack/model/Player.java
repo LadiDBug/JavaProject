@@ -9,11 +9,35 @@ import org.blackjack.view.TypePlayer;
  * @author Diana Pamfile
  */
 public abstract class Player {
+
+    /**
+     * The avatar of the player.
+     */
     protected String avatar;
+
+    /**
+     * Username of the player.
+     */
     protected String username;
+
+    /**
+     * The player's hand.
+     */
     protected Hand hand;
+
+    /**
+     * The player's score.
+     */
     protected int score;
+
+    /**
+     * The player's standing status.
+     */
     protected boolean standing;
+
+    /**
+     * The type of the player.
+     */
     protected TypePlayer type;
 
     /**

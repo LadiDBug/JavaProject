@@ -53,10 +53,29 @@ public class SceneManager implements Observer {
         }
     }
 
+    /**
+     * The window of the game.
+     */
     private final Stage window;
+
+    /**
+     * An instance of the SceneManager.
+     */
     private static SceneManager instance;
+
+    /**
+     * The background music of the game.
+     */
     private static MediaPlayer audioPlayer;
+
+    /**
+     * The sound effect of the draw card.
+     */
     private MediaPlayer drawCardAudio;
+
+    /**
+     * A boolean value used to enable or disable the sound effects.
+     */
     private boolean soundEffect = true;
 
     /**

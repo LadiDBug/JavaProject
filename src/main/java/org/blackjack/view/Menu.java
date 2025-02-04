@@ -27,9 +27,24 @@ import org.blackjack.controller.GameController;
  */
 public class Menu implements WindowRoot {
 
+    /**
+     * The AnchorPane that contains the main menu.
+     */
     private final AnchorPane anchorPane;
+
+    /**
+     * The GameController that manages the game.
+     */
     private final GameController controller;
+
+    /**
+     * The number of players in the game selected by the user.
+     */
     private int playersSelected = 1;
+
+    /**
+     * The bet of the player.
+     */
     private int playerBet = 20;
 
 

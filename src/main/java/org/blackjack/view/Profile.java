@@ -24,8 +24,19 @@ import org.blackjack.controller.GameController;
  * @author Diana Pamfile
  */
 public class Profile implements WindowRoot {
+    /**
+     * The AnchorPane of the profile.
+     */
     private final AnchorPane profilePane;
+
+    /**
+     * An instance of the GameController.
+     */
     private final GameController controller;
+
+    /**
+     * The path of the avatar.
+     */
     private String avatarPath;
 
     /**
