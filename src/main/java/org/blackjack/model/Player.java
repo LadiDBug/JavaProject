@@ -34,6 +34,7 @@ public abstract class Player {
     /**
      * Getter and setter of all the attributes.
      */
+
     public TypePlayer getType() {
         return type;
     }
@@ -54,8 +55,6 @@ public abstract class Player {
         this.username = username;
     }
 
-    ;
-
     public Hand getHand() {
         return hand;
     }
@@ -72,8 +71,6 @@ public abstract class Player {
         this.score = score;
     }
 
-    ;
-
     public boolean getstanding() {
         return standing;
     }
@@ -81,6 +78,7 @@ public abstract class Player {
     public void setstanding(boolean standing) {
         this.standing = standing;
     }
+
 
     /**
      * Adds a card to the player's hand when the player wants to hit.
@@ -103,6 +101,7 @@ public abstract class Player {
         }
         return false;
     }
+
 
     /**
      * Calculates and returns the player's current score.

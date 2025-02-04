@@ -1,7 +1,7 @@
 Username = Anna
-TotalGames = 61
+TotalGames = 62
 TotalWins = 22
 TotalLosses = 35
-TotalFiches = 3040
+TotalFiches = 3000
 Avatar = /org/blackjack/view/avatars/girl.png
 Level = 4

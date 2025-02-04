@@ -24,6 +24,9 @@ public class Deck {
         initializeDeck();
     }
 
+    /**
+     * @return the instance of the deck.
+     */
     public static Deck getInstance() {
         if (instance == null) {
             instance = new Deck();
@@ -48,6 +51,7 @@ public class Deck {
         Collections.shuffle(deck);
     }
 
+
     /**
      * Draws the top card from the deck and remove it from the deck.
      *
@@ -57,12 +61,14 @@ public class Deck {
         return deck.remove(0);
     }
 
+
     /**
      * @return the number of remaining cards in the deck.
      */
     public int remainingCards() {
         return deck.size();
     }
+
 
     /*
      * Refills the deck if the number of remaining cards is less than 39 cards.
@@ -74,7 +80,5 @@ public class Deck {
         }
     }
 
-    public int getDeckSize() {
-        return deck.size();
-    }
+
 }

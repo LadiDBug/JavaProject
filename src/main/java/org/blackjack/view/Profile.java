@@ -18,19 +18,26 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.blackjack.controller.GameController;
 
-
+/**
+ * This class represents the profile window in the game.
+ *
+ * @author Diana Pamfile
+ */
 public class Profile implements WindowRoot {
     private final AnchorPane profilePane;
     private final GameController controller;
     private String avatarPath;
 
+    /**
+     * The constructor. It initializes the principal box of the pane,
+     * backButton, the choice of modify username/avatar, profileBox, statsBox and levelBox.
+     */
     public Profile() {
 
         profilePane = new AnchorPane();
         this.controller = new GameController();
         this.avatarPath = controller.getData("Avatar");
 
-        //Bottone per tornare indiero
         Button backButton = createBackButton();
         backButton.setLayoutX(10);
         backButton.setLayoutY(10);
@@ -51,7 +58,6 @@ public class Profile implements WindowRoot {
         VBox statsBox = createStats();
         HBox levelBox = createLevel();
 
-        //Aggiungo elementi al profilePane
         profilePane.getChildren().addAll(backButton, choice, profileBox, statsBox, levelBox);
 
         profilePane.setStyle("-fx-background-image: url('/org/blackjack/view/sfondo_profilo.jpg');" +
@@ -64,34 +70,38 @@ public class Profile implements WindowRoot {
     }
 
 
+    /**
+     * This method creates the backButton to return to the menu.
+     *
+     * @return backButton
+     */
     private Button createBackButton() {
         Button backButton = new Button();
         backButton.setStyle("-fx-background-color: trasparent");
 
-        //Adding an icon to the button
         Image backIcon = new Image(getClass().getResource("left.png").toExternalForm());
         ImageView backIconView = new ImageView(backIcon);
         backIconView.setFitHeight(40);
         backIconView.setFitWidth(40);
         backButton.setGraphic(backIconView);
 
-        // Adding an action on the button
         backButton.setOnAction(event -> showConfirmDialog());
         return backButton;
     }
 
+    /**
+     * Shows the confirm dialog to return or not to the menu.
+     */
     private void showConfirmDialog() {
         Stage dialog = new Stage();
-        // Utility = minimal
         dialog.initStyle(StageStyle.TRANSPARENT);
         dialog.setAlwaysOnTop(true);
-        dialog.initModality(Modality.APPLICATION_MODAL); // Blocca interazione con la finestra principale
+        dialog.initModality(Modality.APPLICATION_MODAL);
 
         Label confirmLabel = new Label("Are you sure?");
         Button yesButton = new Button("Yes");
         yesButton.setStyle(
                 "-fx-background-color: #007f00; -fx-text-fill: white; -fx-font-size: 14px;"
-                // "-fx-border-color: gold; -fx-border-width: 2px; -fx-border-radius: 5px;"
         );
 
         yesButton.setOnAction(event -> {
@@ -102,7 +112,6 @@ public class Profile implements WindowRoot {
         Button noButton = new Button("No");
         noButton.setStyle(
                 "-fx-background-color: #b30000; -fx-text-fill: white; -fx-font-size: 14px;"
-                //      "-fx-border-color: gold; -fx-border-width: 2px; -fx-border-radius: 5px;"
         );
         noButton.setOnAction(event -> dialog.close());
 
@@ -112,7 +121,7 @@ public class Profile implements WindowRoot {
         VBox dialogLayout = new VBox(10, confirmLabel, buttons);
         dialogLayout.setAlignment(Pos.CENTER);
         dialogLayout.setStyle(
-                "-fx-background-color: #32CD32; -fx-border-color: gold; -fx-border-width: 3px; " +
+                "-fx-background-color: #32CD32; -fx-border-color: withe; -fx-border-width: 3px; " +
                         "-fx-border-radius: 10; -fx-background-radius: 10;");
 
 
@@ -123,6 +132,11 @@ public class Profile implements WindowRoot {
     }
 
 
+    /**
+     * Create a profile box, which contains the username and the avatar of the player.
+     *
+     * @return profileBOx, a VBox.
+     */
     public VBox createProfileBox() {
         Label usernameLabel = new Label("Username: " + controller.getData("Username"));
         usernameLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: white;");
@@ -140,6 +154,11 @@ public class Profile implements WindowRoot {
 
     }
 
+    /**
+     * Create the statsBox, with the total games played, total wins, total losses and the total fiches.
+     *
+     * @return statsBox, a VBox
+     */
     public VBox createStats() {
         Label games = new Label("Games played: " + controller.getData("TotalGames"));
         Label win = new Label("Total wins: " + controller.getData("TotalWins"));
@@ -157,6 +176,11 @@ public class Profile implements WindowRoot {
         return statsBox;
     }
 
+    /**
+     * Creates a levelBox with the current level of the player.
+     *
+     * @return levelBox, an HBox
+     */
     public HBox createLevel() {
         Label liv = new Label("Level: " + controller.getData("Level"));
         liv.setStyle("-fx-font-size: 20px; -fx-text-fill: white");
@@ -170,9 +194,17 @@ public class Profile implements WindowRoot {
 
     }
 
+    /**
+     * This method is used to update the stats of the player when there is a change notify by the model.
+     *
+     * @param totalGames
+     * @param totalWon
+     * @param totalLosses
+     * @param totalFiches
+     */
     public void updateStats(int totalGames, int totalWon, int totalLosses, int totalFiches) {
         VBox stats = (VBox) profilePane.getChildren().get(3);
-        System.out.println(totalGames);
+        //System.out.println(totalGames);
         Label games = (Label) stats.getChildren().get(0);
         games.setText("Games played: " + totalGames);
         Label win = (Label) stats.getChildren().get(1);
@@ -184,6 +216,11 @@ public class Profile implements WindowRoot {
 
     }
 
+    /**
+     * This method update the level of the player.
+     *
+     * @param level of the player.
+     */
     public void updateLevel(int level) {
 
         HBox levelBox = (HBox) profilePane.getChildren().get(4);
@@ -192,6 +229,13 @@ public class Profile implements WindowRoot {
 
     }
 
+    /**
+     * This method update the profile of the player.
+     * It is called when the player modify the username or the avatar.
+     *
+     * @param username
+     * @param avatar
+     */
     public void updateProfile(String username, String avatar) {
         VBox profile = (VBox) profilePane.getChildren().get(2);
 
@@ -204,6 +248,12 @@ public class Profile implements WindowRoot {
 
     }
 
+    /**
+     * This method is used to modify the data of the profile of the player, and it calls the method update file.
+     *
+     * @param key
+     * @param value
+     */
     private void modifyProfile(String key, String value) {
         if (key == "Username") {
             controller.replaceData("Username", value);
@@ -215,6 +265,13 @@ public class Profile implements WindowRoot {
     }
 
 
+    /**
+     * This method creates a button with an image.
+     * It is used to create the modifyUsername and modifyAvatar buttons.
+     *
+     * @param imagePath
+     * @return
+     */
     private Button createButton(String imagePath) {
         Button button = new Button();
         button.setStyle("-fx-background-color: transparent");
@@ -226,6 +283,12 @@ public class Profile implements WindowRoot {
         return button;
     }
 
+    /**
+     * This method is used to ask the player to insert the new username.
+     * It creates a new stage with a textfield and two buttons, confirm and cancel.
+     * The confirm button calls the method modifyProfile.
+     * The cancel button closes the stage.
+     */
     private void askUsername() {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
@@ -268,6 +331,12 @@ public class Profile implements WindowRoot {
         stage.showAndWait();
     }
 
+    /**
+     * This method is used to ask the player to choose the avatar.
+     * It creates a new stage with four buttons, each one with a different avatar.
+     * The confirm button calls the method modifyProfile.
+     * The cancel button closes the stage.
+     */
     private void askAvatar() {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
@@ -325,6 +394,12 @@ public class Profile implements WindowRoot {
 
     }
 
+    /**
+     * This method creates a button with an image for the 4 avatars.
+     *
+     * @param imagePath
+     * @return
+     */
     private Button createButtonAvatar(String imagePath) {
         Button button = new Button();
         button.setStyle("-fx-background-color: transparent");
@@ -336,6 +411,11 @@ public class Profile implements WindowRoot {
         return button;
     }
 
+    /**
+     * This method adds a shadow effect to the button.
+     *
+     * @param b button with the shadow effect.
+     */
     private void addShadow(Button b) {
         DropShadow shadow = new DropShadow();
         shadow.setColor(Color.LIGHTGRAY);

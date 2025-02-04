@@ -14,6 +14,8 @@ import java.util.stream.IntStream;
  * It implements the interaction between the players and the dealer.
  * It also manages the deck of cards.
  * It extends the Observable class to notify the observers (the view) of the changes in the game.
+ *
+ * @author Diana Pamfile
  */
 public class BlackJackGame extends Observable {
     private List<Player> players;
@@ -21,7 +23,7 @@ public class BlackJackGame extends Observable {
     private Deck deck;
     private SaveData saveData;
 
-    private static final String[] USERNAMES = {"Mario", "Michelangelo", "Batman"};
+    private static final String[] USERNAMES = {"Mario", "Michael", "Batman"};
     private static final String[] AVATARS = {
             "/org/blackjack/view/super-mario.png",
             "/org/blackjack/view/michaelangelo.png",
@@ -31,6 +33,7 @@ public class BlackJackGame extends Observable {
 
     /**
      * Constructor of the BlackJackGame class.
+     * It initializes the list of players, the dealer and the deck of cards.
      */
     public BlackJackGame() {
         players = new ArrayList<>();
@@ -44,16 +47,15 @@ public class BlackJackGame extends Observable {
         return players;
     }
 
-
     public Dealer getDealer() {
         return dealer;
     }
+
 
     /*
      * This method sets up the game by adding the players to the game.
      *
      * @param numberOfPlayers the number of players in the game
-     * @param usernameRealPlayer the username of the real player
      */
     public void setUpGame(int numberOfPlayers) {
 
@@ -105,7 +107,7 @@ public class BlackJackGame extends Observable {
                 GameCard card = deck.drawCard();
                 player.hit(card);
                 scores.set(players.indexOf(player), player.getScore());
-                System.out.println(player.getType() + ": " + card.getSuit() + " " + card.getValue());
+                // System.out.println(player.getType() + ": " + card.getSuit() + " " + card.getValue());
                 setChanged();
                 notifyObservers(new DrawPackage(PackageType.DRAW, card.getValue(), card.getSuit(), player.getType(), player.getScore()));
                 notifyObservers(new ScorePackage(PackageType.SCORE, scores, player.getType()));
@@ -125,6 +127,12 @@ public class BlackJackGame extends Observable {
     }
 
 
+    /**
+     * This method is called when the dealer decides to hit.
+     *
+     * @param scores
+     * @param card
+     */
     private void giveCard(List<Integer> scores, GameCard card) {
         dealer.hit(card);
         scores.set(players.size(), dealer.getScore());
@@ -151,6 +159,7 @@ public class BlackJackGame extends Observable {
 
     }
 
+
     /**
      * This method manage the dealer turn.
      * The dealer hit a card if his score is under 17.
@@ -171,16 +180,15 @@ public class BlackJackGame extends Observable {
         dealer.stand();
     }
 
+
     /**
      * This method check the results between the players and the dealer.
      * It notifys the observer of win, loss, or tie
      */
     public void checkWin(List<Player> players, Player dealer) {
 
-        //Check per i computer player
         for (int i = 1; i < players.size(); i++) {
             Player player = players.get(i);
-            // se il player fa > 21 perde in automatico
             if (player.getScore() > 21) {
                 sendLosePackage(player);
             } else if (dealer.getScore() > 21) {
@@ -216,23 +224,44 @@ public class BlackJackGame extends Observable {
 
     }
 
+    /**
+     * Send the win package to the observer.
+     * {@link WinPackage}
+     *
+     * @param player
+     */
     private void sendWinPackage(Player player) {
         setChanged();
         notifyObservers(new WinPackage(PackageType.WIN, true, player.getType()));
         clearChanged();
     }
 
+    /**
+     * Send the lose package to the observer.
+     * <p>
+     * {@link LosePackage}
+     *
+     * @param player
+     */
     private void sendLosePackage(Player player) {
         setChanged();
         notifyObservers(new LosePackage(PackageType.LOSE, true, player.getType()));
         clearChanged();
     }
 
+    /**
+     * Send the tie package to the observer.
+     * <p>
+     * {@link TiePackage}
+     *
+     * @param player
+     */
     private void sendTiePackage(Player player) {
         setChanged();
         notifyObservers(new TiePackage(PackageType.TIE, true, player.getType()));
         clearChanged();
     }
+
 
     /**
      * This method check if a player is bust.
@@ -299,23 +328,9 @@ public class BlackJackGame extends Observable {
 
         deck.initializeDeck();
         deck.shuffleDeck();
-        System.out.println("Dim deck: " + deck.getDeckSize());
-        // setChanged();
-        // notifyObservers(new DeckResetPackage(PackageType.RESET_DECK, deck));
-        // clearChanged();
+        // System.out.println("Dim deck: " + deck.getDeckSize());
     }
 
-    /**
-     * This method quit the game.
-     */
-    public void quitGame() {
-        players.clear();
-        deck = null;
-        dealer = null;
-
-        setChanged();
-        notifyObservers();
-    }
 
     /**
      * This method check if a player has a BlackJack.
@@ -334,18 +349,34 @@ public class BlackJackGame extends Observable {
         return false;
     }
 
-    //lo devo chiamare in gameController
+    /**
+     * This method update the data of the player.
+     * It notifies the observer of the changes.
+     *
+     * @param player
+     */
     public void updateData(RealPlayer player) {
         setChanged();
         notifyObservers(new UpdatePackage(PackageType.UPDATE, player.getTotalGames(), player.getWonGames(), player.getLostGames(), player.getAvatar(), player.getUsername(), player.getTotalFiches(), player.getLevel()));
         clearChanged();
     }
 
+    /**
+     * This method is used by the controller to read the data from the file.
+     *
+     * @param key
+     * @return
+     */
     public String readData(String key) {
         return saveData.readFromFile(key);
     }
 
-    //Scrivi i nuovi dati
+    /**
+     * This method is used by the controller to save the data to the file.
+     *
+     * @param key
+     * @param newValue
+     */
     public void replaceData(String key, String newValue) {
         saveData.updateData(key, newValue);
     }

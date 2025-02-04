@@ -15,12 +15,19 @@ public class SaveData {
 
     private String path;
 
+    /**
+     * Constructor that initializes the path of the file
+     */
     public SaveData() {
-        // Definiamo il percorso del file
-        this.path = "src/main/data/userData.txt"; // Percorso relativo dalla cartella src al file
+        this.path = "src/main/data/userData.txt";
     }
 
-    //Metodo che vede se lo username è presente nel file, lo crea altrimenti
+    /**
+     * Method that initializes the file with the data of the player.
+     *
+     * @param path
+     * @param username
+     */
     public void initializeFile(String path, String username) {
         try (FileWriter fw = new FileWriter(new File(path))) {
             fw.write("Username = " + username + "\n");
@@ -38,7 +45,12 @@ public class SaveData {
 
     }
 
-    //Metodo per leggere il dato dal file
+    /**
+     * Method that reads the data from the file.
+     *
+     * @param value
+     * @return the value of the key, the data read.
+     */
     public String readFromFile(String value) {
         try (BufferedReader br = new BufferedReader(new FileReader(new File(path)))) {
             String line;
@@ -53,6 +65,12 @@ public class SaveData {
         return null;
     }
 
+    /**
+     * Method that updates the data in the file.
+     *
+     * @param key
+     * @param newValue
+     */
     public void updateData(String key, String newValue) {
         try {
             List<String> lines = new ArrayList<>(Files.readAllLines(Paths.get(path)));
@@ -70,6 +88,12 @@ public class SaveData {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Getters and setters for the data of the player.
+     *
+     * @return
+     */
 
     public String getAvatar() {
         return readFromFile("Avatar");

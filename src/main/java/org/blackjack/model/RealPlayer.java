@@ -27,11 +27,11 @@ public class RealPlayer extends Player {
         super(username, TypePlayer.PLAYER);
         this.saveData = new SaveData();
 
-        //Se i dati non sono presenti, inizializzo file
+
         if (saveData.readFromFile("Username") == null) {
             saveData.initializeFile(saveData.getPath(), username);
         }
-        //Se i dati sono presenti li carico dal file
+
         this.level = saveData.getLevel();
         this.totalGames = saveData.getTotalGames();
         this.wonGames = saveData.getTotalWins();
@@ -44,7 +44,7 @@ public class RealPlayer extends Player {
     }
 
     /**
-     * Getter and setter methods for player attributes..
+     * Getter and setter methods for player attributes.
      */
 
     public int getTotalGames() {
@@ -77,8 +77,9 @@ public class RealPlayer extends Player {
         return level;
     }
 
+
     /**
-     * Deducts the current bet amount from the player's total fiches when they place a bet.
+     * This method deducts the current bet amount from the player's total fiches when they place a bet.
      */
     public void toBet() {
         this.totalFiches -= bet;
@@ -86,7 +87,7 @@ public class RealPlayer extends Player {
     }
 
     /*
-     * Increase the player's level by 1 for every games won.
+     * Increase the player's level by 1 for every game won.
      */
     public void increaseLevel() {
         if (wonGames % 5 == 0) {
@@ -109,6 +110,7 @@ public class RealPlayer extends Player {
         saveData.setTotalGames(totalGames);
         saveData.setTotalFiches(totalFiches);
     }
+
 
     /**
      * Increases the count of lost games by 1, increments the total games played,

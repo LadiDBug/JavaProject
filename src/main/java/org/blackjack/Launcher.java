@@ -7,11 +7,18 @@ import org.blackjack.view.SceneManager;
 
 import java.io.IOException;
 
+/**
+ * This class contains the main method to launch the application.
+ * It extends the Application class from JavaFX.
+ * There is an override of the start method that sets the window size and displays the menu scene.
+ *
+ * @author Diana Pamfile
+ */
 public class Launcher extends Application {
     @Override
     public void start(Stage window) throws IOException {
 
-        //Imposta e costruisce il SceneManager
+
         SceneManager.Builder.setWindow(window);
         SceneManager.Builder.build();
         SceneManager sceneManager = SceneManager.getInstance();

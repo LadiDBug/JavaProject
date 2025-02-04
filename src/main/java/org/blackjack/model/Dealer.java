@@ -4,6 +4,8 @@ import org.blackjack.view.TypePlayer;
 
 /**
  * This class represents the dealer in the game.
+ *
+ * @author Diana Pamfile
  */
 public class Dealer extends Player {
 
@@ -23,15 +25,6 @@ public class Dealer extends Player {
     public void stand() {
         this.standing = true;
     }
-
-    /*
-    public void decideAction(GameCard card) {
-        if (hand.calculateHandValue() < 17) {
-            hit(card);
-        }
-        stand();
-
-     */
 
 
 }

@@ -22,6 +22,8 @@ import org.blackjack.controller.GameController;
 /**
  * This class represents the main menu of the game.
  * Allows access to the sections of the game, such as Game, Profile, Settings and Exit
+ *
+ * @Author Diana Pamfile
  */
 public class Menu implements WindowRoot {
 
@@ -68,7 +70,6 @@ public class Menu implements WindowRoot {
         hBox.setLayoutX(200);
         hBox.setLayoutY(90);
         hBox.setAlignment(Pos.CENTER);
-        //vBox.setSpacing();
 
         anchorPane.getChildren().add(hBox);
         anchorPane.setStyle(
@@ -78,6 +79,13 @@ public class Menu implements WindowRoot {
 
     }
 
+    /**
+     * Method that creates the buttons of the menu, with an image and an action.
+     *
+     * @param imagePath the path of the image used for the button.
+     * @param action    the action associated with the button.
+     * @return the button already created.
+     */
     private Button createButton(String imagePath, EventHandler<ActionEvent> action) {
         Button button = new Button();
         button.setStyle("-fx-background-color: trasparent");
@@ -93,6 +101,10 @@ public class Menu implements WindowRoot {
     }
 
 
+    /**
+     * This method asks the user how many players will play the game.
+     * The user can choose between 1, 2, 3 or 4 players.
+     */
     private void preGameQuestion() {
         Stage stage = new Stage();
         stage.initStyle(StageStyle.TRANSPARENT);
@@ -100,7 +112,7 @@ public class Menu implements WindowRoot {
         stage.initModality(Modality.APPLICATION_MODAL);
 
 
-        // Radio button per la scelta dei giocatori
+        // Radio button for the choice of the number of players
         RadioButton onePlayer = new RadioButton("1");
         RadioButton twoPlayer = new RadioButton("2");
         RadioButton threePlayer = new RadioButton("3");
@@ -119,9 +131,10 @@ public class Menu implements WindowRoot {
         threePlayer.setToggleGroup(numberOfPlayers);
         fourPlayer.setToggleGroup(numberOfPlayers);
 
-        // set default selection
+        // set default selection, very important because the user can not continue without selecting a number of players
         onePlayer.setSelected(true);
 
+        // Listener for the selection of the number of players
         numberOfPlayers.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == onePlayer) {
                 playersSelected = 1;
@@ -148,7 +161,7 @@ public class Menu implements WindowRoot {
         buttonStart.setStyle("-fx-background-colodr: #FFD700; -fx-text-fill: black; -fx-font-size: 14px; -fx-font-weight: bold;"); // Oro
         buttonExit.setStyle("-fx-background-color: #8B0000; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;"); // Rosso scuro
 
-        // Horizontal layout for the "Start" and "Cancel" buttons
+
         HBox startExitBox = new HBox(20, buttonStart, buttonExit);
         startExitBox.setAlignment(Pos.CENTER);
 
@@ -164,7 +177,6 @@ public class Menu implements WindowRoot {
         );
 
         box2.setPrefSize(300, 200);
-
 
         buttonExit.setOnAction(event -> {
             stage.close();
@@ -190,7 +202,7 @@ public class Menu implements WindowRoot {
 
 
     /**
-     * Method that returns the main menu.
+     * Method that returns the menuPane.
      *
      * @return the main menu
      */
@@ -201,11 +213,12 @@ public class Menu implements WindowRoot {
 
 
     /**
-     * Applies a specific style to a RadioButton.
+     * Applies a specific style to the radio button.
+     * This method is used for the radio buttons that allow the user to choose the number of players.
      *
      * @param button The button to style.
      */
-    public void customStyle(RadioButton button) {
+    private void customStyle(RadioButton button) {
 
         button.setStyle(
                 "-fx-mark-color: gray;" +                 // Colore del cerchio interno selezionato
@@ -220,46 +233,44 @@ public class Menu implements WindowRoot {
         );
     }
 
-    /*
-        /**
-         * This method manage the player's bet before the game starts.
-         *
-         * @return
-         */
+
+    /**
+     * This method shows the bet stage and allows the user to choose the bet.
+     * The user can choose between 20, 50, 100 or 200.
+     */
     public void showBetStage() {
         Stage betStage = new Stage();
         betStage.initStyle(StageStyle.TRANSPARENT);
         betStage.setAlwaysOnTop(true);
         betStage.initModality(Modality.APPLICATION_MODAL);
 
-        // Etichetta per il messaggio
         Label labelBet = new Label("Choose your bet:");
         labelBet.setStyle("-fx-font-size: 16px; -fx-font-family: 'Verdana'; -fx-text-fill: white;");
 
-        // Pulsanti per le puntate
+
         RadioButton bet20 = new RadioButton("20");
         RadioButton bet50 = new RadioButton("50");
         RadioButton bet100 = new RadioButton("100");
         RadioButton bet200 = new RadioButton("200");
 
-        // Stile per i pulsanti
+
         String radioButtonStyle = "-fx-mark-color: grey; -fx-text-fill: white; -fx-font-size: 14px;";
         bet20.setStyle(radioButtonStyle);
         bet50.setStyle(radioButtonStyle);
         bet100.setStyle(radioButtonStyle);
         bet200.setStyle(radioButtonStyle);
 
-        // Gruppo per i pulsanti radio
+
         ToggleGroup betGroup = new ToggleGroup();
         bet20.setToggleGroup(betGroup);
         bet50.setToggleGroup(betGroup);
         bet100.setToggleGroup(betGroup);
         bet200.setToggleGroup(betGroup);
 
-        // Selezione predefinita
+
         bet20.setSelected(true);
 
-        // Listener per selezione
+
         betGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == bet20) {
                 playerBet = 20;
@@ -272,11 +283,11 @@ public class Menu implements WindowRoot {
             }
         });
 
-        // Pulsanti di azione
+
         Button buttonConfirm = new Button("Confirm");
         Button buttonCancel = new Button("Cancel");
 
-        // Stile per i pulsanti
+
         String buttonStyle = " -fx-text-fill: black; -fx-font-size: 14px; -fx-font-weight: bold;";
         buttonConfirm.setStyle(buttonStyle);
         buttonCancel.setStyle("-fx-background-color: darkred; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;");
@@ -294,23 +305,23 @@ public class Menu implements WindowRoot {
 
         buttonCancel.setOnAction(e -> {
             playerBet = 20; // Imposta a 0 se l'utente annulla
-            betStage.close(); //devo rimanere in menu no nel gioco
+            betStage.close(); //devo rimanere in menu e non nel gioco
             resetPlayerSelected();
             Platform.runLater(() -> {
                 SceneManager.getInstance().displayRoot(Root.MENU);
             });
         });
 
-        // Layout pulsanti azione
+
         HBox actionButtons = new HBox(20, buttonConfirm, buttonCancel);
         actionButtons.setAlignment(Pos.CENTER);
 
-        // Layout principale
+
         VBox mainBox = new VBox(20, labelBet, new HBox(10, bet20, bet50, bet100, bet200), actionButtons);
         mainBox.setAlignment(Pos.CENTER);
         mainBox.setStyle("-fx-background-color: #003100; -fx-padding: 20px; -fx-background-radius: 20;");
 
-        // Imposta la scena e mostra
+
         Scene betScene = new Scene(mainBox, 300, 200);
         betScene.setFill(javafx.scene.paint.Color.TRANSPARENT);
         betStage.setScene(betScene);
@@ -319,15 +330,27 @@ public class Menu implements WindowRoot {
 
     }
 
+    /**
+     * Method that resets the number of players in the game.
+     */
     public void resetPlayerSelected() {
         this.playersSelected = 1;
         // System.out.println("Ho resettato i giocatori" + playersSelected);
     }
 
+    /**
+     * Getter method that return the bet of the player.
+     *
+     * @return
+     */
     public int getPlayerBet() {
         return playerBet;
     }
 
+    /**
+     * This method shows the setting dialog.
+     * The user can change the volume of the background music, and enable or disable the sound effects.
+     */
     public void settingsDialog() {
         Stage settingStage = new Stage();
         settingStage.initStyle(StageStyle.TRANSPARENT);

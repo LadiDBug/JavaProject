@@ -5,6 +5,8 @@ import org.blackjack.view.TypePlayer;
 /**
  * This class represents an AI player in the game.
  * This class extends the {@link Player} class and implements the computer behavior.
+ *
+ * @author Diana Pamfile
  */
 public class ComputerPlayer extends Player {
 

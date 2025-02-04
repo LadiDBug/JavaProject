@@ -30,6 +30,8 @@ import java.util.List;
 /**
  * This class is the view of the game.
  * It sets up the game interface and manages the display of the game elements.
+ *
+ * @author Diana Pamfile
  */
 
 public class Game implements WindowRoot {
@@ -47,19 +49,15 @@ public class Game implements WindowRoot {
     private ImageView hiddenCard;
     private Value hiddenValue;
     private Suit hiddenSuit;
-
     private boolean playAgain;
+
 
     /**
      * Constructor for the Game class.
-     * It initializes the gamePAne and sets up the UI elements.
+     * It initializes the gamePane and sets up the UI elements.
      */
     public Game() {
         gamePane = new AnchorPane();
-
-        //Create the info box, the box that shows up how is playing
-        HBox infoBox = creaInfoBox();
-        infoBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.5); -fx-background-radius: 10; -fx-text-fill: white;");
 
 
         //Create the choice box
@@ -75,8 +73,7 @@ public class Game implements WindowRoot {
         backButton.setLayoutY(10);
 
         // Position UI elements in the gamePane
-        infoBox.setLayoutX(1080);
-        infoBox.setLayoutY(10);
+
         choiceBox.setLayoutX(1000);
         choiceBox.setLayoutY(600);
         deck.setLayoutX(597);
@@ -85,7 +82,7 @@ public class Game implements WindowRoot {
         deck.setFitWidth(87);
 
         // Add elements to the game pane
-        gamePane.getChildren().addAll(infoBox, choiceBox, deck, backButton);
+        gamePane.getChildren().addAll(choiceBox, deck, backButton);
 
         //Style of the gamePane
         gamePane.setStyle(
@@ -110,7 +107,8 @@ public class Game implements WindowRoot {
 
     /**
      * This method creates the back button.
-     * It also creates a dialog box to confirm the exit from the game.
+     * The back button is used to exit the game and return to the main menu.
+     * it calls the showConfirmDialog method when clicked.
      *
      * @return the back button
      */
@@ -130,9 +128,13 @@ public class Game implements WindowRoot {
         return backButton;
     }
 
+    /**
+     * This method creates a confirm dialog for the user.
+     * If the user clicks "Yes", the menu is displayed.
+     * If the user clicks "No", the dialog is closed.
+     */
     private void showConfirmDialog() {
         Stage dialog = new Stage();
-        // Utility = minimal
         dialog.initStyle(StageStyle.TRANSPARENT);
         dialog.setAlwaysOnTop(true);
         dialog.initModality(Modality.APPLICATION_MODAL); // Blocca interazione con la finestra principale
@@ -141,7 +143,6 @@ public class Game implements WindowRoot {
         Button yesButton = new Button("Yes");
         yesButton.setStyle(
                 "-fx-background-color: #007f00; -fx-text-fill: white; -fx-font-size: 14px;"
-                // "-fx-border-color: gold; -fx-border-width: 2px; -fx-border-radius: 5px;"
         );
 
         yesButton.setOnAction(event -> {
@@ -153,7 +154,6 @@ public class Game implements WindowRoot {
         Button noButton = new Button("No");
         noButton.setStyle(
                 "-fx-background-color: #b30000; -fx-text-fill: white; -fx-font-size: 14px;"
-                //      "-fx-border-color: gold; -fx-border-width: 2px; -fx-border-radius: 5px;"
         );
         noButton.setOnAction(event -> dialog.close());
 
@@ -163,7 +163,7 @@ public class Game implements WindowRoot {
         VBox dialogLayout = new VBox(10, confirmLabel, buttons);
         dialogLayout.setAlignment(Pos.CENTER);
         dialogLayout.setStyle(
-                "-fx-background-color: #32CD32; -fx-border-color: gold; -fx-border-width: 3px; " +
+                "-fx-background-color: #32CD32; -fx-border-color: white; -fx-border-width: 3px; " +
                         "-fx-border-radius: 10; -fx-background-radius: 10;");
 
 
@@ -173,6 +173,11 @@ public class Game implements WindowRoot {
         dialog.showAndWait();
     }
 
+    /**
+     * It creates a dialog box to ask the player if they want to play again.
+     * If the player clicks "Yes", the game is reset.
+     * If the player clicks "No", the player is returned to the main menu.
+     */
     public void askToPlayAgain() {
         setPlayAgain(false);
         Stage ps = new Stage();
@@ -205,7 +210,7 @@ public class Game implements WindowRoot {
         buttons.setAlignment(Pos.CENTER);
         VBox layout = new VBox(10, label, buttons);
         layout.setAlignment(Pos.CENTER);
-        layout.setStyle("-fx-background-color: #32CD32; -fx-border-color: gold; -fx-border-width: 3px; -fx-border-radius: 10; -fx-background-radius: 10;");
+        layout.setStyle("-fx-background-color: #32CD32; -fx-border-color: white; -fx-border-width: 3px; -fx-border-radius: 10; -fx-background-radius: 10;");
 
         Scene scene = new Scene(layout, 200, 100);
         scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
@@ -213,16 +218,26 @@ public class Game implements WindowRoot {
         ps.showAndWait();
     }
 
+    /**
+     * Setter for the playAgain variable, used to determine if the player wants to play again.
+     *
+     * @param playAgain a boolean value, true if the player wants to play again, false otherwise.
+     */
     public void setPlayAgain(boolean playAgain) {
         this.playAgain = playAgain;
     }
 
+    /**
+     * Getter for the playAgain variable.
+     *
+     * @return the value of the playAgain variable.
+     */
     public boolean getPlayAgain() {
         return playAgain;
     }
 
     /**
-     * This method creates the choice box.
+     * This method creates the choice box for the player.
      * The choice box contains the buttons "Hit" and "Stand".
      *
      * @return the choice box (HBox)
@@ -232,46 +247,46 @@ public class Game implements WindowRoot {
         Button stand = new Button();
 
         String standButton = "-fx-background-color: rgb(200, 32, 21);"
-                + "-fx-text-fill: black;"                        // Testo bianco (se serve)
-                + "-fx-font-size: 14px;"                         // Dimensione del testo
-                + "-fx-font-weight: bold;"                       // Testo in grassetto
-                + "-fx-border-radius: 50%;"                      // Bordo arrotondato
-                + "-fx-background-radius: 50%;"                 // Sfondo arrotondato
-                + "-fx-padding: 10px;"                           // Padding interno
-                + "-fx-min-width: 60px;"                         // Larghezza minima
-                + "-fx-min-height: 60px;"                        // Altezza minima
-                + "-fx-cursor: hand;"                            // Cambio cursore
-                + "-fx-alignment: center;";                      // Allineamento centrale
+                + "-fx-text-fill: black;"
+                + "-fx-font-size: 14px;"
+                + "-fx-font-weight: bold;"
+                + "-fx-border-radius: 50%;"
+                + "-fx-background-radius: 50%;"
+                + "-fx-padding: 10px;"
+                + "-fx-min-width: 60px;"
+                + "-fx-min-height: 60px;"
+                + "-fx-cursor: hand;"
+                + "-fx-alignment: center;";
 
 
         String hitButton = "-fx-background-color: rgb(0, 102, 0);"
-                + "-fx-text-fill: black;"                        // Testo bianco (se serve)
-                + "-fx-font-size: 14px;"                         // Dimensione del testo
-                + "-fx-font-weight: bold;"                       // Testo in grassetto
-                + "-fx-border-radius: 50%;"                      // Bordo arrotondato
-                + "-fx-background-radius: 50%;"                 // Sfondo arrotondato
-                + "-fx-padding: 10px;"                           // Padding interno
-                + "-fx-min-width: 60px;"                         // Larghezza minima
-                + "-fx-min-height: 60px;"                        // Altezza minima
-                + "-fx-cursor: hand;"                            // Cambio cursore
-                + "-fx-alignment: center;";                      // Allineamento centrale
+                + "-fx-text-fill: black;"
+                + "-fx-font-size: 14px;"
+                + "-fx-font-weight: bold;"
+                + "-fx-border-radius: 50%;"
+                + "-fx-background-radius: 50%;"
+                + "-fx-padding: 10px;"
+                + "-fx-min-width: 60px;"
+                + "-fx-min-height: 60px;"
+                + "-fx-cursor: hand;"
+                + "-fx-alignment: center;";
 
         hit.setStyle(hitButton);
         stand.setStyle(standButton);
         DropShadow shadowHit = new DropShadow();
         shadowHit.setColor(Color.LIGHTGREEN);
 
-        hit.setOnMouseEntered(event -> hit.setEffect(shadowHit)); // Aggiunge ombra
+        hit.setOnMouseEntered(event -> hit.setEffect(shadowHit));
         hit.setOnMouseExited(event -> hit.setEffect(null));
 
         DropShadow shadowStand = new DropShadow();
         shadowStand.setColor(Color.ORANGERED);
 
-        stand.setOnMouseEntered(event -> stand.setEffect(shadowStand)); // Aggiunge ombra
+        stand.setOnMouseEntered(event -> stand.setEffect(shadowStand));
         stand.setOnMouseExited(event -> stand.setEffect(null));
 
 
-        //aggiungo icona
+        //aggiungo icona hit
         Image hitIcon = new Image(getClass().getResource("card_hit.png").toExternalForm());
         ImageView hitIconView = new ImageView(hitIcon);
         hitIconView.setFitHeight(40);
@@ -309,13 +324,6 @@ public class Game implements WindowRoot {
     }
 
     /**
-     * Resets the player choice to 0, a default value.
-     */
-    public void resetPlayerChoice() {
-        this.playerChoice = 0;
-    }
-
-    /**
      * Sets the player action.
      *
      * @param choice, the action chosen by the player. 1 for "Hit", 2 for "Stand".
@@ -324,8 +332,18 @@ public class Game implements WindowRoot {
         this.playerChoice = choice;
     }
 
+
+    /**
+     * Resets the player choice to 0, a default value, after the chioce.
+     */
+    public void resetPlayerChoice() {
+        this.playerChoice = 0;
+    }
+
+
     /**
      * Gets the player's current action choice.
+     * (1 for Hit, 2 for Stand)
      *
      * @return the player's choice
      */
@@ -333,31 +351,15 @@ public class Game implements WindowRoot {
         return playerChoice;
     }
 
-    /**
-     * This method creates the info box.
-     * The info box contains the player's avatar and name.
-     *
-     * @return the info box (HBox)
-     */
-    public HBox creaInfoBox() {
-        //TODO: Implementare correttamente la infoBox
-        //Avatar del player
-        currentPlayerAvatar = new ImageView("/org/blackjack/view/defaultUser.png");
-        currentPlayerAvatar.setFitHeight(30);
-        currentPlayerAvatar.setFitWidth(30);
-
-        // Box delle infoVarie
-        Label labelTurn = new Label("Sta giocando: ");
-        Label labelPlayerName = new Label("PlayerName");
-        return new HBox(labelTurn, labelPlayerName, currentPlayerAvatar);
-    }
 
     /**
-     * This methos diplayes the player boxes for each player based on the number of players.
+     * This method diplayes the player boxes for each player, based on the number of players.
+     * It calls the positionPlayerBox method to put every box in a specific position on the pane.
      *
-     * @param playerNames
-     * @param numberOfPlayers
-     * @param avatars
+     * @param playerNames     to be displayed
+     * @param numberOfPlayers used for the creation of player box
+     * @param avatars         to be displayed
+     * @throws IllegalArgumentException if the numberOfPlayers is not valid.
      */
     public void displayPlayers(List<String> playerNames, int numberOfPlayers, List<String> avatars) {
         //rimuovo le playerbox precedenti per poter vedere di volta in volta le playerbox in base a quant giocatori scelti ci sono
@@ -370,7 +372,6 @@ public class Game implements WindowRoot {
         //Aggiungo ciascun giocatore
         for (int i = 0; i < numberOfPlayers; i++) {
 
-            // if per la posizione ;dei player SI PUO USARE UNO SWITCH
             switch (i) {
                 case 0 -> {
                     playerBox = createPlayerBox(playerNames.get(i), avatars.get(i));
@@ -399,15 +400,23 @@ public class Game implements WindowRoot {
         }
     }
 
+
     /**
      * This method removes the player boxes from the gamePane.
+     * It is used before the display of the players.
      */
     public void removePlayerBoxes() {
         gamePane.getChildren().removeIf(VBox.class::isInstance);
     }
 
+    /**
+     * Reset the cards from the StackPane for every player in the game.
+     * It also manages the dealer score seen in the game.
+     *
+     * @param typePlayer to know the player whose card will be removed
+     */
     public void resetGame(TypePlayer typePlayer) {
-        //per ogni tipo di giocatore, devo rimuovere le carte disegnate, tranne per il dealer
+
         switch (typePlayer) {
             case PLAYER -> {
                 StackPane playerCardStack = getStackPane(TypePlayer.PLAYER);
@@ -439,8 +448,8 @@ public class Game implements WindowRoot {
     /**
      * Creates the playerBox for each player.
      *
-     * @param playerName
-     * @param imagePath
+     * @param playerName to be displayed.
+     * @param imagePath  it is the avatar of the player.
      * @return the playerBox (VBox)
      */
     private VBox createPlayerBox(String playerName, String imagePath) {
@@ -459,22 +468,21 @@ public class Game implements WindowRoot {
 
         StackPane playerCards = new StackPane();
         playerCards.setPrefSize(100, 140);
-        //playerCards.setSpacing(10);
-
 
         VBox playerBox = new VBox(10, totalPointsLabel, playerCards, avatarUsername);
         playerBox.setPrefSize(100, 150);
-        //playerBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.5); -fx-background-radius: 10;");
+
         playerBox.setAlignment(javafx.geometry.Pos.CENTER);
         return playerBox;
     }
 
 
     /**
-     * This method positions the playerBox based on the player's role.
+     * This method positions the playerBox on the gameView, based on the player's role.
      *
-     * @param playerBox
-     * @param role
+     * @param playerBox the box to be positioned.
+     * @param role      specified the box should be placed.
+     * @throws IllegalArgumentException if the role is not valid.
      */
     private void positionPlayerBox(VBox playerBox, String role) {
         switch (role) {
@@ -508,66 +516,81 @@ public class Game implements WindowRoot {
         }
     }
 
+    /**
+     * This method displays a message (WIN, LOSE, TIE, BLACKJACK, BUST) for a specific player.
+     * The message is shown only for 3 seconds and then it is removed.
+     *
+     * @param typePlayer
+     * @param msg        the type of message to be shown.
+     */
     public void showMessage(TypePlayer typePlayer, MessageType msg) {
         HBox messageBox = getMessageBox(typePlayer);
         Label message = (Label) messageBox.getChildren().get(0);
         message.setText(msg.getMessage());
 
-        // Rimuovi messaggio dopo 3 secondi
         new Thread(() -> {
             try {
-                Thread.sleep(3000); // Attendi 3 secondi
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             Platform.runLater(() -> {
-                gamePane.getChildren().remove(messageBox); // Rimuove il messaggio
+                gamePane.getChildren().remove(messageBox);
             });
         }).start();
     }
 
+    /**
+     * It creates and display the HBox of the message, for a specific player.
+     *
+     * @param typePlayer
+     * @return messageBox containing the message Label
+     */
     private HBox getMessageBox(TypePlayer typePlayer) {
         HBox messageBox = new HBox();
         Label message = new Label();
 
-        // Stile della scritta
         message.setStyle("""
                     -fx-text-fill: black;
                     -fx-font-size: 24px;
                     -fx-font-weight: bold;
                 """);
 
-        // Posiziona il messaggio sopra il player
         messageBox.setAlignment(Pos.CENTER);
         messageBox.getChildren().add(message);
 
-        // Posiziona il messaggio dinamicamente
         positionMessageBox(messageBox, typePlayer);
 
-        gamePane.getChildren().add(messageBox); // Aggiungi il messaggio al gamePane
+        gamePane.getChildren().add(messageBox);
         return messageBox;
     }
 
+    /**
+     * This method position the messageBox above a specific player.
+     *
+     * @param messageBox
+     * @param typePlayer
+     */
     private void positionMessageBox(HBox messageBox, TypePlayer typePlayer) {
         switch (typePlayer) {
             case DEALER -> {
-                messageBox.setLayoutX(550); // Sopra il dealer
+                messageBox.setLayoutX(550);
                 messageBox.setLayoutY(0);
             }
             case PLAYER -> {
-                messageBox.setLayoutX(800); // Sopra il player umano
+                messageBox.setLayoutX(800);
                 messageBox.setLayoutY(360);
             }
             case BOT1 -> {
-                messageBox.setLayoutX(300); // Sopra il bot 1
+                messageBox.setLayoutX(300);
                 messageBox.setLayoutY(360);
             }
             case BOT2 -> {
-                messageBox.setLayoutX(50); // Sopra il bot 2
+                messageBox.setLayoutX(50);
                 messageBox.setLayoutY(160);
             }
             case BOT3 -> {
-                messageBox.setLayoutX(1050); // Sopra il bot 3
+                messageBox.setLayoutX(1050);
                 messageBox.setLayoutY(160);
             }
             default -> throw new IllegalArgumentException("Invalid player type");
@@ -589,12 +612,12 @@ public class Game implements WindowRoot {
     }
 
     /**
-     * This method displays the hit card.
+     * This method displays the hit card with an overlay of the cards.
      *
-     * @param value
-     * @param suit
-     * @param score
-     * @param player
+     * @param value  of the card.
+     * @param suit   of the card.
+     * @param score  of the player.
+     * @param player the player who hit a card.
      */
     private void drawHitCard1(Value value, Suit suit, int score, TypePlayer player) {
 
@@ -615,6 +638,7 @@ public class Game implements WindowRoot {
 
     /**
      * This method manages the animation of the card drawn.
+     * It also played the sound effect of a draw card.
      *
      * @param value
      * @param suit
@@ -628,7 +652,7 @@ public class Game implements WindowRoot {
         card.setFitWidth(87);
         gamePane.getChildren().add(card);
 
-        // Calcola la posizione di destinazione in base al giocatore
+        // Calcolo la posizione di destinazione in base al giocatore
         double toX = 0;
         double toY = 0;
 
@@ -656,11 +680,11 @@ public class Game implements WindowRoot {
                 break;
         }
 
-        // Crea la transizione di movimento
+        // Creo la transizione di movimento
         TranslateTransition tt = new TranslateTransition(Duration.millis(1000), card);
-        tt.setFromX(597);  // Centro di partenza
-        tt.setFromY(300);  // Centro di partenza
-        tt.setToX(toX);    // Posizione di arrivo
+        tt.setFromX(597);
+        tt.setFromY(300);
+        tt.setToX(toX);
         tt.setToY(toY);
 
         // Aggiungi l'animazione alla scena
@@ -687,17 +711,34 @@ public class Game implements WindowRoot {
         SceneManager.getInstance().drawCardAudio();
     }
 
+    /**
+     * This method add the card to the StackPane of card of the player.
+     *
+     * @param value
+     * @param suit
+     * @param player
+     * @param score
+     */
     public void drawCards(Value value, Suit suit, TypePlayer player, int score) {
         ImageView card = createImageCard(value, suit);
         addCardToPlayerBox(card, player);
         updateScore(score, player);
     }
 
+    /**
+     * A method for the draw card of the dealer.
+     * It also manages the score depending on whether the second card has been revealed or not.
+     *
+     * @param value
+     * @param suit
+     * @param score
+     * @param visible
+     */
     public void drawDealerCard(Value value, Suit suit, int score, boolean visible) {
         ImageView card = createImageCard(value, suit);
         if (!visible) {
             card.setImage(new Image(getClass().getResource("retro_card.png").toExternalForm()));
-            card.setFitHeight(120); // Imposta l'altezza della carta
+            card.setFitHeight(120);
             card.setFitWidth(87);
 
             addCardToPlayerBox(card, TypePlayer.DEALER);
@@ -716,23 +757,39 @@ public class Game implements WindowRoot {
     }
 
 
+    /**
+     * This method is used for the creation of the imageCard.
+     *
+     * @param value
+     * @param suit
+     * @return ImageView of the card.
+     */
     private ImageView createImageCard(Value value, Suit suit) {
         return new ImageView(getClass().getResource("cards/" + value.toString().toLowerCase() + "_" + suit.toString().toLowerCase() + ".png").toExternalForm());
     }
 
+    /**
+     * This method add the card to the playerBox with an overlay of the cards.
+     *
+     * @param card
+     * @param player
+     */
     private void addCardToPlayerBox(ImageView card, TypePlayer player) {
         StackPane playerCardStack = getStackPane(player);
-        // Calcola lo spostamento per ogni carta, in modo che si sovrappongano leggermente
         int cardCount = playerCardStack.getChildren().size();
         double offsetX = cardCount * 15;
 
-        // Sovrapponi le carte spostandole leggermente
-        card.setTranslateX(offsetX);  // Sposta la carta verso destra
+        card.setTranslateX(offsetX);
 
-        // Aggiungi la carta al StackPane
         playerCardStack.getChildren().add(card);
     }
 
+    /**
+     * Getter for the StackPane of a player
+     *
+     * @param player
+     * @return StackPane with the cards.
+     */
     private StackPane getStackPane(TypePlayer player) {
         StackPane playerCardStack;
         switch (player) {
@@ -747,6 +804,12 @@ public class Game implements WindowRoot {
     }
 
 
+    /**
+     * Method used to update the score of a player when gets a new card.
+     *
+     * @param score
+     * @param player
+     */
     private void updateScore(int score, TypePlayer player) {
         switch (player) {
             case PLAYER -> {
@@ -768,136 +831,41 @@ public class Game implements WindowRoot {
         }
     }
 
+    /**
+     * It reveals the hidden card of the dealer with an animation.
+     *
+     * @param score
+     */
     public void revealHiddenCard(int score) {
 
-        // mi prendo lo stack del dealer
         StackPane dealerCardStack = getStackPane(TypePlayer.DEALER);
 
-        // creo la carta nascosta
         ImageView realCard = createImageCard(hiddenValue, hiddenSuit);
         realCard.setFitHeight(120);
         realCard.setFitWidth(87);
 
-        // prendo il retro della carta
         ImageView retroCard = (ImageView) dealerCardStack.getChildren().getLast();
 
-        // realCard.setOpacity(0);
-        //dealerCardStack.getChildren().add(realCard);
-        // addCardToPlayerBox(realCard, TypePlayer.DEALER);
         //Rimuovo la cart coperta con animazione
         RotateTransition rt = new RotateTransition(Duration.millis(500), retroCard);
-        rt.setAxis(Rotate.Y_AXIS);  // Ruota attorno all'asse Y
+        rt.setAxis(Rotate.Y_AXIS);
         rt.setFromAngle(0);
         rt.setFromAngle(90);
 
         rt.setOnFinished(event -> {
-            dealerCardStack.getChildren().remove(retroCard);  // Rimuovi il retro della carta
-            //dealerCardStack.getChildren().add(realCard);  // Mostra la carta finale
+            dealerCardStack.getChildren().remove(retroCard);
             realCard.setOpacity(1);
             RotateTransition rt1 = new RotateTransition(Duration.millis(500), realCard);
             rt1.setAxis(Rotate.Y_AXIS);
             rt1.setFromAngle(90);
             rt1.setToAngle(0);
 
-            rt1.play();  // Avvia la seconda rotazione
+            rt1.play();
             addCardToPlayerBox(realCard, TypePlayer.DEALER);
         });
         rt.play();
         updateScore(score, TypePlayer.DEALER);
     }
-
-
-    /*
-    public void showBetMessage() {
-
-        setPlayAgain(true);
-        System.out.println(getPlayAgain() + "sono in showBetMessage");
-        Stage betStage = new Stage();
-        betStage.initStyle(StageStyle.TRANSPARENT);
-        betStage.setAlwaysOnTop(true);
-
-        // Etichetta per il messaggio
-        Label labelBet = new Label("Choose your bet to play again:");
-        labelBet.setStyle("-fx-font-size: 16px; -fx-font-family: 'Verdana'; -fx-text-fill: white;");
-
-        // Pulsanti per le puntate
-        RadioButton bet20 = new RadioButton("20");
-        RadioButton bet50 = new RadioButton("50");
-        RadioButton bet100 = new RadioButton("100");
-        RadioButton bet200 = new RadioButton("200");
-
-        // Stile per i pulsanti
-        String radioButtonStyle = "-fx-mark-color: grey; -fx-text-fill: white; -fx-font-size: 14px;";
-        bet20.setStyle(radioButtonStyle);
-        bet50.setStyle(radioButtonStyle);
-        bet100.setStyle(radioButtonStyle);
-        bet200.setStyle(radioButtonStyle);
-
-        // Gruppo per i pulsanti radio
-        ToggleGroup betGroup = new ToggleGroup();
-        bet20.setToggleGroup(betGroup);
-        bet50.setToggleGroup(betGroup);
-        bet100.setToggleGroup(betGroup);
-        bet200.setToggleGroup(betGroup);
-
-        // Selezione predefinita
-        bet20.setSelected(true);
-
-        // Listener per selezione
-        betGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-
-            if (newValue == bet20) {
-                setBet(20);
-            } else if (newValue == bet50) {
-                setBet(50);
-            } else if (newValue == bet100) {
-                setBet(100);
-            } else if (newValue == bet200) {
-                setBet(200);
-            }
-        });
-
-        // Pulsanti di azione
-        Button buttonConfirm = new Button("Play");
-        Button buttonCancel = new Button("Exit");
-
-        // Stile per i pulsanti
-        String buttonStyle = " -fx-text-fill: black; -fx-font-size: 14px; -fx-font-weight: bold;";
-        buttonConfirm.setStyle(buttonStyle);
-        buttonCancel.setStyle("-fx-background-color: darkred; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;");
-
-        buttonConfirm.setOnAction(e -> {
-
-            setPlayAgain(true);
-            betStage.close();
-
-        });
-
-        buttonCancel.setOnAction(e -> {
-
-                    setPlayAgain(false);
-                    betStage.close();
-                }
-        );
-
-        // Layout pulsanti azione
-        HBox actionButtons = new HBox(20, buttonConfirm, buttonCancel);
-        actionButtons.setAlignment(Pos.CENTER);
-
-        // Layout principale
-        VBox mainBox = new VBox(20, labelBet, new HBox(10, bet20, bet50, bet100, bet200), actionButtons);
-        mainBox.setAlignment(Pos.CENTER);
-        mainBox.setStyle("-fx-background-color: #003100; -fx-padding: 20px; -fx-background-radius: 20;");
-
-        // Imposta la scena e mostra
-        Scene betScene = new Scene(mainBox, 300, 200);
-        betScene.setFill(javafx.scene.paint.Color.TRANSPARENT);
-        betStage.setScene(betScene);
-        betStage.showAndWait();
-
-
-    }
-*/
 
 
 }
